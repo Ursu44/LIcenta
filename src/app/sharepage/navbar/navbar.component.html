@@ -1,5 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
+<div class="banner">
+  <h1>Educatie la indemana oricui</h1> 
+</div>
+
+<nav [ngClass]="{'bg-dark': isScrolled, 'bg-transparent': !isScrolled}" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <a class="navbar-brand" href="#"> <span style="color:white; font-size:38px"> LearnHub </span> </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -7,13 +11,13 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mx-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Blog </a>
+        <a class="nav-link" href="#">Blog</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Cursuri</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Disabled</a>
+        <a class="nav-link" href="#">Catalog</a>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
