@@ -6,7 +6,6 @@ import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
 public class ProfesorRepository implements FireBaseRepository<Profesor>{
-
     @Inject
     private FirebaseInitializer firebaseInitializer;
     private DatabaseReference profesor = null;
