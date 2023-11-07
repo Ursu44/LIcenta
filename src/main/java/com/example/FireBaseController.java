@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 public class FireBaseController {
 
     private ObjectMapper objectMapper;
-    private String type = "profesor";
     private  FireBaseRepository<Profesor> profesorRepository = null;
     private  FireBaseRepository<Student> studentRepository = null;
 
@@ -26,12 +25,12 @@ public class FireBaseController {
             this.studentRepository = studentRepository;
     }
 
-    @Get("/get")
-    public void getCollection(){
-        if(type == "profesor") {
+    @Get("/get/{type1}")
+    public void getCollection(@PathVariable String type1){
+        if("profesor".equals(type1)) {
             profesorRepository.read();
         }
-        else if(type == "student"){
+        else if("student".equals(type1)){
             studentRepository.read();
         }
 
@@ -39,7 +38,6 @@ public class FireBaseController {
 
     @Post("/add/{type}")
     public void createEntity(@PathVariable String type, @Body String json)  {
-        System.out.println(json);
         if ("profesor".equals(type) ) {
             Profesor profesor = Profesor.fromJson(json);
             profesorRepository.create(profesor);

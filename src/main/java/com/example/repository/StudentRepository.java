@@ -1,5 +1,6 @@
 package com.example.repository;
 
+import com.example.EncryptDecrypt;
 import com.example.firebase.FirebaseInitializer;
 import com.example.model.Student;
 import com.google.firebase.database.*;
@@ -11,7 +12,7 @@ public class StudentRepository implements FireBaseRepository<Student>{
     private FirebaseInitializer firebaseInitializer;
     private DatabaseReference student = null;
 
-
+    private EncryptDecrypt encryptor = new EncryptDecrypt();
     @Inject
     public StudentRepository() {
         student = FirebaseDatabase.getInstance().getReference("Studenti");
@@ -19,7 +20,6 @@ public class StudentRepository implements FireBaseRepository<Student>{
 
     @Override
     public void create(Student entity) {
-        System.out.println("da2");
         DatabaseReference studentNou = student.push();
         studentNou.setValue(entity, new DatabaseReference.CompletionListener() {
             @Override
