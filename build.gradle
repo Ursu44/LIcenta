@@ -33,6 +33,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.x'
     implementation 'com.fasterxml.jackson.core:jackson-core'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'javax.activation:javax.activation-api:1.2.0'
+    implementation("io.micronaut.email:micronaut-email-template")
+    implementation("io.micronaut.views:micronaut-views-velocity")
 }
 
 

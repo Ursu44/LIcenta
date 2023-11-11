@@ -71,7 +71,7 @@ public class Student {
     }
 
     public void setParola(String parola) throws NoSuchAlgorithmException {
-        this.parola = this.parola = encryptor.toHexString(encryptor.getSHA(parola));;
+        this.parola = this.parola = encryptor.toHexString(encryptor.getSHA(parola));
     }
 
     public String getParola(){

@@ -1,10 +1,13 @@
 package com.example.repository;
 
 import com.example.EncryptDecrypt;
+import com.example.SendMail;
 import com.example.firebase.FirebaseInitializer;
 import com.example.model.Student;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
+
+import javax.mail.MessagingException;
 
 public class StudentRepository implements FireBaseRepository<Student>{
 
@@ -13,6 +16,7 @@ public class StudentRepository implements FireBaseRepository<Student>{
     private DatabaseReference student = null;
 
     private EncryptDecrypt encryptor = new EncryptDecrypt();
+    private SendMail send =new SendMail();
     @Inject
     public StudentRepository() {
         student = FirebaseDatabase.getInstance().getReference("Studenti");
@@ -25,7 +29,14 @@ public class StudentRepository implements FireBaseRepository<Student>{
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError == null) {
-                    System.out.println("Data saved successfully");
+                    String studentEmail = entity.getMail();
+                    send.setMailFrom(studentEmail);
+                    send.setMailTo(studentEmail);
+                    try {
+                        send.sending();
+                    } catch (MessagingException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     System.err.println("Data could not be saved. " + databaseError.getMessage());
                 }
