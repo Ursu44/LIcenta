@@ -1,17 +1,14 @@
 package com.example;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Date;
-import java.util.Properties;
+import okhttp3.*;
+
+import java.io.IOException;
 
 public class SendMail {
 
     private String mailTo;
     private String mailFrom;
+
     public void setMailFrom(String mailFrom) {
         this.mailFrom = mailFrom;
     }
@@ -19,6 +16,7 @@ public class SendMail {
     public String getMailFrom() {
         return mailFrom;
     }
+
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
     }
@@ -27,30 +25,24 @@ public class SendMail {
         return mailTo;
     }
 
-    public void sending() throws MessagingException {
-        System.out.println("Mail 1"+mailTo);
-        System.out.println("Mail 2"+mailFrom);
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "127.0.0.1");
-        props.put("mail.smtp.port", "25");
-        props.put("mail.debug", "true");
-        Session session = Session.getDefaultInstance(props);
-        MimeMessage message = new MimeMessage(session);
+    public void sending() throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"from\":{\"email\":\"mailtrap@mail.learnhub\",\"name\":\"Mailtrap Test\"},\"to\":[{\"email\":\"cosminaursulesei23@gmail.com\"}],\"subject\":\"You are awesome!\",\"text\":\"Congrats for sending test email with Mailtrap!\",\"category\":\"Integration Test\"}");
+        Request request = new Request.Builder()
+                .url("https://send.api.mailtrap.io/api/send")
+                .method("POST", body)
+                .addHeader("Authorization", "Bearer 6ae4fdd015e22ab75f1d7b9ce3450cf3")
+                .addHeader("Content-Type", "application/json")
+                .build();
         try {
-            message.setFrom(new InternetAddress(mailFrom));
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            Response response = client.newCall(request).execute();
+            System.out.println(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        try {
-            message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(mailTo));
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-
-        message.setSubject("Notification");
-        message.setText("Successful!", "UTF-8");
-        message.setSentDate(new Date());
-        Transport.send(message);
     }
 }
+
+

@@ -37,6 +37,10 @@ dependencies {
     implementation 'javax.activation:javax.activation-api:1.2.0'
     implementation("io.micronaut.email:micronaut-email-template")
     implementation("io.micronaut.views:micronaut-views-velocity")
+    implementation 'org.apache.commons:commons-email:1.5'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'javax.activation:javax.activation-api:1.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.6'
 }
 
 

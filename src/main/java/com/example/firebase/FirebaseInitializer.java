@@ -29,7 +29,6 @@ public class FirebaseInitializer {
                     .setDatabaseUrl("https://learnhub-f5ef3-default-rtdb.firebaseio.com")
                     .build();
             FirebaseApp.initializeApp(options);
-            System.out.println("da1");
         }
         catch (FileNotFoundException e) {
 

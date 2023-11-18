@@ -7,7 +7,7 @@ import com.example.model.Student;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
-import javax.mail.MessagingException;
+import java.io.IOException;
 
 public class StudentRepository implements FireBaseRepository<Student>{
 
@@ -34,9 +34,10 @@ public class StudentRepository implements FireBaseRepository<Student>{
                     send.setMailTo(studentEmail);
                     try {
                         send.sending();
-                    } catch (MessagingException e) {
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+
                 } else {
                     System.err.println("Data could not be saved. " + databaseError.getMessage());
                 }
