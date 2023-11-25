@@ -7,16 +7,16 @@ import com.example.model.Student;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
-import java.io.IOException;
-
 public class StudentRepository implements FireBaseRepository<Student>{
 
     @Inject
     private FirebaseInitializer firebaseInitializer;
+
+    @Inject
+    private SendMail sendMail;
     private DatabaseReference student = null;
 
     private EncryptDecrypt encryptor = new EncryptDecrypt();
-    private SendMail send =new SendMail();
     @Inject
     public StudentRepository() {
         student = FirebaseDatabase.getInstance().getReference("Studenti");
@@ -30,12 +30,13 @@ public class StudentRepository implements FireBaseRepository<Student>{
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError == null) {
                     String studentEmail = entity.getMail();
-                    send.setMailFrom(studentEmail);
-                    send.setMailTo(studentEmail);
+                    sendMail.setMailFrom(studentEmail);
+                    sendMail.setMailTo(studentEmail);
                     try {
-                        send.sending();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        sendMail.sending();
+                    }catch (Exception e) {
+                        System.out.println("Exception during sending email:");
+                        e.printStackTrace();
                     }
 
                 } else {
