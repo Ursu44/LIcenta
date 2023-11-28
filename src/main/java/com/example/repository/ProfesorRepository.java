@@ -5,29 +5,15 @@ import com.example.model.Profesor;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
-public class ProfesorRepository implements FireBaseRepository<Profesor>{
+public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     @Inject
     private FirebaseInitializer firebaseInitializer;
     private DatabaseReference profesor = null;
 
     @Inject
     public ProfesorRepository() {
+        super("Profesori");
         profesor = FirebaseDatabase.getInstance().getReference("Profesori");
-    }
-
-    @Override
-    public void create(Profesor entity) {
-        DatabaseReference profesorNou = profesor.push();
-        profesorNou.setValue(entity, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    System.out.println("Data saved successfully");
-                } else {
-                    System.err.println("Data could not be saved. " + databaseError.getMessage());
-                }
-            }
-        });
     }
 
     @Override
@@ -44,5 +30,27 @@ public class ProfesorRepository implements FireBaseRepository<Profesor>{
                 System.out.println("Citirea a esuat: " + databaseError.getCode());
             }
         });
+    }
+
+    @Override
+    public void update(Profesor entity, String identifier) {
+        profesor.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
+    }
+
+    @Override
+    protected String getEmailFromEntity(Profesor entity) {
+        return entity.getMail();
     }
 }

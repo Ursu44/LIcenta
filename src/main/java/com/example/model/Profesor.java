@@ -20,7 +20,6 @@ import java.util.concurrent.CountDownLatch;
 @JsonPropertyOrder({"nume","prenume","mail","parola","materie"})
 @Serdeable.Serializable
 public class Profesor {
-
     private EncryptDecrypt encryptor = new EncryptDecrypt();
     @JsonProperty("nume")
     private String nume;
@@ -46,7 +45,6 @@ public class Profesor {
             @JsonProperty("parola") String parola,
             @JsonProperty("materie") String materie
     ) throws NoSuchAlgorithmException {
-
         this.nume = nume;
         this.prenume = prenume;
         this.mail = mail;

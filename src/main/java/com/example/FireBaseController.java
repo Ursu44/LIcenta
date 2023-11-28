@@ -47,4 +47,11 @@ public class FireBaseController {
         }
     }
 
+    @Put("/update/{identifier}")
+    public void updateEntity(@PathVariable String identifier, @Body String json){
+        Student student = Student.fromJson(json);
+        studentRepository.update(student, identifier);
+    }
+
+
 }

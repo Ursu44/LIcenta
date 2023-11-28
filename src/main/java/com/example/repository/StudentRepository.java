@@ -7,11 +7,13 @@ import com.example.model.Student;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
-public class StudentRepository implements FireBaseRepository<Student>{
+import java.util.HashMap;
+import java.util.Map;
+
+public class StudentRepository extends AbstractFirebasRepository<Student>{
 
     @Inject
     private FirebaseInitializer firebaseInitializer;
-
     @Inject
     private SendMail sendMail;
     private DatabaseReference student = null;
@@ -19,31 +21,13 @@ public class StudentRepository implements FireBaseRepository<Student>{
     private EncryptDecrypt encryptor = new EncryptDecrypt();
     @Inject
     public StudentRepository() {
+        super("Studenti");
         student = FirebaseDatabase.getInstance().getReference("Studenti");
     }
 
     @Override
-    public void create(Student entity) {
-        DatabaseReference studentNou = student.push();
-        studentNou.setValue(entity, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    String studentEmail = entity.getMail();
-                    sendMail.setMailFrom(studentEmail);
-                    sendMail.setMailTo(studentEmail);
-                    try {
-                        sendMail.sending();
-                    }catch (Exception e) {
-                        System.out.println("Exception during sending email:");
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    System.err.println("Data could not be saved. " + databaseError.getMessage());
-                }
-            }
-        });
+    protected String getEmailFromEntity(Student entity) {
+        return entity.getMail();
     }
 
     @Override
@@ -58,6 +42,29 @@ public class StudentRepository implements FireBaseRepository<Student>{
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("Citirea a esuat: " + databaseError.getCode());
+            }
+        });
+    }
+
+    @Override
+    public void update(Student entity, String identifier) {
+        student.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String emailValue = snapshot.child("mail").getValue(String.class);
+                    if (emailValue != null && emailValue.equals(identifier)) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("parola", entity.getParola());
+                        snapshot.getRef().updateChildren(data, null);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
             }
         });
     }

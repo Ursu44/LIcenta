@@ -24,7 +24,6 @@ import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 @Singleton
@@ -40,14 +39,6 @@ public class SendMail {
     private String mailFrom;
 
     private static final String USER_ID = "me";
-
-    public void setMailFrom(String mailFrom) {
-        this.mailFrom = mailFrom;
-    }
-
-    public String getMailFrom() {
-        return mailFrom;
-    }
 
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
@@ -73,10 +64,6 @@ public class SendMail {
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-
-        String accessToken = Objects.requireNonNull(credential.getAccessToken());
-        System.out.println("Access Token: " + accessToken);
-
         return credential;
     }
 
@@ -93,7 +80,7 @@ public class SendMail {
         MimeMessage email = new MimeMessage(session);
         email.setFrom(new InternetAddress("aursuleseicosminirimia@gmail.com"));
         email.addRecipient(javax.mail.Message.RecipientType.TO,
-                new InternetAddress("cosminaursulesei13@gmail.com"));
+                new InternetAddress(mailTo));
         email.setSubject(messageSubject);
         email.setText(bodyText);
 
