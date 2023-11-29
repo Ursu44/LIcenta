@@ -1,6 +1,5 @@
 package com.example.repository;
 
-import com.example.EncryptDecrypt;
 import com.example.SendMail;
 import com.example.firebase.FirebaseInitializer;
 import com.google.firebase.database.*;
@@ -17,8 +16,6 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
     private SendMail sendMail;
     private DatabaseReference dataReference = null;
     private DatabaseReference emailIndex = null;
-
-    private EncryptDecrypt encryptor = new EncryptDecrypt();
 
     public AbstractFirebasRepository(String dataCollectionName) {
         dataReference = FirebaseDatabase.getInstance().getReference(dataCollectionName);
@@ -56,7 +53,7 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
         String encodeEmail = email.replace(".",",");
         DatabaseReference entityNew = dataReference.push();
         String id = entityNew.getKey();
-        emailIndex.addValueEventListener(new ValueEventListener() {
+        emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -77,6 +74,8 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                     emailIndexNou.setValue(data, (databaseError, databaseReference) -> {
                         if (databaseError == null) {
                             System.out.println("Email saved successfully");
+                            Map<String, Object> verificare = new HashMap<>();
+                            verificare.put("verifcat","nu");
 
                             entityNew.setValue(entity, (entityDatabaseError, entityDatabaseReference) -> {
                                 if (entityDatabaseError == null) {
@@ -92,6 +91,8 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                                     System.out.println("Error creating entity: " + entityDatabaseError.getMessage());
                                 }
                             });
+
+                            entityNew.updateChildren(verificare, null);
                         } else {
                             System.out.println("Email could not be saved");
                         }
@@ -112,4 +113,7 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
 
     public abstract void update(T entity,String identifier);
     protected abstract String getEmailFromEntity(T entity);
+    public abstract void updateCobnfirmation();
+
+
 }

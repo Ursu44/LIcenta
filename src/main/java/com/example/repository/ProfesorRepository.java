@@ -53,4 +53,11 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     protected String getEmailFromEntity(Profesor entity) {
         return entity.getMail();
     }
+
+    @Override
+    public void updateCobnfirmation() {
+
+    }
+
+
 }

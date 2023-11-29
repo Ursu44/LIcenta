@@ -72,8 +72,21 @@ public class SendMail {
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        String messageSubject = "Test message";
-        String bodyText = "lorem ipsum.";
+
+        StringBuilder confirmatonTokenBuilder = new StringBuilder(30) ;
+        String random = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+
+        for(int i=0;i<30;i++){
+            int index = (int)(random.length() * Math.random());
+            confirmatonTokenBuilder.append(random.charAt(index));
+        }
+
+        String confirmatonToken = confirmatonTokenBuilder.toString();
+        String url = "http://8080/activation/"+confirmatonToken;
+        String content = "<a href='"+url+"'>"+url+"</a>";
+
+        String messageSubject = "Confirmare identitate";
+        String bodyText = "Bun venit pentru cofirmarea identitatii apasati urmatorul link:\n"+content;
 
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -82,7 +95,7 @@ public class SendMail {
         email.addRecipient(javax.mail.Message.RecipientType.TO,
                 new InternetAddress(mailTo));
         email.setSubject(messageSubject);
-        email.setText(bodyText);
+        email.setContent(bodyText, "text/html");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         email.writeTo(buffer);

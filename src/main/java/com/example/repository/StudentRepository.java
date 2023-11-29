@@ -31,6 +31,11 @@ public class StudentRepository extends AbstractFirebasRepository<Student>{
     }
 
     @Override
+    public void updateCobnfirmation() {
+
+    }
+
+    @Override
     public void read() {
         student.addValueEventListener(new ValueEventListener() {
             @Override
@@ -48,7 +53,7 @@ public class StudentRepository extends AbstractFirebasRepository<Student>{
 
     @Override
     public void update(Student entity, String identifier) {
-        student.addValueEventListener(new ValueEventListener() {
+        student.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
