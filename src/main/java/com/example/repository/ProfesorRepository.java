@@ -55,7 +55,7 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     }
 
     @Override
-    public void updateCobnfirmation() {
+    public void updateConfirmation(String token) {
 
     }
 

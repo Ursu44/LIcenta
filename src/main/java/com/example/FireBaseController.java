@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.annotation.*;
 import jakarta.inject.Inject;
 
+import java.nio.charset.StandardCharsets;
+
 @Controller("/firebase")
 public class FireBaseController {
 
@@ -53,7 +55,19 @@ public class FireBaseController {
         studentRepository.update(student, identifier);
     }
 
-
+    @Get("/activationLink/activate/{token}/")
+    public void updateForConfirmation(@PathVariable String token){
+        try {
+            System.out.println("da");
+            String decodedToken = java.net.URLDecoder.decode(token, StandardCharsets.UTF_8);
+            System.out.println("da1");
+            studentRepository.updateConfirmation(decodedToken);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }

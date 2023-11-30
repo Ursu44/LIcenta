@@ -65,7 +65,6 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                         break;
                     }
                 }
-
                 if (!emailExistence) {
                     Map<String, Object> data= new HashMap<>();
                     data.put("id", id);
@@ -75,15 +74,25 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                         if (databaseError == null) {
                             System.out.println("Email saved successfully");
                             Map<String, Object> verificare = new HashMap<>();
-                            verificare.put("verifcat","nu");
-
+                            verificare.put("verificat","nu");
                             entityNew.setValue(entity, (entityDatabaseError, entityDatabaseReference) -> {
                                 if (entityDatabaseError == null) {
                                     System.out.println("Entity saved successfully");
                                     sendMail.setMailTo(email);
-
+                                    System.out.println("token "+sendMail.getConfirmatonToken());
                                     try {
                                         sendMail.sending();
+                                        System.out.println("token "+sendMail.getConfirmatonToken());
+                                        Map<String, Object> confirmation = new HashMap<>();
+                                        confirmation.put("token", sendMail.getConfirmatonToken());
+                                        entityNew.updateChildren(confirmation, (confirmationError, confirmationReference) -> {
+                                            if (confirmationError == null) {
+                                                System.out.println("Confirmation updated successfully");
+                                            } else {
+                                                System.err.println("Error updating confirmation: " + confirmationError.getMessage());
+                                            }
+                                        });
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -91,7 +100,6 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                                     System.out.println("Error creating entity: " + entityDatabaseError.getMessage());
                                 }
                             });
-
                             entityNew.updateChildren(verificare, null);
                         } else {
                             System.out.println("Email could not be saved");
@@ -113,7 +121,7 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
 
     public abstract void update(T entity,String identifier);
     protected abstract String getEmailFromEntity(T entity);
-    public abstract void updateCobnfirmation();
+    public abstract void updateConfirmation(String token);
 
 
 }

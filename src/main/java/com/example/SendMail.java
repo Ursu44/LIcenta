@@ -33,19 +33,22 @@ public class SendMail {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-
     private static final List<String> SCOPES = Arrays.asList(GmailScopes.GMAIL_SEND);
     private String mailTo;
-    private String mailFrom;
-
+    private String confirmatonToken;
     private static final String USER_ID = "me";
 
     public void setMailTo(String mailTo) {
         this.mailTo = mailTo;
     }
-
     public String getMailTo() {
         return mailTo;
+    }
+    public void setConfirmatonToken(String confirmatonToken){
+        this.confirmatonToken = confirmatonToken;
+    }
+    public String getConfirmatonToken(){
+        return confirmatonToken;
     }
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
@@ -81,8 +84,8 @@ public class SendMail {
             confirmatonTokenBuilder.append(random.charAt(index));
         }
 
-        String confirmatonToken = confirmatonTokenBuilder.toString();
-        String url = "http://8080/activation/"+confirmatonToken;
+        confirmatonToken = confirmatonTokenBuilder.toString();
+        String url = "http://localhost:8080/firebase/activationLink/activate/"+confirmatonToken;
         String content = "<a href='"+url+"'>"+url+"</a>";
 
         String messageSubject = "Confirmare identitate";
