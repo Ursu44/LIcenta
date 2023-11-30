@@ -58,9 +58,7 @@ public class FireBaseController {
     @Get("/activationLink/activate/{token}/")
     public void updateForConfirmation(@PathVariable String token){
         try {
-            System.out.println("da");
             String decodedToken = java.net.URLDecoder.decode(token, StandardCharsets.UTF_8);
-            System.out.println("da1");
             studentRepository.updateConfirmation(decodedToken);
         }
         catch (Exception e) {
