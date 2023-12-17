@@ -1,0 +1,24 @@
+micronaut:
+  application:
+    name: JWTLogin
+  firebase:
+    admin-sdk-service-account-file: home/student/Licenta/DataBase/firebase.json
+
+---
+micronaut:
+  security:
+    authentication: bearer # <1>
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"' # <2>
+---
+micronaut:
+  security:
+    token:
+      jwt:
+        generator:
+          refresh-token:
+            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"' # <1>
