@@ -51,6 +51,8 @@ public class FireBaseController {
         Student student = Student.fromJson(json);
         studentRepository.update(student, identifier);
     }
+
+
     @Get("/activationLink/activate/{token}/")
     public void updateForConfirmation(@PathVariable String token){
         try {

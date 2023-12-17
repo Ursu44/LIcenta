@@ -23,19 +23,14 @@ public class Profesor {
     private EncryptDecrypt encryptor = new EncryptDecrypt();
     @JsonProperty("nume")
     private String nume;
-
     @JsonProperty("prenume")
     private String prenume;
-
     @JsonProperty("mail")
     private String mail;
-
     @JsonProperty("parola")
     private String parola;
-
     @JsonProperty("materie")
     private String materie;
-
 
     @JsonCreator
     public Profesor(
