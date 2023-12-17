@@ -32,7 +32,7 @@ public class SendMail {
     private static final String APPLICATION_NAME = "Gmail API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "/credintials.json";
     private static final List<String> SCOPES = Arrays.asList(GmailScopes.GMAIL_SEND);
     private String mailTo;
     private String confirmatonToken;
