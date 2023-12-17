@@ -17,7 +17,6 @@ public class EncryptDecrypt {
         while (hexString.length() < 32) {
             hexString.insert(0, '0');
         }
-
         return hexString.toString();
     }
 }
