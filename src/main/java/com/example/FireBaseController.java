@@ -19,8 +19,6 @@ public class FireBaseController {
 
     @Inject
     private FirebaseInitializer firebaseInitializer;
-
-
     @Inject
     public FireBaseController(FireBaseRepository<Profesor> profesorRepository, FireBaseRepository<Student> studentRepository ) {
             this.profesorRepository = profesorRepository;
@@ -37,7 +35,6 @@ public class FireBaseController {
         }
 
     }
-
     @Post("/add/{type}")
     public void createEntity(@PathVariable String type, @Body String json)  {
         if ("profesor".equals(type) ) {
@@ -54,7 +51,6 @@ public class FireBaseController {
         Student student = Student.fromJson(json);
         studentRepository.update(student, identifier);
     }
-
     @Get("/activationLink/activate/{token}/")
     public void updateForConfirmation(@PathVariable String token){
         try {
