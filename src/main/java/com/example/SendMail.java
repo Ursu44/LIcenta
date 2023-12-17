@@ -83,8 +83,6 @@ public class SendMail {
             int index = (int)(random.length() * Math.random());
             confirmatonTokenBuilder.append(random.charAt(index));
         }
-
-
         confirmatonToken = confirmatonTokenBuilder.toString();
         String url = "http://localhost:8080/firebase/activationLink/activate/"+confirmatonToken;
         String content = "<a href='"+url+"'>"+url+"</a>";
