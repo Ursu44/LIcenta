@@ -13,10 +13,11 @@ import java.security.Principal;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller
 public class Contoller {
-
     @Produces(MediaType.TEXT_PLAIN)
     @Get
     public String index(Principal principal) {
+
+        System.out.println("Hello, " + principal.getName() + "! You have access to the secured endpoint.");
         return "Hello, " + principal.getName() + "! You have access to the secured endpoint.";
     }
 }

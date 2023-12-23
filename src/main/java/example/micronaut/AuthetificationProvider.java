@@ -27,7 +27,6 @@ public class AuthetificationProvider implements AuthenticationProvider<HttpReque
                 emitter.next(AuthenticationResponse.success((String) authenticationRequest.getIdentity(), roles));
 
                 emitter.complete();
-
             } else {
                 System.out.println("nu 1");
                 emitter.error(AuthenticationResponse.exception());
