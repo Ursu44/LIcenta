@@ -36,7 +36,6 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
             }
         });
     }
-
     @Override
     public Optional<RefreshTokenEntity> findByRefreshToken(String refreshToken) {
         final Boolean[] ok = {false};
@@ -62,7 +61,6 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
         if(ok[0] == false) {
             return Optional.empty();
         }
-
         return Optional.of(refreshTokenEntity[0]);
     }
 }
