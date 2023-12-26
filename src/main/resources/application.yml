@@ -13,7 +13,7 @@ micronaut:
         signatures:
           secret:
             generator:
-              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET_1:M3iYQYrGyOKxGFgQf7SuDbWA5hzz7j}"'
 ---
 micronaut:
   security:
@@ -21,7 +21,7 @@ micronaut:
       jwt:
         generator:
           refresh-token:
-            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
+            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET_2:xIJkp3jr72sEFO3AUonCov7PNyGAfJ}"'
 
 ---
 micronaut:

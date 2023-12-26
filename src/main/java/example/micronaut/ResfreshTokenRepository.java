@@ -23,11 +23,12 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
     public void save(String username, Boolean revoked, String refreshToken) {
         Map<String, Object> data = new HashMap<>();
 
-        data.put("id", username);
+        data.put("username", username);
         data.put("state", revoked);
         data.put("refresh", refreshToken);
 
-        login.setValue(data, (entityDatabaseError, entityDatabaseReference) -> {
+        DatabaseReference newRecordRef = login.push();
+        newRecordRef.setValue(data, (entityDatabaseError, entityDatabaseReference) -> {
             if (entityDatabaseError == null) {
                 System.out.println("Succes");
             } else {

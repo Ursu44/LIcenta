@@ -10,8 +10,9 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Singleton
 public class AuthetificationProvider implements AuthenticationProvider<HttpRequest<?>> {
@@ -19,13 +20,16 @@ public class AuthetificationProvider implements AuthenticationProvider<HttpReque
     @Override
     public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
         return Flux.create(emitter -> {
-            if (authenticationRequest.getIdentity().equals("sherlock") &&
-                    authenticationRequest.getSecret().equals("password")) {
+            if (authenticationRequest.getIdentity().equals("sherlock1") &&
+                    authenticationRequest.getSecret().equals("password1")) {
                 System.out.println("da 1");
-                Collection<String> roles = Arrays.asList("ROLE_USER", "ROLE_ADMIN");
+                //Collection<String> roles = Arrays.asList("ROLE_STUDENT");
+                HashMap<String, Object> roles = new HashMap<>();
+                List<String> roleList = new ArrayList<>();
+                roleList.add("ROLE_STUDENT");
+                roles.put("roles", roleList);
 
-                emitter.next(AuthenticationResponse.success((String) authenticationRequest.getIdentity(), roles));
-
+                emitter.next(AuthenticationResponse.success((String) authenticationRequest.getIdentity(), roleList));
                 emitter.complete();
             } else {
                 System.out.println("nu 1");
