@@ -8,10 +8,14 @@ import io.micronaut.serde.annotation.SerdeImport;
 import io.micronaut.serde.annotation.Serdeable;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Introspected
 @SerdeImport(RefreshTokenEntity.class)
-@JsonPropertyOrder({"username","revoked","refreshToken"})
+@JsonPropertyOrder({"username","revoked","refreshToken", "dateCreated"})
 @Serdeable.Serializable
 public class RefreshTokenEntity {
 
@@ -24,18 +28,22 @@ public class RefreshTokenEntity {
     @JsonProperty("refreshToken")
     private String refreshToken;
 
+    @JsonProperty("dateCreated")
+    private String dateCreated;
 
     @JsonCreator
     public RefreshTokenEntity(
             @JsonProperty("username") String username,
             @JsonProperty("revoked") Boolean revoked,
-            @JsonProperty("refreshToken") String refreshToken
-    ) throws NoSuchAlgorithmException {
+            @JsonProperty("refreshToken") String refreshToken)
+            throws NoSuchAlgorithmException {
         this.username = username;
         this.revoked = revoked;
         this.refreshToken = refreshToken;
-    }
+        String formattedDate = DateTimeFormatter.ISO_INSTANT.format((new Date()).toInstant());
+        this.dateCreated = formattedDate;
 
+    }
 
     public String getUsername() {
         return username;
@@ -59,5 +67,22 @@ public class RefreshTokenEntity {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", username);
+        map.put("revoked", revoked);
+        map.put("refreshToken", refreshToken);
+        map.put("date created", dateCreated);
+        return map;
     }
 }

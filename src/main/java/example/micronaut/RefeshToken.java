@@ -9,6 +9,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static io.micronaut.security.errors.IssuingAnAccessTokenErrorCode.INVALID_GRANT;
@@ -29,13 +30,19 @@ public class RefeshToken implements RefreshTokenPersistence {
                 event.getAuthentication() != null &&
                 event.getAuthentication().getName() != null) {
             String payload = event.getRefreshToken();
-            refreshTokenRepository.save(event.getAuthentication().getName(), false, payload);
+            try {
+                refreshTokenRepository.save(event.getAuthentication().getName(), false, payload);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("da");
         }
     }
 
+
     @Override
     public Publisher<Authentication> getAuthentication(String refreshToken) {
+        System.out.println("da3");
         return Flux.create(emitter -> {
             Optional<RefreshTokenEntity> tokenOpt = refreshTokenRepository.findByRefreshToken(refreshToken);
             if (tokenOpt.isPresent()) {
