@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -15,4 +15,5 @@ export class HomeComponent implements OnInit{
   ngOnInit(): void {
     this.courseData = this.service.courseDetails;
   }
+  
 }
