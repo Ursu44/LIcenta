@@ -1,0 +1,51 @@
+application:
+  name: JWTLogin
+firebase:
+  admin-sdk-service-account-file: home/student/Licenta/DataBase/firebase.json
+
+micronaut:
+  security:
+    authentication: bearer
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET_1:M3iYQYrGyOKxGFgQf7SuDbWA5hzz7j}"'
+        generator:
+          refresh-token:
+            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET_2:xIJkp3jr72sEFO3AUonCov7PNyGAfJ}"'
+
+---
+micronaut:
+  security:
+    token:
+      generator:
+        access-token:
+          expiration: 60
+
+---
+micronaut:
+  server:
+    cors:
+      enabled: true
+
+      configurations:
+        ui:
+          allowed-origins:
+            - http://localhost:4200
+
+---
+micronaut:
+  security:
+    endpoints:
+      enabled: true
+      get-allowed: true
+
+---
+micronaut:
+  security:
+    endpoints:
+      logout:
+        enabled: true
+        get-allowed:
