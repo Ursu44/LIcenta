@@ -14,10 +14,10 @@
         <a class="nav-link" href="#">Blog</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Cursuri</a>
+        <a class="nav-link" href="#" (click)="efectueazaCerereaGet()">Cursuri</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Catalog</a>
+        <a class="nav-link" href="#" (click)="logout()">Catalog</a>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -56,17 +56,17 @@
         <form>
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Email:</label>
-            <input type="text" class="form-control" id="recipient-mail">
+            <input type="text" class="form-control" id="recipient-mail" name="username" [(ngModel)]="loginFormData.username">
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Parola:</label>
-            <input type="text" class="form-control" id="recipient-parola">
+            <input type="password" class="form-control" id="recipient-parola" name="password" [(ngModel)]="loginFormData.password">
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>
-        <button type="button" class="btn btn-primary">Trimite</button>
+        <button type="button" class="btn btn-primary" (click)="sendFormDataLogin()">Trimite</button>
       </div>
     </div>
   </div>
