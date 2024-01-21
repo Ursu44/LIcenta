@@ -1,0 +1,9 @@
+micronaut:
+  server:
+    cors:
+      enabled: true
+
+      configurations:
+        ui:
+          allowed-origins:
+            - http://localhost:4200
