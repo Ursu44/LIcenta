@@ -48,4 +48,9 @@ micronaut:
     endpoints:
       logout:
         enabled: true
-        get-allowed:
+        get-allowed: true
+
+---
+micronaut:
+  server:
+    port: 8081

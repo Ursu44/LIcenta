@@ -12,9 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Singleton
 public class AuthetificationProvider implements AuthenticationProvider<HttpRequest<?>> {
@@ -44,10 +42,8 @@ public class AuthetificationProvider implements AuthenticationProvider<HttpReque
                 String username = identityVerification.ConfirmationIdentittyCheck();
                 if(username != "") {
                     System.out.println("da5");
-                    HashMap<String, Object> roles = new HashMap<>();
-                    List<String> roleList = new ArrayList<>();
-                    roleList.add("ROLE_STUDENT");
-                    roles.put("roles", roleList);
+                    Collection<String> roles = Arrays.asList("ROLE_STUDENT");
+                    username =username+"_"+mail ;
                     emitter.next(AuthenticationResponse.success(username, roles));
                     emitter.complete();
                 }
