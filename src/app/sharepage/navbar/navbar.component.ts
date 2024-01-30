@@ -2,7 +2,6 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import axios from 'axios';
-import * as jwt from 'jsonwebtoken';
 
 declare var window: any;
 
@@ -17,6 +16,7 @@ export class NavbarComponent implements OnInit {
   formRegister: any;
   formLogin: any;
   confirmModal: any;
+  formRefresh: any;
   isProfesorSelected: boolean = false;
 
   formData: any = {
@@ -31,6 +31,12 @@ export class NavbarComponent implements OnInit {
     username: '',
     password: ''
   }
+
+  refreshData:any = {
+    username: '',
+    password: ''
+  }
+
   raspunsServer: string = ''; 
   constructor(private httpClient: HttpClient) { 
     this.isProfesorSelected = false;
@@ -47,6 +53,10 @@ export class NavbarComponent implements OnInit {
       document.getElementById("RegisterForm")
     );
 
+    this.formRefresh = new window.bootstrap.Modal(
+      document.getElementById("RefreshForm")
+    );
+
     this.formData = {
       nume: '',
       prenume: '',
@@ -59,7 +69,11 @@ export class NavbarComponent implements OnInit {
       username: '',
       password: ''
     }
-  
+    
+    this.refreshData = {
+      username: '',
+      password: ''
+    }
   
   }
 
@@ -71,12 +85,19 @@ export class NavbarComponent implements OnInit {
     this.formRegister.show();
   }
 
+  openRefrsh() {
+    this.formRefresh.show();
+  }
+
   doHiddingLogin() {
     this.formLogin.hide();
   }
 
   doHiddingRgister() {
     this.formRegister.hide();
+  }
+  doHiddingRefresh(){
+    this.formRefresh.hide();
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -131,7 +152,7 @@ export class NavbarComponent implements OnInit {
   async sendFormDataLogin() {
     const jsonObj = JSON.stringify(this.loginFormData);
     console.log('Form Data:', jsonObj);
-    const backendEndpoint = 'http://localhost:8080/login';
+    const backendEndpoint = 'http://localhost:8081/login';
     
     axios.post(backendEndpoint, jsonObj, {
       headers: {
@@ -145,7 +166,7 @@ export class NavbarComponent implements OnInit {
 
         const accessToken = response.data.access_token;
         
-        const securedEndpoint = 'http://localhost:8080/';
+        const securedEndpoint = 'http://localhost:8081/';
        
         const securedResponse = await fetch(securedEndpoint, {
           headers: {
@@ -188,7 +209,7 @@ export class NavbarComponent implements OnInit {
       const expirationTime = accessTokenPayload.exp * 1000; 
   
       if (expirationTime > Date.now()) {
-        const securedEndpoint = 'http://localhost:8080/';
+        const securedEndpoint = 'http://localhost:8081/';
         try {
           const response = await axios.get(securedEndpoint, {
             headers: {
@@ -205,15 +226,16 @@ export class NavbarComponent implements OnInit {
 
         this.formLogin.show();
 
-        await this.refreshAccessToken(refreshToken);
+        //await this.refreshAccessToken();
       }
     } else {
       console.error('Token-uri lipsă.');
     }
   }
 
-  async refreshAccessToken(refreshToken: string) {
-    const backendEndpoint = 'http://localhost:8080/oauth/access_token';
+  async refreshAccessToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+    const backendEndpoint = 'http://localhost:8081/oauth/access_token';
 
   const requestData = {
     grant_type: 'refresh_token',
@@ -255,8 +277,9 @@ export class NavbarComponent implements OnInit {
 
   async logout(){
 
-    const accessToken = localStorage.getItem('access_token');
-    const securedEndpoint = 'http://localhost:8080/logout';
+    localStorage.removeItem('access_token');
+    this.formLogin.show();
+    /*const securedEndpoint = 'http://localhost:8080/logout';
         try {
           const response = await axios.post(securedEndpoint, {
             headers: {
@@ -266,6 +289,6 @@ export class NavbarComponent implements OnInit {
         }
           catch (error) {
             console.error('Eroare la logout:', error);
-    }
+    }*/
   }
 }
