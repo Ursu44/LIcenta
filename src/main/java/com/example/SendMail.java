@@ -75,6 +75,7 @@ public class SendMail {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
+
         StringBuilder confirmatonTokenBuilder = new StringBuilder(30) ;
         String random = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
 
@@ -112,8 +113,5 @@ public class SendMail {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
-
 }

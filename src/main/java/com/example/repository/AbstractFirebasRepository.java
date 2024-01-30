@@ -16,10 +16,12 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
     private SendMail sendMail;
     private DatabaseReference dataReference = null;
     private DatabaseReference emailIndex = null;
+    private DatabaseReference lectures = null;
 
     public AbstractFirebasRepository(String dataCollectionName) {
         dataReference = FirebaseDatabase.getInstance().getReference(dataCollectionName);
         emailIndex = FirebaseDatabase.getInstance().getReference().child("UniqueMail");
+        lectures = FirebaseDatabase.getInstance().getReference().child("Materii");;
         emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -32,6 +34,31 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                     data.put("email", mail);
 
                     emailIndex.setValue(data, (databaseError, databaseReference) -> {
+                        if (databaseError == null) {
+                            System.out.println("UniqueMail node creat cu succes");
+                        } else {
+                            System.err.println("Eroare la crearea nodului: " + databaseError.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.err.println("Read operation cancelled: " + databaseError.getMessage());
+            }
+        });
+
+        lectures.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    String id = "id";
+
+                    Map<String, Object> data= new HashMap<>();
+                    data.put("id", id);
+
+                    lectures.setValue(data, (databaseError, databaseReference) -> {
                         if (databaseError == null) {
                             System.out.println("UniqueMail node creat cu succes");
                         } else {
@@ -112,13 +139,48 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
 
             @Override
             public void onCancelled(DatabaseError error) {
-                System.out.println("Read operation failed");
+                System.out.println("Citire esuata");
+            }
+        });
+        lectures.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String,  Object> data= new HashMap<>();
+                Map<String, Object> detaliiLectie= new HashMap<>();
+                detaliiLectie.put("nume", "Lectie_1");
+                detaliiLectie.put("Inforamtie_1", "bla bla");
+                detaliiLectie.put("Inforamtie_2", "bla bla bla");
+                detaliiLectie.put("progres", 0);
+                data.put("mail",encodeEmail);
+
+                DatabaseReference lectieReference = lectures.child("Lectie_1");
+                lectieReference.setValue(detaliiLectie, (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        System.out.println("Datele lectiei au fost slavate bine");
+                    } else {
+                        System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
+                    }
+                });
+
+                DatabaseReference materiiReference = FirebaseDatabase.getInstance().getReference().child("Materii");
+                materiiReference.child("mail").setValue(email, (emailError, emailReference) -> {
+                    if (emailError == null) {
+                        System.out.println("Mail inregistrat cu succes " + encodeEmail);
+                    } else {
+                        System.err.println(": " + emailError.getMessage());
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Citire esuata");
             }
         });
     }
 
     public abstract void read();
-
     public abstract void update(T entity,String identifier);
     protected abstract String getEmailFromEntity(T entity);
     public abstract void updateConfirmation(String token);
