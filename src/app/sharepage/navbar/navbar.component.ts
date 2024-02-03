@@ -38,6 +38,7 @@ export class NavbarComponent implements OnInit {
   }
 
   raspunsServer: string = ''; 
+  jwtHelper: any;
   constructor(private httpClient: HttpClient) { 
     this.isProfesorSelected = false;
   }
@@ -166,11 +167,17 @@ export class NavbarComponent implements OnInit {
 
         const accessToken = response.data.access_token;
         
-        const securedEndpoint = 'http://localhost:8081/';
+        localStorage.clear();
+
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('refresh_token', response.data.refresh_token);
+
+        const securedEndpoint = 'http://localhost:8082/';
        
-        const securedResponse = await fetch(securedEndpoint, {
+       const securedResponse = await fetch(securedEndpoint, {
           headers: {
-            'Content-Type': 'application/json',
+            method: 'GET',
+           'Content-Type': 'text/plain',
             'Authorization': `Bearer ${accessToken}`,
           },
         });
@@ -181,9 +188,6 @@ export class NavbarComponent implements OnInit {
 
         const securedData = await securedResponse.text();
         console.log('Răspuns de la endpoint-ul securizat:', securedData);
-
-        localStorage.setItem('access_token', accessToken);
-        localStorage.setItem('refresh_token', response.data.refresh_token);
 
         this.doHiddingRgister();
 
@@ -203,29 +207,29 @@ export class NavbarComponent implements OnInit {
   async efectueazaCerereaGet() {
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
-  
     if (accessToken && refreshToken) {
       const accessTokenPayload = this.decodeJwtPayload(accessToken);
       const expirationTime = accessTokenPayload.exp * 1000; 
-  
+      
+
       if (expirationTime > Date.now()) {
-        const securedEndpoint = 'http://localhost:8081/';
+        const securedEndpoint = 'http://localhost:8082/';
         try {
           const response = await axios.get(securedEndpoint, {
+            method: 'GET',
             headers: {
+              'Content-Type': 'application/json',
               'Authorization': `Bearer ${accessToken}`,
             },
           });
-  
           this.raspunsServer = response.data;
+           console.log("Raspuns server "+ response.data);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
         }
       } else {
         console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
-
         this.formLogin.show();
-
         //await this.refreshAccessToken();
       }
     } else {
@@ -235,6 +239,9 @@ export class NavbarComponent implements OnInit {
 
   async refreshAccessToken() {
     const refreshToken = localStorage.getItem('refresh_token');
+    const accessToken = localStorage.getItem('access_token');
+    console.log("TOken "+accessToken);
+    console.log("Refresh folosit "+refreshToken);
     const backendEndpoint = 'http://localhost:8081/oauth/access_token';
 
   const requestData = {
@@ -246,13 +253,15 @@ export class NavbarComponent implements OnInit {
     const response = await axios.post(backendEndpoint, requestData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${accessToken}`,
       },
     });
 
     const newAccessToken = response.data.access_token;
     console.log('Noul access token:', newAccessToken);
-
+    localStorage.clear();
     localStorage.setItem('access_token', newAccessToken);
+    localStorage.setItem('refresh_token', response.data.refresh_token);
 
     return newAccessToken;
     } catch (error) {
@@ -291,4 +300,7 @@ export class NavbarComponent implements OnInit {
             console.error('Eroare la logout:', error);
     }*/
   }
+  
+
+
 }
