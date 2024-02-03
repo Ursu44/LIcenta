@@ -20,6 +20,16 @@ micronaut:
 micronaut:
   security:
     token:
+      jwt:
+        signatures:
+          secret:
+            validation:
+              secret: "'${JWT_GENERATOR_SIGNATURE_SECRET_1:M3iYQYrGyOKxGFgQf7SuDbWA5hzz7j}'"
+
+---
+micronaut:
+  security:
+    token:
       generator:
         access-token:
           expiration: 60
@@ -29,7 +39,6 @@ micronaut:
   server:
     cors:
       enabled: true
-
       configurations:
         ui:
           allowed-origins:
@@ -42,15 +51,27 @@ micronaut:
       enabled: true
       get-allowed: true
 
----
-micronaut:
-  security:
-    endpoints:
-      logout:
-        enabled: true
-        get-allowed: true
 
 ---
 micronaut:
   server:
     port: 8081
+
+---
+micronaut:
+  http:
+    services:
+      afisareCursuri:
+        urls:
+          - "http://localhost:8082"
+          -
+
+---
+micronaut:
+  security:
+    token:
+      jwt:
+        signatures:
+          jwks:
+            awscognito:
+              url: 'https://cognito-idp.eu-west-1.amazonaws.com/eu-west-XXXX/.well-known/jwks.json'
