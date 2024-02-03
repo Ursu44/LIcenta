@@ -151,25 +151,18 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                 detaliiLectie.put("Inforamtie_1", "bla bla");
                 detaliiLectie.put("Inforamtie_2", "bla bla bla");
                 detaliiLectie.put("progres", 0);
+                data.put("Lectii",detaliiLectie);
                 data.put("mail",encodeEmail);
 
-                DatabaseReference lectieReference = lectures.child("Lectie_1");
-                lectieReference.setValue(detaliiLectie, (databaseError, databaseReference) -> {
+                DatabaseReference newLectureReference = lectures.push();
+                newLectureReference.setValue(data, (databaseError, databaseReference) -> {
                     if (databaseError == null) {
-                        System.out.println("Datele lectiei au fost slavate bine");
+                        System.out.println("Datele lectiei au fost salvate bine");
                     } else {
                         System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
                     }
                 });
 
-                DatabaseReference materiiReference = FirebaseDatabase.getInstance().getReference().child("Materii");
-                materiiReference.child("mail").setValue(email, (emailError, emailReference) -> {
-                    if (emailError == null) {
-                        System.out.println("Mail inregistrat cu succes " + encodeEmail);
-                    } else {
-                        System.err.println(": " + emailError.getMessage());
-                    }
-                });
 
             }
 
