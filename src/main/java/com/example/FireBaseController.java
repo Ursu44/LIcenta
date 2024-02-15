@@ -58,6 +58,7 @@ public class FireBaseController {
         try {
             String decodedToken = java.net.URLDecoder.decode(token, StandardCharsets.UTF_8);
             studentRepository.updateConfirmation(decodedToken);
+            profesorRepository.updateConfirmation(decodedToken);
         }
         catch (Exception e) {
             e.printStackTrace();

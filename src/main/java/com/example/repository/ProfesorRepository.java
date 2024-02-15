@@ -5,6 +5,9 @@ import com.example.model.Profesor;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     @Inject
     private FirebaseInitializer firebaseInitializer;
@@ -61,7 +64,25 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
 
     @Override
     public void updateConfirmation(String token) {
+        profesor.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String tokenValue = snapshot.child("token").getValue(String.class);
+                    if(tokenValue != null && tokenValue.equals(token)){
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("verificat", "da");
+                        System.out.println("Verificat cu succes");
+                        snapshot.getRef().updateChildren(data, null);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
     }
 
 
