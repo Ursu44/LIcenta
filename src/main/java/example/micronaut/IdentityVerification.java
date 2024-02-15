@@ -17,9 +17,9 @@ public class IdentityVerification {
         profesori = FirebaseDatabase.getInstance().getReference("Profesori");
     }
 
-    public boolean ConfirmIdentity(String mail,String pass){
-        CountDownLatch latch = new CountDownLatch(1);
-        boolean[] rezultat = {false};
+    public String ConfirmIdentity(String mail,String pass){
+        CountDownLatch latch = new CountDownLatch(2);
+        String[] rezultat = {null};
 
         studenti.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -29,8 +29,29 @@ public class IdentityVerification {
                     String passValue = snapshot.child("parola").getValue(String.class);
 
                     if(mailValue != null && mailValue.equals(mail) && passValue !=null && passValue.equals(pass)){
-                            rezultat[0] = true;
+                            rezultat[0] = snapshot.child("rol").getValue(String.class);
                             break;
+                    }
+                }
+                latch.countDown();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                latch.countDown();
+            }
+        });
+
+        profesori.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String mailValue = snapshot.child("mail").getValue(String.class);
+                    String passValue = snapshot.child("parola").getValue(String.class);
+
+                    if(mailValue != null && mailValue.equals(mail) && passValue !=null && passValue.equals(pass)){
+                        rezultat[0] = snapshot.child("rol").getValue(String.class);
+                        break;
                     }
                 }
                 latch.countDown();

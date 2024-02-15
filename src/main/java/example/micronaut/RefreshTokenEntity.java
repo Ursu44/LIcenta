@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Introspected
 @SerdeImport(RefreshTokenEntity.class)
-@JsonPropertyOrder({"username","revoked","refreshToken", "dateCreated"})
+@JsonPropertyOrder({"username","revoked","refreshToken", "dateCreated", "role"})
 @Serdeable.Serializable
 public class RefreshTokenEntity {
 
@@ -31,15 +31,20 @@ public class RefreshTokenEntity {
     @JsonProperty("dateCreated")
     private String dateCreated;
 
+    @JsonProperty("role")
+    private String role;
+
     @JsonCreator
     public RefreshTokenEntity(
             @JsonProperty("username") String username,
             @JsonProperty("revoked") Boolean revoked,
-            @JsonProperty("refreshToken") String refreshToken)
+            @JsonProperty("refreshToken") String refreshToken,
+            @JsonProperty("role") String role)
             throws NoSuchAlgorithmException {
         this.username = username;
         this.revoked = revoked;
         this.refreshToken = refreshToken;
+        this.role = role;
         String formattedDate = DateTimeFormatter.ISO_INSTANT.format((new Date()).toInstant());
         this.dateCreated = formattedDate;
 
@@ -77,11 +82,20 @@ public class RefreshTokenEntity {
         return dateCreated;
     }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("username", username);
         map.put("revoked", revoked);
         map.put("refreshToken", refreshToken);
+        map.put("role", role);
         map.put("date created", dateCreated);
         return map;
     }

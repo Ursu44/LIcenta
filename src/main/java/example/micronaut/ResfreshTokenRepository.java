@@ -4,6 +4,7 @@ import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,10 +23,10 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
     }
 
     @Override
-    public void save(String username, Boolean revoked, String refreshToken) throws NoSuchAlgorithmException {
+    public void save(String username, Boolean revoked, String refreshToken, String role) throws NoSuchAlgorithmException {
         Map<String, Object> data = new HashMap<>();
 
-        RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(username, revoked, refreshToken);
+        RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(username, revoked, refreshToken, role);
 
         DatabaseReference inregistrareNoua = login.push();
         inregistrareNoua.setValue(refreshTokenEntity.toMap(), (entityDatabaseError, entityDatabaseReference) -> {
@@ -54,7 +55,7 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
                     Boolean revoked = revokedSnapshot.getValue(Boolean.class);
                     String username = numeSnapshot.getValue(String.class);
                     String dateCreated = numeSnapshot.getValue(String.class);
-
+                    String role = snapshot.child("role").getValue(String.class);
                     System.out.println("Refresh from database: " + refresh);
                     System.out.println("Refresh token parameter: " + refreshToken);
 
@@ -65,7 +66,7 @@ public class ResfreshTokenRepository implements IRefreshTokenRepository {
                         ok[0] = true;
                         System.out.println("Valoare ok "+String.valueOf(ok[0]));
                         try {
-                            refreshTokenEntity[0] = new RefreshTokenEntity(username, revoked, refresh);
+                            refreshTokenEntity[0] = new RefreshTokenEntity(username, revoked, refresh, role);
                             if(refreshTokenEntity[0] == null){
                                 System.out.println("nu e null");
                             }

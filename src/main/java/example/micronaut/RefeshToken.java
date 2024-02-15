@@ -10,7 +10,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.micronaut.security.errors.IssuingAnAccessTokenErrorCode.INVALID_GRANT;
 
@@ -30,9 +35,21 @@ public class RefeshToken implements RefreshTokenPersistence {
                 event.getAuthentication() != null &&
                 event.getAuthentication().getName() != null) {
             String payload = event.getRefreshToken();
+            String regex = "\\[(.*?)\\]";
+            String roles = String.valueOf(event.getAuthentication().getRoles());
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(roles);
+            String role = "";
+            if(matcher.find()) {
+                 role = matcher.group(1);
+            }
+            else{
+
+            }
+
             System.out.println("Refresh token in DB "+ payload);
             try {
-                refreshTokenRepository.save(event.getAuthentication().getName(), false, payload);
+                refreshTokenRepository.save(event.getAuthentication().getName(), false, payload, role);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -56,7 +73,9 @@ public class RefeshToken implements RefreshTokenPersistence {
                     System.out.println("da8");
                 } else {
                     System.out.println("da6");
-                    emitter.next(Authentication.build(token.getUsername()));
+                    String role = token.getRole();
+                    Collection<String> roles = Arrays.asList(role);
+                    emitter.next(Authentication.build(token.getUsername(), roles));
                     emitter.complete();
                 }
             } else {

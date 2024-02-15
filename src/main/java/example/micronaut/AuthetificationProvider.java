@@ -36,13 +36,19 @@ public class AuthetificationProvider implements AuthenticationProvider<HttpReque
         } catch (NoSuchAlgorithmException e) {
             return Flux.error(e);
         }
-        boolean confirm = identityVerification.ConfirmIdentity(mail, hasshedPassword);
+        String rol = identityVerification.ConfirmIdentity(mail, hasshedPassword);
         return Flux.create(emitter -> {
-            if (identityVerification.ConfirmIdentity(mail, hasshedPassword)) {
+            if (rol!=null) {
                 String username = identityVerification.ConfirmationIdentittyCheck();
                 if(username != "") {
                     System.out.println("da5");
-                    Collection<String> roles = Arrays.asList("ROLE_STUDENT");
+                    Collection<String> roles;
+                    if(rol.equals("student")) {
+                         roles = Arrays.asList("ROLE_STUDENT");
+                    }
+                    else {
+                        roles = Arrays.asList("ROLE_PROFESOR");
+                    }
                     username =username+"_"+mail ;
                     emitter.next(AuthenticationResponse.success(username, roles));
                     emitter.complete();
