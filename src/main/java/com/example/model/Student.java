@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 
 @Introspected
 @SerdeImport(Student.class)
-@JsonPropertyOrder({"nume","prenume","mail","parola"})
+@JsonPropertyOrder({"nume","prenume","mail","parola", "rol"})
 @Serdeable.Serializable
 public class Student {
 
@@ -31,6 +31,9 @@ public class Student {
 
     @JsonProperty("parola")
     private String parola;
+
+    @JsonProperty("rol")
+    private String rol;
 
     @JsonCreator
     public Student(
@@ -64,6 +67,14 @@ public class Student {
 
     public void setMail(String mail){
         this.mail = mail;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public String getMail(){

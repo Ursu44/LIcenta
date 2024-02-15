@@ -75,12 +75,14 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
         });
     }
 
-    public void create(T entity) {
+    public void create(T entity,String role) {
         String email = getEmailFromEntity(entity);
         String encodeEmail = email.replace(".",",");
         DatabaseReference entityNew = dataReference.push();
         String id = entityNew.getKey();
+
         emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -142,40 +144,49 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                 System.out.println("Citire esuata");
             }
         });
-        lectures.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String,  Object> data= new HashMap<>();
-                Map<String, Object> detaliiLectie= new HashMap<>();
-                detaliiLectie.put("nume", "Lectie_1");
-                detaliiLectie.put("Inforamtie_1", "bla bla");
-                detaliiLectie.put("Inforamtie_2", "bla bla bla");
-                detaliiLectie.put("progres", 0);
-                data.put("Lectii",detaliiLectie);
-                data.put("mail",encodeEmail);
+        if(role.equals("student")) {
+            System.out.println("Pun lectii");
+            lectures.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Map<String, Object> data = new HashMap<>();
+                    Map<String, Object> detaliiLectie = new HashMap<>();
+                    Map<String, Object> informatiiLectie = new HashMap<>();
+                    detaliiLectie.put("nume", "Lectie_1");
+                    informatiiLectie.put("Inforamtie_1", "bla bla");
+                    informatiiLectie.put("Inforamtie_2", "bla bla bla");
+                    detaliiLectie.put("inforamtii", informatiiLectie);
+                    detaliiLectie.put("progres", 0);
+                    data.put("Lectia1", detaliiLectie);
+                    data.put("mail", encodeEmail);
 
-                DatabaseReference newLectureReference = lectures.push();
-                newLectureReference.setValue(data, (databaseError, databaseReference) -> {
-                    if (databaseError == null) {
-                        System.out.println("Datele lectiei au fost salvate bine");
-                    } else {
-                        System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
-                    }
-                });
+                    DatabaseReference newLectureReference = lectures.push();
+                    newLectureReference.setValue(data, (databaseError, databaseReference) -> {
+                        if (databaseError == null) {
+                            System.out.println("Datele lectiei au fost salvate bine");
+                        } else {
+                            System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
+                        }
+                    });
 
 
-            }
+                }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("Citire esuata");
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    System.out.println("Citire esuata");
+                }
+            });
+        } else {
+
+        }
+
     }
 
     public abstract void read();
     public abstract void update(T entity,String identifier);
     protected abstract String getEmailFromEntity(T entity);
+    protected abstract  String getRoleFromEntity(T entity);
     public abstract void updateConfirmation(String token);
 
 

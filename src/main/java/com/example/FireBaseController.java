@@ -39,10 +39,10 @@ public class FireBaseController {
     public void createEntity(@PathVariable String type, @Body String json)  {
         if ("profesor".equals(type) ) {
             Profesor profesor = Profesor.fromJson(json);
-            profesorRepository.create(profesor);
+            profesorRepository.create(profesor, type);
         } else if ("student".equals(type) ) {
             Student student = Student.fromJson(json);
-            studentRepository.create(student);
+            studentRepository.create(student,type);
         }
     }
 

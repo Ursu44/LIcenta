@@ -31,6 +31,11 @@ public class StudentRepository extends AbstractFirebasRepository<Student>{
     }
 
     @Override
+    protected String getRoleFromEntity(Student entity) {
+        return entity.getRol();
+    }
+
+    @Override
     public void updateConfirmation(String token) {
         student.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

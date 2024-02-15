@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 
 @Introspected
 @SerdeImport(Profesor.class)
-@JsonPropertyOrder({"nume","prenume","mail","parola","materie"})
+@JsonPropertyOrder({"nume","prenume","mail","parola","materie", "rol"})
 @Serdeable.Serializable
 public class Profesor {
     private EncryptDecrypt encryptor = new EncryptDecrypt();
@@ -32,19 +32,24 @@ public class Profesor {
     @JsonProperty("materie")
     private String materie;
 
+    @JsonProperty("rol")
+    private String rol;
+
     @JsonCreator
     public Profesor(
             @JsonProperty("nume") String nume,
             @JsonProperty("prenume") String prenume,
             @JsonProperty("mail") String mail,
             @JsonProperty("parola") String parola,
-            @JsonProperty("materie") String materie
+            @JsonProperty("materie") String materie,
+            @JsonProperty("rol")  String rol
     ) throws NoSuchAlgorithmException {
         this.nume = nume;
         this.prenume = prenume;
         this.mail = mail;
         this.parola = encryptor.toHexString(encryptor.getSHA(parola));
         this.materie = materie;
+        this.rol =rol;
     }
 
     public void setNume(String nume){
@@ -85,6 +90,12 @@ public class Profesor {
 
     public String getMaterie(){
         return materie;
+    }
+
+    public String getRol() {return rol;}
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public static Profesor fromJson(String json) {

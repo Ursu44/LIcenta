@@ -55,6 +55,11 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     }
 
     @Override
+    protected String getRoleFromEntity(Profesor entity) {
+        return entity.getRol();
+    }
+
+    @Override
     public void updateConfirmation(String token) {
 
     }
