@@ -1,11 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseDetailsService {
-
-  constructor() { }
+  private jsonData: any;
+  constructor(private http: HttpClient) { }
 
   courseDetails=[
     {

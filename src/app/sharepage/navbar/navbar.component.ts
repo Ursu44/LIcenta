@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
 import axios from 'axios';
+import { ShareDataService } from 'src/app/services/share-data.service';
 
 declare var window: any;
 
@@ -39,7 +39,8 @@ export class NavbarComponent implements OnInit {
 
   raspunsServer: string = ''; 
   jwtHelper: any;
-  constructor(private httpClient: HttpClient) { 
+  router: any;
+  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService) { 
     this.isProfesorSelected = false;
   }
 
@@ -113,19 +114,29 @@ export class NavbarComponent implements OnInit {
   handleRadioButtonSelection(event: Event) {
     const radioButton = event.target as HTMLInputElement;
     this.isProfesorSelected = radioButton.value === 'profesor';
-
-    if(radioButton.value !== 'profersor'){
+    console.log("Rol selectat "+radioButton.value);
+    if(radioButton.value !== 'profesor'){
+      console.log("Rol selectat 1 "+radioButton.value)
+      this.formData.rol = "student";
       delete this.formData.materie;
+    }
+    else{
+      console.log("Rol selectat 2 "+radioButton.value)
+      this.formData.rol = "profesor";
     }
   }
 
   async sendFormData() {
-
+    console.log("role"+this.formData.rol);
     const jsonObj = JSON.stringify(this.formData);
     console.log('Form Data:', jsonObj);
-
-    const backendEndpoint = 'http://localhost:8080/firebase/add/student';
-    
+    let backendEndpoint 
+    if(this.formData.rol === 'profesor'){
+        backendEndpoint = 'http://localhost:8080/firebase/add/profesor';
+    }
+    else{
+      backendEndpoint = 'http://localhost:8080/firebase/add/student';
+    }    
     axios.post(backendEndpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json'
@@ -134,14 +145,15 @@ export class NavbarComponent implements OnInit {
       .then(response => {
         console.log('JSON trimis cu succes:', response.data);
         this.doHiddingRgister();
-        window.location.reload();
+        //window.location.reload();
         //this.confirmModal.show();
         this.formData = {
           nume: '',
           prenume: '',
           mail: '',
           parola: '',
-          materie: ''
+          materie: '',
+          rol:''
         };
         
       })
@@ -218,12 +230,16 @@ export class NavbarComponent implements OnInit {
           const response = await axios.get(securedEndpoint, {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'text/plain',
               'Authorization': `Bearer ${accessToken}`,
             },
           });
-          this.raspunsServer = response.data;
-           console.log("Raspuns server "+ response.data);
+          let raspunsServer = response.data;
+          let raspunsServerModficat = raspunsServer.slice(0, -1);
+          const raspunsJSON = JSON.stringify(raspunsServerModficat);
+          this.shareDataService.sendRaspuns(raspunsServerModficat);
+           console.log("Raspuns server "+ raspunsServerModficat);
+           console.log("Raspuns server json"+ raspunsJSON);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
         }

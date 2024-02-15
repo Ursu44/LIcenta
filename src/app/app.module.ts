@@ -8,14 +8,17 @@ import { FooterComponent } from './sharepage/footer/footer.component';
 import { HomeComponent } from './sharepage/home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { CursuriComponent } from './sharepage/cursuri/cursuri.component';
 
 
-@NgModule({
+@NgModule({ 
   declarations: [
     AppComponent,
     NavbarComponent,
     FooterComponent,
-    HomeComponent
+    HomeComponent,
+    CursuriComponent
+    
   ],
   imports: [
     FormsModule,
