@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import axios from 'axios';
 import { ShareDataService } from 'src/app/services/share-data.service';
+import { ShareCatalogService } from 'src/app/services/share-catalog.service';
 
 declare var window: any;
 
@@ -40,7 +41,7 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService) { 
+  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService) { 
     this.isProfesorSelected = false;
   }
 
@@ -222,7 +223,6 @@ export class NavbarComponent implements OnInit {
     if (accessToken && refreshToken) {
       const accessTokenPayload = this.decodeJwtPayload(accessToken);
       const expirationTime = accessTokenPayload.exp * 1000; 
-      
 
       if (expirationTime > Date.now()) {
         const securedEndpoint = 'http://localhost:8082/';
@@ -317,6 +317,42 @@ export class NavbarComponent implements OnInit {
     }*/
   }
   
+  async accesCatalog(){
+    console.log("Am intrat la catalog")
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
 
+    if (accessToken && refreshToken) {
+      const accessTokenPayload = this.decodeJwtPayload(accessToken);
+      const expirationTime = accessTokenPayload.exp * 1000; 
+      
+    if (expirationTime > Date.now()) {
+    const securedEndpoint = 'http://localhost:8084/';
+        try {
+          const response = await axios.get(securedEndpoint, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/plain',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+          let raspunsServer = response.data;
+          let raspunsServerModficat = raspunsServer.slice(0, -1);
+          const raspunsJSON = JSON.stringify(raspunsServerModficat);
+          this.shareDataCatalog.sendRaspunsCatalog(raspunsServerModficat);
+           console.log("Raspuns server catalog "+ raspunsServerModficat);
+        } catch (error) {
+          console.error('Eroare la cererea GET cu token valid:', error);
+        }
+      }
+        else {
+          console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
+          this.formLogin.show();
+          //await this.refreshAccessToken();
+        }
+      } else {
+        console.error('Token-uri lipsă.');
+      }
+  }
 
 }

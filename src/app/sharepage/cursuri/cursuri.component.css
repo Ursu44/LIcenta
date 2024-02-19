@@ -3,7 +3,11 @@ button{
     margin-bottom: 1900px;
 }
 
+input[type="text"]{
+    margin-top: 915px;
+    margin-bottom: 1700px;
+}
 p{
-    margin-top: 1015px;
-    margin-bottom: 1900px;
+    margin-top: 1035px;
+    margin-bottom: 1700px;
 }

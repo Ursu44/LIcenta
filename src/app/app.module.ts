@@ -9,6 +9,7 @@ import { HomeComponent } from './sharepage/home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CursuriComponent } from './sharepage/cursuri/cursuri.component';
+import { CatalogComponent } from './sharepage/catalog/catalog.component';
 
 
 @NgModule({ 
@@ -17,7 +18,8 @@ import { CursuriComponent } from './sharepage/cursuri/cursuri.component';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
-    CursuriComponent
+    CursuriComponent,
+    CatalogComponent
     
   ],
   imports: [
