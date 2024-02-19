@@ -63,6 +63,11 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     }
 
     @Override
+    protected String getMaterie(Profesor entity) {
+        return entity.getMaterie();
+    }
+
+    @Override
     public void updateConfirmation(String token) {
         profesor.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -84,6 +89,5 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
             }
         });
     }
-
-
 }
+

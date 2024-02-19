@@ -36,6 +36,11 @@ public class StudentRepository extends AbstractFirebasRepository<Student>{
     }
 
     @Override
+    protected String getMaterie(Student entity) {
+        return null;
+    }
+
+    @Override
     public void updateConfirmation(String token) {
         student.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
