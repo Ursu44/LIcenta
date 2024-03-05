@@ -10,6 +10,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CursuriComponent } from './sharepage/cursuri/cursuri.component';
 import { CatalogComponent } from './sharepage/catalog/catalog.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PopupComponent } from './sharepage/popup/popup.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.component';
 
 
 @NgModule({ 
@@ -19,7 +23,9 @@ import { CatalogComponent } from './sharepage/catalog/catalog.component';
     FooterComponent,
     HomeComponent,
     CursuriComponent,
-    CatalogComponent
+    CatalogComponent,
+    PopupComponent,
+    ForgotPopupComponent
     
   ],
   imports: [
@@ -28,7 +34,9 @@ import { CatalogComponent } from './sharepage/catalog/catalog.component';
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    BrowserModule
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

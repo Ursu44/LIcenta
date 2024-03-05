@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import axios from 'axios';
+import { RefreshService } from 'src/app/services/refresh.service';
 import { ShareCatalogService } from 'src/app/services/share-catalog.service';
 import { ShareDataService } from 'src/app/services/share-data.service';
+import { PopupComponent } from '../popup/popup.component';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-catalog',
@@ -9,12 +12,12 @@ import { ShareDataService } from 'src/app/services/share-data.service';
   styleUrls: ['./catalog.component.css']
 })
 export class CatalogComponent {
-  raspunsCatalog: any = null;
+  raspunsCatalog: any = this.shareDataService.getRaspunsCatalog();;
 
-  constructor(private shareDataService:ShareCatalogService) {}
+  constructor(private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog) {}
 
   formData: any = {
-    nume: '',
+    nume: 0,
     prenume: '',
     mail: '',
     parola: '',
@@ -29,10 +32,20 @@ export class CatalogComponent {
   }
 
   async adaugaNota(){
+    
     const endpoint = 'http://localhost:8085/';
-    const jsonObj = JSON.stringify(this.formData);
     const accessToken = localStorage.getItem('access_token');
+    var notaNoua = document.getElementById('element')  as HTMLInputElement | null;
+    let value = notaNoua?.value;
+    console.log("Nota noua "+notaNoua);
+    console.log("Nota noua1 "+notaNoua);
+
+    const jsonObj = JSON.parse(this.raspunsCatalog);  
+    jsonObj.nota2 = value;
+    jsonObj.nota3 = value;
+
     if(accessToken){
+    this.refresh.refresh();
     axios.put(endpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json',
@@ -41,9 +54,10 @@ export class CatalogComponent {
     })
       .then(response => {
         console.log('JSON trimis cu succes:', response.data);
+        this.shareDataService.sendRaspunsCatalog(jsonObj);
         window.location.reload();
         this.formData = {
-          nume: '',
+          nume: 0,
           prenume: '',
           mail: '',
           parola: '',
@@ -69,19 +83,25 @@ export class CatalogComponent {
   }
 
   esteProfesor() :boolean{
+    var notaNoua = document.getElementById('element') as HTMLInputElement | null;
+    console.log("Nota noua "+notaNoua)
     const accessToken = localStorage.getItem('access_token');
     let ok =false;
     if(accessToken){
       const claimsDecodat = this.decodeJwtClaims(accessToken)
       let rol = claimsDecodat.roles;
       let rol1 = JSON.stringify(rol);
-      console.log("Tip "+typeof rol1)
-        const numeRol = rol1.trim()
-        console.log("Rol "+numeRol);
+        const numeRol = rol1.trim();
         ok = (numeRol === '["ROLE_PROFESOR"]');
-        console.log("OK "+ok)
-    
   }
     return ok;
   }
+
+  open(){
+    const dialogRefresh = new MatDialogConfig();
+    dialogRefresh.width = "60%";
+    
+    this.dialog.open(PopupComponent);
+  }
+  
 }

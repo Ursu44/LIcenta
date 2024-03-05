@@ -3,6 +3,8 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import axios from 'axios';
 import { ShareDataService } from 'src/app/services/share-data.service';
 import { ShareCatalogService } from 'src/app/services/share-catalog.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPopupComponent } from '../forgot-popup/forgot-popup.component';
 
 declare var window: any;
 
@@ -41,7 +43,7 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService) { 
+  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog) { 
     this.isProfesorSelected = false;
   }
 
@@ -133,11 +135,12 @@ export class NavbarComponent implements OnInit {
     console.log('Form Data:', jsonObj);
     let backendEndpoint 
     if(this.formData.rol === 'profesor'){
-        backendEndpoint = 'http://localhost:8080/firebase/add/profesor';
+        backendEndpoint = 'http://localhost:8086/add/profesor';
     }
     else{
       backendEndpoint = 'http://localhost:8080/firebase/add/student';
     }    
+    console.log(backendEndpoint);
     axios.post(backendEndpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json'
@@ -159,6 +162,7 @@ export class NavbarComponent implements OnInit {
         
       })
       .catch(error => {
+        console.log("Aicisa");
         console.error('Eroare la trimiterea JSON-ului:', error);
       });
   }
@@ -355,4 +359,8 @@ export class NavbarComponent implements OnInit {
       }
   }
 
+  open(){
+    this.doHiddingLogin();
+    this.dialog.open(ForgotPopupComponent);
+  }
 }

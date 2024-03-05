@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from './sharepage/popup/popup.component';
 
 
 @Component({
@@ -14,7 +16,7 @@ export class AppComponent {
   registerForm!: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, private dialog : MatDialog) { }
   show(){
     this.showModal = true; 
     
@@ -22,6 +24,5 @@ export class AppComponent {
   hide(){
     this.showModal = false;
   }
-
   
 }

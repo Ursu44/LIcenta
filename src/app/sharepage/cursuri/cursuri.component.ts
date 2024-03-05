@@ -8,7 +8,7 @@ import axios from 'axios';
   styleUrls: ['./cursuri.component.css']
 })
 export class CursuriComponent implements OnInit {
-  raspuns: any = null;
+  raspuns: any = this.shareDataService.getRaspuns();
 
   constructor(private shareDataService:ShareDataService) {}
 

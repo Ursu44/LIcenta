@@ -1,6 +1,6 @@
 <div class ="form" *ngIf="raspunsCatalog">
-    <button (click)="adaugaNota()" [disabled]="!esteProfesor()">Progres</button><br>
-    <input type="text" name="lname" [disabled]="!esteProfesor()"><br>
+    <button (click)="adaugaNota()" [disabled]="!esteProfesor()">Nota</button><br><br>
+    <input type="number" name="lname" id="element" [disabled]="!esteProfesor()"><br>
 </div>
 <div *ngIf="!raspunsCatalog">
     <p>Raspunsul nu este disponibil</p>
