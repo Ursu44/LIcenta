@@ -25,14 +25,17 @@ export class CatalogComponent {
   };
 
   ngOnInit(): void {
+      this.preiaDate();
+  }
+
+  preiaDate(): void{
     setTimeout(() => {
       this.raspunsCatalog = this.shareDataService.getRaspunsCatalog();
       console.log("Uite ce am primit catalog"+this.raspunsCatalog);
-    }, 1000);  
+    }, 2100);  
   }
 
   async adaugaNota(){
-    
     const endpoint = 'http://localhost:8085/';
     const accessToken = localStorage.getItem('access_token');
     var notaNoua = document.getElementById('element')  as HTMLInputElement | null;
@@ -45,8 +48,8 @@ export class CatalogComponent {
     jsonObj.nota3 = value;
 
     if(accessToken){
-    this.refresh.refresh();
-    axios.put(endpoint, jsonObj, {
+      this.refresh.refresh();
+     await axios.put(endpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
@@ -55,7 +58,6 @@ export class CatalogComponent {
       .then(response => {
         console.log('JSON trimis cu succes:', response.data);
         this.shareDataService.sendRaspunsCatalog(jsonObj);
-        window.location.reload();
         this.formData = {
           nume: 0,
           prenume: '',

@@ -14,6 +14,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PopupComponent } from './sharepage/popup/popup.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.component';
+import { VerifyCodComponent } from './sharepage/verify-cod/verify-cod.component';
+import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component';
 
 
 @NgModule({ 
@@ -25,7 +27,9 @@ import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.comp
     CursuriComponent,
     CatalogComponent,
     PopupComponent,
-    ForgotPopupComponent
+    ForgotPopupComponent,
+    VerifyCodComponent,
+    PassResetComponent
     
   ],
   imports: [

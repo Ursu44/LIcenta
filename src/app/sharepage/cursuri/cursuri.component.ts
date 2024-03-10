@@ -8,6 +8,7 @@ import axios from 'axios';
   styleUrls: ['./cursuri.component.css']
 })
 export class CursuriComponent implements OnInit {
+  
   raspuns: any = this.shareDataService.getRaspuns();
 
   constructor(private shareDataService:ShareDataService) {}
@@ -21,12 +22,16 @@ export class CursuriComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.preiaDate();
+    
+  }
+
+  preiaDate(): void{
     setTimeout(() => {
       this.raspuns = this.shareDataService.getRaspuns();
       console.log("Uite ce am primit"+this.raspuns);
       console.log("Raspuns primit 11"+ this.raspuns);
-    }, 1000);
-    
+    }, 3000);
   }
 
   async updateProgres(){

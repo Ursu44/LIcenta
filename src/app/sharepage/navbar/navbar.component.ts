@@ -3,8 +3,10 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import axios from 'axios';
 import { ShareDataService } from 'src/app/services/share-data.service';
 import { ShareCatalogService } from 'src/app/services/share-catalog.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ForgotPopupComponent } from '../forgot-popup/forgot-popup.component';
+import { RefreshService } from 'src/app/services/refresh.service';
+import { PopupComponent } from '../popup/popup.component';
 
 declare var window: any;
 
@@ -14,7 +16,8 @@ declare var window: any;
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-
+  ok = false;
+  ok1 = false;
   isScrolled = false;
   formRegister: any;
   formLogin: any;
@@ -43,13 +46,22 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog) { 
+  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService,) { 
     this.isProfesorSelected = false;
   }
 
 
   ngOnInit(): void {
-    this.efectueazaCerereaGet();
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (accessToken && refreshToken) {
+      this.ok = true;
+    }
+
+    if(!accessToken && refreshToken){
+      this.ok1 = true;
+    }
+    
     this.formLogin = new window.bootstrap.Modal(
       document.getElementById("LoginForm")
     );
@@ -185,10 +197,9 @@ export class NavbarComponent implements OnInit {
         const accessToken = response.data.access_token;
         
         localStorage.clear();
-
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', response.data.refresh_token);
-
+        this.ok = true;
         const securedEndpoint = 'http://localhost:8082/';
        
        const securedResponse = await fetch(securedEndpoint, {
@@ -225,6 +236,7 @@ export class NavbarComponent implements OnInit {
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken) {
+
       const accessTokenPayload = this.decodeJwtPayload(accessToken);
       const expirationTime = accessTokenPayload.exp * 1000; 
 
@@ -249,7 +261,8 @@ export class NavbarComponent implements OnInit {
         }
       } else {
         console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
-        this.formLogin.show();
+        this.refresh.refresh();
+        //this.formLogin.show();
         //await this.refreshAccessToken();
       }
     } else {
@@ -280,6 +293,7 @@ export class NavbarComponent implements OnInit {
     const newAccessToken = response.data.access_token;
     console.log('Noul access token:', newAccessToken);
     localStorage.clear();
+    this.ok = true;
     localStorage.setItem('access_token', newAccessToken);
     localStorage.setItem('refresh_token', response.data.refresh_token);
 
@@ -308,6 +322,7 @@ export class NavbarComponent implements OnInit {
 
     localStorage.removeItem('access_token');
     this.formLogin.show();
+    this.ok = false;
     /*const securedEndpoint = 'http://localhost:8080/logout';
         try {
           const response = await axios.post(securedEndpoint, {
@@ -343,7 +358,7 @@ export class NavbarComponent implements OnInit {
           let raspunsServer = response.data;
           let raspunsServerModficat = raspunsServer.slice(0, -1);
           const raspunsJSON = JSON.stringify(raspunsServerModficat);
-          this.shareDataCatalog.sendRaspunsCatalog(raspunsServerModficat);
+            this.shareDataCatalog.sendRaspunsCatalog(raspunsServerModficat);
            console.log("Raspuns server catalog "+ raspunsServerModficat);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
@@ -351,7 +366,8 @@ export class NavbarComponent implements OnInit {
       }
         else {
           console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
-          this.formLogin.show();
+          this.refresh.refresh();
+          //this.formLogin.show();
           //await this.refreshAccessToken();
         }
       } else {
@@ -361,6 +377,21 @@ export class NavbarComponent implements OnInit {
 
   open(){
     this.doHiddingLogin();
+    this.dialog.open(PopupComponent);
+  }
+
+  openForgot(){
+    this.doHiddingLogin();
     this.dialog.open(ForgotPopupComponent);
+
+  }
+
+  async operatie(){
+    if(this.ok1 === false){
+      this.openLogin();
+    }
+    else if(this.ok1 === true){
+      this.refreshAccessToken();
+    }
   }
 }

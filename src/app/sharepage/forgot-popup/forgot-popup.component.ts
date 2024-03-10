@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import axios from 'axios';
+import { VerifyCodComponent } from '../verify-cod/verify-cod.component';
 
 @Component({
   selector: 'app-forgot-popup',
@@ -8,6 +10,8 @@ import axios from 'axios';
 })
 export class ForgotPopupComponent {
   
+  constructor(private dialog:MatDialog) {}
+
   formData: any = {
     mail: 'ceva'  
   };
@@ -16,10 +20,10 @@ export class ForgotPopupComponent {
       const input = document.getElementById('mail')  as HTMLInputElement | null; 
       const mailValue = input?.value;
       console.log(mailValue);
-      const backendEndpoint = 'http://localhost:8087/change/password/profesor';
+      const backendEndpoint = 'http://localhost:8087/change/';
       this.formData.mail = mailValue;
       const jsonObj = JSON.stringify(this.formData);
-    axios.put(backendEndpoint, jsonObj, {
+    axios.post(backendEndpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -28,11 +32,19 @@ export class ForgotPopupComponent {
       this.formData = {
         mail: ''
       }
-
+      this.dialog.closeAll();
+      this.open();
       })
       .catch(error => {
         console.error('Eroare la trimiterea JSON-ului:', error);
       }); 
     }
 
+
+  open(){
+    const dialogRefresh = new MatDialogConfig();
+    dialogRefresh.width = "60%";
+    
+    this.dialog.open(VerifyCodComponent);
+  }
 }
