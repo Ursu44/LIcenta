@@ -17,7 +17,7 @@ dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    implementation platform('io.micronaut:micronaut-bom:3.2.1')
+    implementation platform('io.micronaut:micronaut-bom:3.2.1') // Use the latest version
     implementation 'io.micronaut:micronaut-inject'
     implementation 'io.micronaut:micronaut-validation'
     implementation 'com.google.firebase:firebase-admin:8.0.0'
