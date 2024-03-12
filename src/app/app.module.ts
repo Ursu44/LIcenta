@@ -16,6 +16,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.component';
 import { VerifyCodComponent } from './sharepage/verify-cod/verify-cod.component';
 import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component';
+import { CoursesComponent } from './sharepage/courses/courses.component';
 
 
 @NgModule({ 
@@ -29,7 +30,8 @@ import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component'
     PopupComponent,
     ForgotPopupComponent,
     VerifyCodComponent,
-    PassResetComponent
+    PassResetComponent,
+    CoursesComponent
     
   ],
   imports: [

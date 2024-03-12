@@ -1,0 +1,9 @@
+<div class="container">
+  <div *ngFor="let detail of details"  class="card" id ="cardPosition" style="width: 18rem;">
+    <img class="card-img-top" [src]="detail.srcImg" alt="Card image cap">
+    <div class="card-body">
+      <h2 class="card-title">{{detail.courseName}}</h2>
+      <button class="btn btn-primary" (click)="afisezMateria(detail.courseName)" routerLink="/curs">Vezi</button>
+    </div>
+  </div>
+</div>

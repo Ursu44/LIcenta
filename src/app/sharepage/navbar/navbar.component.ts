@@ -46,7 +46,7 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService,) { 
+  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
