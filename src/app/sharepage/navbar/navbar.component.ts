@@ -52,6 +52,7 @@ export class NavbarComponent implements OnInit {
 
 
   ngOnInit(): void {
+    //localStorage.clear();
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken) {
@@ -242,7 +243,7 @@ export class NavbarComponent implements OnInit {
 
       if (expirationTime > Date.now()) {
         const securedEndpoint = 'http://localhost:8082/';
-        try {
+        /*try {
           const response = await axios.get(securedEndpoint, {
             method: 'GET',
             headers: {
@@ -258,7 +259,7 @@ export class NavbarComponent implements OnInit {
            console.log("Raspuns server json"+ raspunsJSON);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
-        }
+        }*/
       } else {
         console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
         this.refresh.refresh();
@@ -321,7 +322,8 @@ export class NavbarComponent implements OnInit {
   async logout(){
 
     localStorage.removeItem('access_token');
-    this.formLogin.show();
+    localStorage.removeItem('refresh_token');
+    //this.formLogin.show();
     this.ok = false;
     /*const securedEndpoint = 'http://localhost:8080/logout';
         try {
@@ -356,10 +358,9 @@ export class NavbarComponent implements OnInit {
             },
           });
           let raspunsServer = response.data;
-          let raspunsServerModficat = raspunsServer.slice(0, -1);
-          const raspunsJSON = JSON.stringify(raspunsServerModficat);
-            this.shareDataCatalog.sendRaspunsCatalog(raspunsServerModficat);
-           console.log("Raspuns server catalog "+ raspunsServerModficat);
+          const raspunsJSON = JSON.stringify(raspunsServer);
+            this.shareDataCatalog.sendRaspunsCatalog(raspunsJSON);
+           console.log("Raspuns server catalog "+ raspunsJSON);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
         }

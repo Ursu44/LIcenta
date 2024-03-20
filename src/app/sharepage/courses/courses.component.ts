@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import axios from 'axios';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
 import { RefreshService } from 'src/app/services/refresh.service';
+import { ShareCatalogService } from 'src/app/services/share-catalog.service';
 import { ShareDataService } from 'src/app/services/share-data.service';
+import { SharenumeService } from 'src/app/services/sharenume.service';
 
 @Component({
   selector: 'app-courses',
@@ -12,23 +14,30 @@ import { ShareDataService } from 'src/app/services/share-data.service';
 export class CoursesComponent {
     details : any[] = [];
 
-    constructor(private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService) {}
+    constructor(private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService, private shareNume:SharenumeService) {}
 
     ngOnInit() : void{
       this.details = this.courseDetalis.courseDetails;
     }
 
     async afisezMateria(nume: string):Promise<void>{
+      this.shareNume.sendNume(nume);
       console.log("Aceasta este materia selectata "+nume);
       const accessToken = localStorage.getItem('access_token');
       const refreshToken = localStorage.getItem('refresh_token');
       if (accessToken && refreshToken) {
   
-        const accessTokenPayload = this.decodeJwtPayload(accessToken);
+        const accessTokenPayload = this.decodeJwtClaims(accessToken);
         const expirationTime = accessTokenPayload.exp * 1000; 
   
         if (expirationTime > Date.now()) {
-          const securedEndpoint = 'http://localhost:8082/'+nume;
+          let securedEndpoint:string;
+          if(this.esteProfesor()){
+          securedEndpoint = 'http://localhost:8082/'+nume+'/profesor';
+          }
+          else{
+            securedEndpoint = 'http://localhost:8082/'+nume+'/elev';
+          }
           try {
             const response = await axios.get(securedEndpoint , {
               method: 'GET',
@@ -57,7 +66,7 @@ export class CoursesComponent {
       }
     }
 
-    decodeJwtPayload(token: string) {
+    decodeJwtClaims(token: string) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
@@ -71,5 +80,17 @@ export class CoursesComponent {
       return JSON.parse(jsonPayload);
     }
   
-
+    esteProfesor() :boolean{
+      var notaNoua = document.getElementById('element') as HTMLInputElement | null;
+      const accessToken = localStorage.getItem('access_token');
+      let ok =false;
+      if(accessToken){
+        const claimsDecodat = this.decodeJwtClaims(accessToken)
+        let rol = claimsDecodat.roles;
+        let rol1 = JSON.stringify(rol);
+          const numeRol = rol1.trim();
+          ok = (numeRol === '["ROLE_PROFESOR"]');
+    }
+      return ok;
+    }
 }

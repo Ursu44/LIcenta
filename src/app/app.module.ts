@@ -19,6 +19,7 @@ import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component'
 import { CoursesComponent } from './sharepage/courses/courses.component';
 
 
+
 @NgModule({ 
   declarations: [
     AppComponent,
@@ -47,4 +48,9 @@ import { CoursesComponent } from './sharepage/courses/courses.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  constructo(){
+    localStorage.clear();
+  }
+
+}

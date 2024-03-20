@@ -1,34 +1,29 @@
-<div class="accordion" id="accordionExample">
-    <div class="accordion-item">
+<div class="accordion" id="accordionExample" *ngFor="let subvector of subvectori; let i = index;">
+  <div class="accordion-item" *ngIf="subvector.activat && !esteProfesor() || (esteProfesor());">
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-          Lecția 1
+          Lecția {{i+1}}
         </button>
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
         <div class="accordion-body">
-          <p>{{this.raspunsObj.lectieDetalii["Inforamtie"+this.pozitieActuala]}}</p>
+          <p *ngIf="apasat">{{this.raspunsObj.lectieDetalii["Inforamtie"+this.pozitieActuala]}}</p>
         </div>
         <div class="progress">
-            <div class="progress-bar" role="progressbar" [style.width.%]="this.progres" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{this.progres}}%</div>
+            <div class="progress-bar" role="progressbar" *ngIf="apasat" [style.width.%]="this.progres" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{this.progres}}%</div>
           </div><br><br><br>
-        <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInainte()">Înainte</button><br><br>
-        <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInapoi()">Înapoi</button><br><br>
-    </div>
-    </div>
-</div>
-
-<div class="accordion" id="accordionExample" style="margin-top: 80px;">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-          Accordion Item #1
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-          <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-        </div>
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInapoi()">Înapoi</button>
+            <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInainte()">Înainte</button>
+        </div><br><br>
+        <div style="text-align: center;">
+          <button type="button" class="btn btn-primary btn-lg">Trimite</button>
       </div>
-    </div>
 </div>
+<br><br><br>
+<div class="form-check form-switch" style="text-align: right;" *ngIf="esteProfesor()">
+  <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" [(ngModel)]="stare">
+  <label class="form-check-label" for="flexSwitchCheckChecked">Statusul actual al lecției: {{subvector.activat}}</label><br>
+  <button type="button" class="btn btn-outline-success" style="text-align: left;" (click)="activeaza(i)">Activează</button>
+</div>
+<br><br><br><br><br>

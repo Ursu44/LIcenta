@@ -39,4 +39,13 @@ nav.nav-brand {
     left: 20%;
     transform: translate(-60%, -40%);
   }
+
+  .linkbutton{
+    background: none;
+    color: blue;
+    border:none;
+  }
   
+  .linkbutton:hover{
+    text-decoration: underline;
+  }

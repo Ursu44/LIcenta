@@ -12,16 +12,23 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
   styleUrls: ['./catalog.component.css']
 })
 export class CatalogComponent {
-  raspunsCatalog: any = this.shareDataService.getRaspunsCatalog();;
+  raspunsCatalog: any = this.shareDataService.getRaspunsCatalog();
+;
 
   constructor(private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog) {}
 
+  AccessToken: any;
+  rol:string = "";
+  raspunsCatalogJson:any;
+  vectorCatalog:any;
+
   formData: any = {
-    nume: 0,
+    nume: '',
     prenume: '',
     mail: '',
-    parola: '',
-    materie: ''
+    materie: '',
+    tipNota: '',
+    nota:0
   };
 
   ngOnInit(): void {
@@ -31,24 +38,64 @@ export class CatalogComponent {
   preiaDate(): void{
     setTimeout(() => {
       this.raspunsCatalog = this.shareDataService.getRaspunsCatalog();
+      if(this.raspunsCatalog != undefined){
+        this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
+        this.vectorCatalog = Object.values(this.raspunsCatalogJson);
+        this.calculeazaMedia();
+      }
       console.log("Uite ce am primit catalog"+this.raspunsCatalog);
     }, 2100);  
   }
 
   async adaugaNota(){
+  
+    let accessToken = localStorage.getItem('access_token');
+    let refreshToken = localStorage.getItem('refresh_token');
+
+    if(accessToken && refreshToken){
     const endpoint = 'http://localhost:8085/';
-    const accessToken = localStorage.getItem('access_token');
-    var notaNoua = document.getElementById('element')  as HTMLInputElement | null;
-    let value = notaNoua?.value;
-    console.log("Nota noua "+notaNoua);
-    console.log("Nota noua1 "+notaNoua);
+    const accessTokenPayload = this.decodeJwtClaims(accessToken);
+    const expirationTime = accessTokenPayload.exp * 1000; 
+    this.rol = accessTokenPayload.roles;
+    console.log("afagas "+this.rol);
 
-    const jsonObj = JSON.parse(this.raspunsCatalog);  
-    jsonObj.nota2 = value;
-    jsonObj.nota3 = value;
+    if (expirationTime > Date.now()) {
+    var nume = document.getElementById('nume')  as HTMLInputElement | null;
+    let numeValoare = nume?.value;
+    this.formData.nume = numeValoare;
 
-    if(accessToken){
-      this.refresh.refresh();
+    console.log('Opțiunea selectată:', numeValoare);
+    var prenume = document.getElementById('prenume')  as HTMLInputElement | null;
+    let prenumeValoare = prenume?.value;
+    this.formData.prenume = prenumeValoare;
+
+    console.log('Opțiunea selectată:', prenumeValoare);
+    var mail = document.getElementById('mail')  as HTMLInputElement | null;
+    let mailValoare = mail?.value;
+    console.log('Opțiunea selectată:', mailValoare);
+    this.formData.mail = mailValoare;
+    
+    const selectMaterie = document.getElementById('selectMaterie') as HTMLSelectElement;
+    const materieValoare = selectMaterie.value;
+    console.log('Materie:', materieValoare);
+    this.formData.materie = materieValoare;
+
+
+    var nota = document.getElementById('selectNota')  as HTMLInputElement | null;
+    let notaValoare = nota?.value;
+    console.log('Opțiunea selectată select 2:', notaValoare);
+    this.formData.tipNota = notaValoare;
+
+
+    var nota1 = document.getElementById('nota')  as HTMLInputElement | null;
+    let notaVal = nota1?.value;
+    console.log('Opțiunea selectată select 2:', notaVal);
+    this.formData.nota = notaVal;
+
+    const jsonObj = JSON.stringify(this.formData);
+    console.log("JSON: ", jsonObj);
+
+
      await axios.put(endpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json',
@@ -59,17 +106,22 @@ export class CatalogComponent {
         console.log('JSON trimis cu succes:', response.data);
         this.shareDataService.sendRaspunsCatalog(jsonObj);
         this.formData = {
-          nume: 0,
+          nume: '',
           prenume: '',
           mail: '',
-          parola: '',
-          materie: ''
+          materie: '',
+          tipNota: '',
+          nota:0
         };
         
       })
       .catch(error => {
         console.error('Eroare la trimiterea JSON-ului:', error);
       });
+    }
+    else{
+      this.refresh.refresh();
+    }
   }
 }
 
@@ -86,7 +138,6 @@ export class CatalogComponent {
 
   esteProfesor() :boolean{
     var notaNoua = document.getElementById('element') as HTMLInputElement | null;
-    console.log("Nota noua "+notaNoua)
     const accessToken = localStorage.getItem('access_token');
     let ok =false;
     if(accessToken){
@@ -105,5 +156,18 @@ export class CatalogComponent {
     
     this.dialog.open(PopupComponent);
   }
-  
+
+  calculeazaMedia(){
+    for(let i=0;i<this.vectorCatalog.length;i++){
+      if(this.vectorCatalog[i].Fizica.Nota1!=0 && this.vectorCatalog[i].Fizica.Nota2!=0 && this.vectorCatalog[i].Fizica.Nota3!=0 && this.vectorCatalog[i].Fizica.Nota4!=0){
+        this.vectorCatalog[i].Fizica.Medie = 
+        Math.round(0.2 *this.vectorCatalog[i].Fizica.Nota1 
+        + 0.2*this.vectorCatalog[i].Fizica.Nota2 
+        + 0.3* this.vectorCatalog[i].Fizica.Nota3
+        + 0.3* this.vectorCatalog[i].Fizica.Nota4);
+      }
+    }
+  }
+
+
 }
