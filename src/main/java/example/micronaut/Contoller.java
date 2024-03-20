@@ -1,10 +1,11 @@
 package example.micronaut;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.*;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
@@ -21,20 +22,35 @@ public class Contoller {
 
     private TakeLectures takeLectures;
 
+    public String numeLectie;
+
     @Inject
     public Contoller(TakeLectures takeLectures) {
         materii = FirebaseDatabase.getInstance().getReference("Materii");
         this.takeLectures = takeLectures;
     }
 
+    @Get("/{nume}/{tip}")
     @Produces(MediaType.TEXT_PLAIN)
-    @Get
-    public String index(Principal principal) {
+    public String index(Principal principal, @QueryValue String nume, @QueryValue String tip) {
         String response = principal.getName();
         String gmail = response.split("_")[1];
-        JSONObject raspuns = takeLectures.ExtracLectures(gmail);
+        System.out.println("Afizsse numele materiei "+nume);
+        JSONObject raspuns = takeLectures.ExtracLectures(gmail, nume, tip);
         String raspuns1 = raspuns.toString()+"r";
         System.out.println("Raspuns : " + raspuns);
         return  raspuns1;
     }
+
+    @Put("/activare")
+    @Produces(MediaType.TEXT_PLAIN)
+    public void schimba(@Body String json) throws JsonProcessingException {
+        System.out.println("Raspuns primit de la " +json);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode raspunsJson = objectMapper.readTree(json);
+        numeLectie = raspunsJson.get("numeMaterie").asText();
+        takeLectures.updateStare(raspunsJson, numeLectie);
+        System.out.println("Nume "+numeLectie);
+    }
+
 }
