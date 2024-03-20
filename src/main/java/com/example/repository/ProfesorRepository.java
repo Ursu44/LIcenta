@@ -58,8 +58,13 @@ public class ProfesorRepository extends AbstractFirebasRepository<Profesor>{
     }
 
     @Override
-    protected String getRoleFromEntity(Profesor entity) {
-        return entity.getRol();
+    protected String getFirstNameFromEntity(Profesor entity) {
+        return null;
+    }
+
+    @Override
+    protected String getLastNameFromEntity(Profesor entity) {
+        return null;
     }
 
     @Override

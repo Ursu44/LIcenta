@@ -31,8 +31,13 @@ public class StudentRepository extends AbstractFirebasRepository<Student>{
     }
 
     @Override
-    protected String getRoleFromEntity(Student entity) {
-        return entity.getRol();
+    protected String getFirstNameFromEntity(Student entity) {
+        return entity.getPrenume();
+    }
+
+    @Override
+    protected String getLastNameFromEntity(Student entity) {
+        return entity.getNume();
     }
 
     @Override
