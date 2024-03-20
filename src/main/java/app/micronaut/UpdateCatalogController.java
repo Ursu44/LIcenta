@@ -42,6 +42,6 @@ public class UpdateCatalogController {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode raspunsJson = objectMapper.readTree(json);
         updateNote.updateCatalog(raspunsJson);
-        System.out.println("Raspuns "+json);
+        System.out.println("Raspuns "+raspunsJson);
     }
 }

@@ -27,27 +27,30 @@ public class UpdateNote {
 
     public void updateCatalog(JsonNode json) throws JsonProcessingException {
         CountDownLatch latch = new CountDownLatch(1);
-        System.out.println("Raspuns12 "+json);
         System.out.println("Raspuns recieved "+ json);
-        System.out.println("Nota3 "+json.get("nota3").asInt());
+        String mail = json.get("mail").textValue();
+        System.out.println("Mail "+mail);
+        String nume = json.get("nume").textValue();
+        System.out.println("Nume "+nume);
+        String prenume = json.get("prenume").textValue();
+        System.out.println("Prenume "+prenume);
+        String tip = json.get("tipNota").textValue();
+        int nota = json.get("nota").asInt();
+        String materie = json.get("materie").textValue();
 
         materii.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-                    System.out.println("Nota34  "+json.get("nota3").asInt());
-                    studentSnapshot.child("mail").getValue(String.class);
-                    String elevEmail = studentSnapshot.child("elev").getValue(String.class);
-                    if (elevEmail.equals(json.get("elev").asText())) {
-                        System.out.println("DA DA DA DA");
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("nota_1", json.get("nota1").asInt());
-                        data.put("nota_2", json.get("nota2").asInt());
-                        data.put("nota_3", json.get("nota3").asInt());
-                        data.put("medie", json.get("medie").asInt());
-                        DatabaseReference elevRef = studentSnapshot.getRef();
-                        DatabaseReference fizicaRef = elevRef.child("Fizica");
-                        fizicaRef.updateChildren(data ,null);
+                    DataSnapshot dataSnapshot1 = studentSnapshot;
+                    String elevEmail = dataSnapshot1.child("mailElev").getValue(String.class);
+                    String elevNume = dataSnapshot1.child("numeElev").getValue(String.class);
+                    String elevPrenume= dataSnapshot1.child("prenumenumeElev").getValue(String.class);
+                    if (elevEmail.equals(mail) && elevNume.equals(nume) && elevPrenume.equals(prenume)) {
+                        Map<String, Object> data = new HashMap<String, Object>();
+                        data.put(tip, nota);
+                        studentSnapshot.child(materie).getRef().updateChildren(data, null);
+                        break;
                     }
                 }
                 latch.countDown();
