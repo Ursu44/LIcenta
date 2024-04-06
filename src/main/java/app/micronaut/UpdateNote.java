@@ -32,24 +32,58 @@ public class UpdateNote {
         System.out.println("Mail "+mail);
         String nume = json.get("nume").textValue();
         System.out.println("Nume "+nume);
-        String prenume = json.get("prenume").textValue();
-        System.out.println("Prenume "+prenume);
-        String tip = json.get("tipNota").textValue();
-        int nota = json.get("nota").asInt();
         String materie = json.get("materie").textValue();
-
+        System.out.println("Materie "+materie);
+        String tip = json.get("tipNota").textValue();
+        System.out.println("Tip "+tip);
+        String an = json.get("an").textValue();
+        System.out.println("An "+an);
+        String grupa = json.get("grupa").textValue();
+        System.out.println("Grupa "+grupa);
+        int nota = json.get("nota").asInt();
+        System.out.println("Nota "+nota);
+        String materie1 = "";
+        if (materie.equals("Fizica")) {
+            materie1 = "Fizică";
+        }
+        if (materie.equals("Matematica")) {
+            materie1 =  "Matematică";
+        }
+        if (materie.equals("Limbasiliteraturaromana")) {
+            materie1 =  "Limba si literatura romana";
+        }
+        if (materie.equals("Limbaengleza")) {
+            materie1 =  "Limba engleza";
+        }
+        String finalMaterie = materie1;
+        System.out.println("Materie de adaugat "+finalMaterie);
         materii.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
                     DataSnapshot dataSnapshot1 = studentSnapshot;
                     String elevEmail = dataSnapshot1.child("mailElev").getValue(String.class);
-                    String elevNume = dataSnapshot1.child("numeElev").getValue(String.class);
-                    String elevPrenume= dataSnapshot1.child("prenumenumeElev").getValue(String.class);
-                    if (elevEmail.equals(mail) && elevNume.equals(nume) && elevPrenume.equals(prenume)) {
+                    String elevNume = dataSnapshot1.child("nume").getValue(String.class);
+                    String elevPrenume= dataSnapshot1.child("prenume").getValue(String.class);
+                    String grupaElev = dataSnapshot1.child("grupa").getValue(String.class);
+                    String anElev = dataSnapshot1.child("an").getValue(String.class);
+                    elevNume = elevNume+" "+elevPrenume;
+                    System.out.println(grupaElev);
+                    if (elevEmail.equals(mail) && elevNume.equals(nume) && grupaElev.equals(grupa) && anElev.equals(an))   {
+                        System.out.println("Pe aici nu se trece ");
                         Map<String, Object> data = new HashMap<String, Object>();
                         data.put(tip, nota);
-                        studentSnapshot.child(materie).getRef().updateChildren(data, null);
+                        studentSnapshot.child(finalMaterie).getRef().updateChildren(data, null);
+                        int nota1 = studentSnapshot.child(finalMaterie).child("Nota1").getValue(Integer.class);
+                        int nota2 = studentSnapshot.child(finalMaterie).child("Nota2").getValue(Integer.class);
+                        int nota3 = studentSnapshot.child(finalMaterie).child("Nota3").getValue(Integer.class);
+                        int nota4 = studentSnapshot.child(finalMaterie).child("Nota4").getValue(Integer.class);
+                        if(nota1!=0 && nota2!=0 && nota3!=0 && nota4!=0){
+                            Map<String, Object> data1 = new HashMap<String, Object>();
+                            int medie = (int) (0.2* nota1 + 0.2* nota2 + 0.3* nota3 +0.3* nota4);
+                            data1.put("medie", medie);
+                            studentSnapshot.child(finalMaterie).getRef().updateChildren(data1, null);
+                        }
                         break;
                     }
                 }
