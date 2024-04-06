@@ -1,3 +1,19 @@
-.accordion{
+.container{
     margin-top: 1015px;
+    display: flex;
+    width: 1990px;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-right: 550px;
 }
+
+.container .btn-group{
+    margin-top: 1290px;
+    height:50px;
+    width: 20px;
+}
+
+
+.collapsed {
+    background-color: #D4E4F7; 
+  }

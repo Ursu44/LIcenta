@@ -18,11 +18,13 @@ declare var window: any;
 export class NavbarComponent implements OnInit {
   ok = false;
   ok1 = false;
+  ok2 = false;
   isScrolled = false;
   formRegister: any;
   formLogin: any;
+  snackBar: any;
   confirmModal: any;
-  formRefresh: any;
+  formSuccesLogin: any;
   isProfesorSelected: boolean = false;
 
   formData: any = {
@@ -71,8 +73,8 @@ export class NavbarComponent implements OnInit {
       document.getElementById("RegisterForm")
     );
 
-    this.formRefresh = new window.bootstrap.Modal(
-      document.getElementById("RefreshForm")
+    this.formSuccesLogin = new window.bootstrap.Modal(
+      document.getElementById("SuccesLogin")
     );
 
     this.formData = {
@@ -95,6 +97,7 @@ export class NavbarComponent implements OnInit {
   
   }
 
+
   openLogin() {
     this.formLogin.show();
   }
@@ -104,7 +107,7 @@ export class NavbarComponent implements OnInit {
   }
 
   openRefrsh() {
-    this.formRefresh.show();
+    this.formSuccesLogin.show();
   }
 
   doHiddingLogin() {
@@ -115,7 +118,7 @@ export class NavbarComponent implements OnInit {
     this.formRegister.hide();
   }
   doHiddingRefresh(){
-    this.formRefresh.hide();
+    this.formSuccesLogin.hide();
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -201,7 +204,8 @@ export class NavbarComponent implements OnInit {
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', response.data.refresh_token);
         this.ok = true;
-        const securedEndpoint = 'http://localhost:8082/';
+        this.doHiddingLogin();
+        /*const securedEndpoint = 'http://localhost:8082/';
        
        const securedResponse = await fetch(securedEndpoint, {
           headers: {
@@ -218,7 +222,7 @@ export class NavbarComponent implements OnInit {
         const securedData = await securedResponse.text();
         console.log('Răspuns de la endpoint-ul securizat:', securedData);
 
-        this.doHiddingRgister();
+        this.doHiddingRgister();*/
 
         //window.location.reload();
         //this.confirmModal.show();
@@ -228,8 +232,10 @@ export class NavbarComponent implements OnInit {
       }
 
       })
+      
       .catch(error => {
         console.error('Eroare la trimiterea JSON-ului:', error);
+        this.ok2= true;
       }); 
   }
 
@@ -348,7 +354,14 @@ export class NavbarComponent implements OnInit {
       const expirationTime = accessTokenPayload.exp * 1000; 
       
     if (expirationTime > Date.now()) {
-    const securedEndpoint = 'http://localhost:8084/';
+        let securedEndpoint ;
+    if(this.esteProfesor()){
+       securedEndpoint = 'http://localhost:8084/catalog/profesor';
+    }
+    else{
+      securedEndpoint = 'http://localhost:8084/catalog/elev';
+    }
+ 
         try {
           const response = await axios.get(securedEndpoint, {
             method: 'GET',
@@ -394,5 +407,18 @@ export class NavbarComponent implements OnInit {
     else if(this.ok1 === true){
       this.refreshAccessToken();
     }
+  }
+  esteProfesor() :boolean{
+    var notaNoua = document.getElementById('element') as HTMLInputElement | null;
+    const accessToken = localStorage.getItem('access_token');
+    let ok =false;
+    if(accessToken){
+      const claimsDecodat = this.decodeJwtPayload(accessToken)
+      let rol = claimsDecodat.roles;
+      let rol1 = JSON.stringify(rol);
+        const numeRol = rol1.trim();
+        ok = (numeRol === '["ROLE_PROFESOR"]');
+  }
+    return ok;
   }
 }

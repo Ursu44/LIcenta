@@ -17,13 +17,18 @@ export class CursuriComponent implements OnInit {
   i = 0;
   raspunsObj:any;
   raspuns: any;
-  pozitieActuala = 0;
-  progres = 0;
+  pozitieActuala :number[] =[];
+  progres :number[] =[];
+  lungimi :number[]=[];
+
   apasat = false;
-  progresAdaugat = 0;
+  progresAdaugat:number[] =[];
   subvectori:any;
   Object: any;
   stare:boolean = false;
+  indexDeschis: number = 0;
+  isCollapsed: boolean[] = [];
+  nume="Fizica";
 
   constructor(private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService) {}
 
@@ -37,9 +42,53 @@ export class CursuriComponent implements OnInit {
     this.preiaDate();
   }
 
-  preiaDate(): void {
+
+  async preiaDate(): Promise<void> {
     this.getData();
+    console.log("Aceasta este materia selectata "+this.nume);
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (accessToken && refreshToken) {
+
+      const accessTokenPayload = this.decodeJwtClaims(accessToken);
+      const expirationTime = accessTokenPayload.exp * 1000; 
+
+      if (expirationTime > Date.now()) {
+        let securedEndpoint:string;
+        if(this.esteProfesor()){
+        securedEndpoint = 'http://localhost:8082/'+this.nume+'/profesor';
+        }
+        else{
+          securedEndpoint = 'http://localhost:8082/'+this.nume+'/elev';
+        }
+        try {
+          const response = await axios.get(securedEndpoint , {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/plain',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+          let raspunsServer = response.data;
+          let raspunsServerModficat = raspunsServer.slice(0, -1);
+          const raspunsJSON = JSON.stringify(raspunsServerModficat);
+          this.shareDataService.sendRaspuns(raspunsServerModficat);
+           console.log("Raspuns server "+ raspunsServerModficat);
+           console.log("Raspuns server json"+ raspunsJSON);
+        } catch (error) {
+          console.error('Eroare la cererea GET cu token valid:', error);
+        }
+      } else {
+        console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
+        this.refresh.refresh();
+        //this.formLogin.show();
+        //await this.refreshAccessToken();
+      }
+    } else {
+      console.error('Token-uri lipsă.');
+    }
   }
+
 
   getData() {
     setTimeout(() => {
@@ -48,11 +97,16 @@ export class CursuriComponent implements OnInit {
       if( this.raspuns != undefined){
       this.raspunsObj = JSON.parse(this.shareDataService.getRaspuns());
       console.log("Answear "+this.raspunsObj["lectie2Detalii"])
-      this.pozitieActuala = Object.keys(this.raspunsObj).length ;
-      this.progresAdaugat = 100 / this.pozitieActuala;
+      this.raspunsObj['Lectia1']['Inforamtie1'] = "Cinematica explorează mișcarea obiectelor fără a lua în considerare forțele implicate, concentrându-se pe aspecte precum poziția, timpul, viteza și accelerarea. Acesta se bazează pe sisteme de coordonate, cum ar fi cele cartezian și polar, pentru a descrie mișcarea în spațiu. Conceptele cheie includ mișcarea rectilinie uniformă (MRU), mișcarea rectilinie uniform variată (MRUV), mișcarea circulară uniformă (MCU) și mișcarea circulară uniform variată (MCUV), fiecare având ecuații specifice care descriu mișcarea în funcție de timp și poziție. Înțelegerea acestor concepte este fundamentală pentru analiza și predicția mișcării într-o varietate de situații fizice și tehnologice."
+      for(let j =0;j<= Object.keys(this.raspunsObj).length-1; j++){
+        let k =j+1;
+        this.lungimi[j] = Object.keys(this.raspunsObj["Lectia"+k]).length-2;
+        console.log("b "+this.lungimi[j]);
+        this.progresAdaugat[j] = 100 / this.lungimi[j] ;
+        this.progres[j] = 0;
+        this.pozitieActuala[j] = 0;
+      }
       this.subvectori = Object.values(this.raspunsObj);
-      this.progres = 0 ;
-      this.pozitieActuala++;
       console.log("Dimensiune "+this.i)
       }
     }, 3000);
@@ -94,7 +148,7 @@ export class CursuriComponent implements OnInit {
     this.dialog.open(PopupComponent);
   }
 
-  actualizeazapozitiaInainte(){
+  actualizeazapozitiaInainte(i:number){
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken) {
@@ -104,11 +158,13 @@ export class CursuriComponent implements OnInit {
   
       if (expirationTime > Date.now()) {
     this.apasat =true;
-    console.log("Pozitia "+this.pozitieActuala);
-    console.log("Progres "+this.progres);
-    if(this.pozitieActuala>1 && this.pozitieActuala<=5 && this.apasat ==true){
-      this.pozitieActuala--;
-      this.progres += this.progresAdaugat;
+    console.log("Pozitia1 "+this.pozitieActuala[i]);
+    console.log("Progres1 "+this.progres[i]);
+    console.log("Apasat1 "+this.apasat);
+
+    if(this.pozitieActuala[i]>=0 && this.pozitieActuala[i]<this.lungimi[i] && this.apasat ==true){
+      this.pozitieActuala[i]++;
+      this.progres[i] += this.progresAdaugat[i];
     }
   }
     else{
@@ -117,7 +173,7 @@ export class CursuriComponent implements OnInit {
   }
 }
 
-  actualizeazapozitiaInapoi(){
+  actualizeazapozitiaInapoi(i:number){
     let accessToken = localStorage.getItem('access_token');
     let refreshToken = localStorage.getItem('refresh_token');
     
@@ -128,11 +184,12 @@ export class CursuriComponent implements OnInit {
 
     if (expirationTime > Date.now()) {
     this.apasat =true;
-    console.log("Pozitia "+this.pozitieActuala);
-    console.log("Progres "+this.progres);
-    if(this.pozitieActuala>=1 && this.pozitieActuala<5 && this.apasat ==true){
-      this.pozitieActuala++;
-      this.progres -= this.progresAdaugat;
+    console.log("Pozitia "+this.pozitieActuala[i]);
+    console.log("Progres "+this.progres[i]);
+    console.log("Apasat "+this.apasat);
+    if(this.pozitieActuala[i]>=1 && this.pozitieActuala[i]<=this.lungimi[i] && this.apasat ==true){
+      this.pozitieActuala[i]--;
+      this.progres[i] -= this.progresAdaugat[i];
       this.apasat =true;
     }
   }
@@ -143,7 +200,7 @@ export class CursuriComponent implements OnInit {
   }
   }
    
-  decodeJwtPayload(token: string) {
+  decodeJwtClaims(token: string) {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
@@ -223,6 +280,28 @@ export class CursuriComponent implements OnInit {
       }
     }
     return -1; 
+  }
+
+  toggleCollapse(index: number) {
+    if (this.indexDeschis === index) {
+      this.isCollapsed[index] = !this.isCollapsed[index];
+    } else {
+      this.isCollapsed.fill(false);
+      this.isCollapsed[index] = true;
+      this.indexDeschis = index;
+    }
+  }
+
+
+  decodeJwtPayload(token: string) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+
+    return JSON.parse(jsonPayload);
   }
 
 }

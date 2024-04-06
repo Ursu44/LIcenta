@@ -77,6 +77,7 @@
       <div class="mb-3">
         <button class="linkbutton" (click)="openForgot()">Ai uitat parola ?</button>
       </div>
+      <p *ngIf="ok2" style="color:red;">Mail sau parolă incorecte</p>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="refreshAccessToken()">Inchide</button>
         <button type="button" class="btn btn-primary" (click)="sendFormDataLogin()">Trimite</button>
@@ -138,31 +139,56 @@
     </div>
   </div>
 
-  <div class="modal fade" id="RefreshForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="SuccesLogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Log in</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Inregistrare</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form>
             <div class="mb-3">
-              <label for="recipient-name" class="col-form-label">Email:</label>
-              <input type="text" class="form-control" id="recipient-mail" name="username" [(ngModel)]="refreshData.username">
+              <label for="recipient-name" class="col-form-label">Nume:</label>
+              <input type="text" class="form-control" id="recipient-first_name" name="nume" [(ngModel)]="formData.nume">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Prenume:</label>
+              <input type="text" class="form-control" id="recipient-last_name" name="prenume" [(ngModel)]="formData.prenume">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Mail:</label>
+              <input type="text" class="form-control" id="recipient-mail" name="mail" [(ngModel)]="formData.mail">
             </div>
             <div class="mb-3">
               <label for="message-text" class="col-form-label">Parola:</label>
-              <input type="password" class="form-control" id="recipient-parola" name="password" [(ngModel)]="refreshData.password">
+              <input type="password" class="form-control" id="recipient-parola" name="parola" [(ngModel)]="formData.parola">
             </div>
+          
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="flexRadioDefault" id="student" value="student" (change)="handleRadioButtonSelection($event)">
+    <label class="form-check-label" for="student">
+      Student
+    </label>
+  </div>
+  
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="flexRadioDefault" id="profesor" value="profesor" (change)="handleRadioButtonSelection($event)">
+    <label class="form-check-label" for="profesor">
+      Profesor
+    </label>
+  </div>
+              <div class="mb-3">
+      <label for="message-text" class="col-form-label">Materie:</label>
+      <input type="text" class="form-control" id="recipient-materie" [disabled]="!isProfesorSelected" name="materie" [(ngModel)]="formData.materie">
+    </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>
-          <button type="button" class="btn btn-primary" (click)="refreshAccessToken()">Trimite</button>
+          <button type="button" class="btn btn-primary" (click)="sendFormData()">Trimite</button>
         </div>
       </div>
     </div>
-  </div>
 
 </div>
