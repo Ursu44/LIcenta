@@ -35,7 +35,8 @@ export class CursuriComponent implements OnInit {
   formData: any = {
     numeLectie:"",
     activat:false,
-    numeMaterie:""
+    numeMaterie:"",
+    mail:""
   };
 
   ngOnInit(): void {
@@ -45,7 +46,8 @@ export class CursuriComponent implements OnInit {
 
   async preiaDate(): Promise<void> {
     this.getData();
-    console.log("Aceasta este materia selectata "+this.nume);
+    const numeMaterie = this.shareNume.getNume();
+    console.log("Aceasta este materia selectata "+numeMaterie);
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken) {
@@ -56,10 +58,10 @@ export class CursuriComponent implements OnInit {
       if (expirationTime > Date.now()) {
         let securedEndpoint:string;
         if(this.esteProfesor()){
-        securedEndpoint = 'http://localhost:8082/'+this.nume+'/profesor';
+        securedEndpoint = 'http://localhost:8082/'+numeMaterie+'/profesor';
         }
         else{
-          securedEndpoint = 'http://localhost:8082/'+this.nume+'/elev';
+          securedEndpoint = 'http://localhost:8082/'+numeMaterie+'/elev';
         }
         try {
           const response = await axios.get(securedEndpoint , {
@@ -97,10 +99,9 @@ export class CursuriComponent implements OnInit {
       if( this.raspuns != undefined){
       this.raspunsObj = JSON.parse(this.shareDataService.getRaspuns());
       console.log("Answear "+this.raspunsObj["lectie2Detalii"])
-      this.raspunsObj['Lectia1']['Inforamtie1'] = "Cinematica explorează mișcarea obiectelor fără a lua în considerare forțele implicate, concentrându-se pe aspecte precum poziția, timpul, viteza și accelerarea. Acesta se bazează pe sisteme de coordonate, cum ar fi cele cartezian și polar, pentru a descrie mișcarea în spațiu. Conceptele cheie includ mișcarea rectilinie uniformă (MRU), mișcarea rectilinie uniform variată (MRUV), mișcarea circulară uniformă (MCU) și mișcarea circulară uniform variată (MCUV), fiecare având ecuații specifice care descriu mișcarea în funcție de timp și poziție. Înțelegerea acestor concepte este fundamentală pentru analiza și predicția mișcării într-o varietate de situații fizice și tehnologice."
       for(let j =0;j<= Object.keys(this.raspunsObj).length-1; j++){
         let k =j+1;
-        this.lungimi[j] = Object.keys(this.raspunsObj["Lectia"+k]).length-2;
+        this.lungimi[j] = Object.keys(this.raspunsObj["Capitol"+k]).length-3;
         console.log("b "+this.lungimi[j]);
         this.progresAdaugat[j] = 100 / this.lungimi[j] ;
         this.progres[j] = 0;
@@ -165,6 +166,9 @@ export class CursuriComponent implements OnInit {
     if(this.pozitieActuala[i]>=0 && this.pozitieActuala[i]<this.lungimi[i] && this.apasat ==true){
       this.pozitieActuala[i]++;
       this.progres[i] += this.progresAdaugat[i];
+      console.log("Pozitia1 "+this.pozitieActuala[i]);
+      console.log("Progres1 "+this.progres[i]);
+      console.log("Apasat1 "+this.apasat);
     }
   }
     else{
@@ -191,6 +195,9 @@ export class CursuriComponent implements OnInit {
       this.pozitieActuala[i]--;
       this.progres[i] -= this.progresAdaugat[i];
       this.apasat =true;
+      console.log("Pozitia1 "+this.pozitieActuala[i]);
+      console.log("Progres1 "+this.progres[i]);
+      console.log("Apasat1 "+this.apasat);
     }
   }
   else{
@@ -239,9 +246,10 @@ export class CursuriComponent implements OnInit {
       console.log("check = "+this.stare);
       const securedEndpoint = 'http://localhost:8082/activare';
       index++;
-      this.formData.numeLectie = "Lectia"+index;
+      this.formData.numeLectie = "Capitlolul "+index;
       this.formData.activat = this.stare;
       this.formData.numeMaterie = numeMaterie;
+      this.formData.mail = accessTokenPayload.username;
       console.log("Rspusns pregatit "+this.formData);
       const jsonObj = JSON.stringify(this.formData);
       console.log("Rspusns pregatit "+jsonObj);
@@ -255,7 +263,9 @@ export class CursuriComponent implements OnInit {
         console.log('JSON trimis cu succes:', response.data);
         this.formData = {
           numeLectie:"",
-          activat:false
+          activat:false,
+          numeMaterie:"",
+          mail:""
         };
       })
       .catch(error => {

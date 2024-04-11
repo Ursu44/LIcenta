@@ -7,6 +7,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ForgotPopupComponent } from '../forgot-popup/forgot-popup.component';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { PopupComponent } from '../popup/popup.component';
+import { CourseDetailsService } from 'src/app/services/course-details.service';
 
 declare var window: any;
 
@@ -48,7 +49,7 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
+  constructor(private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
@@ -246,10 +247,15 @@ export class NavbarComponent implements OnInit {
 
       const accessTokenPayload = this.decodeJwtPayload(accessToken);
       const expirationTime = accessTokenPayload.exp * 1000; 
-
-      if (expirationTime > Date.now()) {
-        const securedEndpoint = 'http://localhost:8082/';
-        /*try {
+      let securedEndpoint;
+      if(!this.esteProfesor()){
+         securedEndpoint = 'http://localhost:8082/elev';
+      }
+      else{
+         securedEndpoint = 'http://localhost:8082/profesor';
+      }
+      if (expirationTime > Date.now()) {;
+        try {
           const response = await axios.get(securedEndpoint, {
             method: 'GET',
             headers: {
@@ -257,15 +263,24 @@ export class NavbarComponent implements OnInit {
               'Authorization': `Bearer ${accessToken}`,
             },
           });
-          let raspunsServer = response.data;
+          /*let raspunsServer = response.data;
           let raspunsServerModficat = raspunsServer.slice(0, -1);
           const raspunsJSON = JSON.stringify(raspunsServerModficat);
           this.shareDataService.sendRaspuns(raspunsServerModficat);
            console.log("Raspuns server "+ raspunsServerModficat);
-           console.log("Raspuns server json"+ raspunsJSON);
+           console.log("Raspuns server json"+ raspunsJSON);*/
+           if(!this.esteProfesor()){
+           console.log("AN primit "+response.data);
+           this.courseDetalis.curataVector();
+           this.courseDetalis.modifica(response.data);
+           }
+           else {
+            this.courseDetalis.curataVectorProf();
+            this.courseDetalis.modificaProf(response.data);
+           }
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
-        }*/
+        }
       } else {
         console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
         this.refresh.refresh();

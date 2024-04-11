@@ -1,27 +1,28 @@
 <div class="container">
 <div class="accordion" id="accordionExample" style="width:1790px; ">
   <ng-container *ngFor="let subvector of subvectori; let i = index;" style="width:1860px; margin-right: -120px;">
-    <div class="accordion-item" *ngIf="(subvector.activat && !esteProfesor()) || esteProfesor()">
+    <div class="accordion-item" *ngIf="(raspunsObj['Capitol'+(i+1)].activat && !esteProfesor()) || esteProfesor()">
       <h2 class="accordion-header" [id]="'heading'+i">
         <button class="accordion-button" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#collapse'+i" aria-expanded="false" [attr.aria-controls]="'collapse'+i" (click)="toggleCollapse(i)">
-          Lecția {{i+1}}
+          Capitol {{i+1}} {{raspunsObj['Capitol'+(i+1)].numeCapitol}}
         </button>
       </h2>
       <div [id]="'collapse'+i" class="accordion-collapse collapse" [ngClass]="{'show': isCollapsed[i]}" [attr.aria-labelledby]="'heading'+i" data-bs-parent="#accordionExample">
         <div class="accordion-body">
-          <p *ngIf="apasat ">{{raspunsObj['Lectia'+(i+1)]['Inforamtie'+pozitieActuala[i]]}}</p>
+          <p *ngIf="apasat">{{raspunsObj['Capitol'+(i+1)]['Lectia'+pozitieActuala[i]].nume}}</p>
+          <p *ngIf="apasat">{{raspunsObj['Capitol'+(i+1)]['Lectia'+pozitieActuala[i]].informatie}}</p>
         </div>
         <div class="progress">
           <div class="progress-bar" role="progressbar" *ngIf="apasat" [style.width.%]="progres[i]" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">{{progres[i]}}%</div>
         </div>
         <br><br><br>
         <div style="display: flex; justify-content: space-between;">
-          <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInapoi(i)">Înapoi</button>
-          <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" (click)="actualizeazapozitiaInainte(i)">Înainte</button>
+          <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" *ngIf="!esteProfesor()" (click)="actualizeazapozitiaInapoi(i)">Înapoi</button>
+          <button type="button" class="btn btn-secondary btn-sm" style="text-align: left;" *ngIf="!esteProfesor()" (click)="actualizeazapozitiaInainte(i)">Înainte</button>
         </div>
         <br><br>
         <div style="text-align: center;">
-          <button type="button" class="btn btn-primary btn-lg">Trimite</button>
+          <button type="button" class="btn btn-primary btn-lg" *ngIf="!esteProfesor()">Trimite</button>
         </div>
       </div>
       <br><br><br>
