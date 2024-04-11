@@ -44,13 +44,23 @@ public class Contoller {
 
     @Put("/activare")
     @Produces(MediaType.TEXT_PLAIN)
-    public void schimba(@Body String json) throws JsonProcessingException {
+    public void schimba(Principal principal, @Body String json) throws JsonProcessingException {
         System.out.println("Raspuns primit de la " +json);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode raspunsJson = objectMapper.readTree(json);
         numeLectie = raspunsJson.get("numeMaterie").asText();
-        takeLectures.updateStare(raspunsJson, numeLectie);
+        takeLectures.updateStare(raspunsJson, numeLectie, principal.getName());
         System.out.println("Nume "+numeLectie);
+    }
+
+    @Get("/{nume}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String iauAni(Principal principal, @QueryValue String nume) {
+        String response = principal.getName();
+        String gmail = response.split("_")[1];
+        String an = takeLectures.takeYear(gmail, nume);
+        System.out.println("An "+an);
+        return  an;
     }
 
 }
