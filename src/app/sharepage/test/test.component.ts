@@ -48,7 +48,8 @@ export class TestComponent {
               }
             }
             this.appComponent.apasat = false;
-            
+            var date = new Date().getTime();
+
             //console.log("Raspuns 123" +Object.keys(this.test["Intrebare1"]));
 
               resolve(); 

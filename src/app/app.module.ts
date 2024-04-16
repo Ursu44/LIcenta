@@ -18,7 +18,7 @@ import { VerifyCodComponent } from './sharepage/verify-cod/verify-cod.component'
 import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component';
 import { CoursesComponent } from './sharepage/courses/courses.component';
 import { TestComponent } from './sharepage/test/test.component';
-
+import { CountdownModule } from 'ngx-countdown';
 
 
 @NgModule({ 
@@ -44,7 +44,8 @@ import { TestComponent } from './sharepage/test/test.component';
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
-    MatDialogModule
+    MatDialogModule ,
+    CountdownModule
   ],
   providers: [],
   bootstrap: [AppComponent]
