@@ -8,6 +8,7 @@ import { ForgotPopupComponent } from '../forgot-popup/forgot-popup.component';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { PopupComponent } from '../popup/popup.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
+import { AppComponent } from 'src/app/app.component';
 
 declare var window: any;
 
@@ -49,13 +50,14 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
+  constructor(private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
 
   ngOnInit(): void {
     //localStorage.clear();
+    //this.appComponent.raspuns1 = true;
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     if (accessToken && refreshToken) {
@@ -387,6 +389,7 @@ export class NavbarComponent implements OnInit {
           });
           let raspunsServer = response.data;
           const raspunsJSON = JSON.stringify(raspunsServer);
+          console.log("Raspuns "+raspunsServer);
             this.shareDataCatalog.sendRaspunsCatalog(raspunsJSON);
            console.log("Raspuns server catalog "+ raspunsJSON);
         } catch (error) {

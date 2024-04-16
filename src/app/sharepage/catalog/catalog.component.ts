@@ -5,6 +5,7 @@ import { ShareCatalogService } from 'src/app/services/share-catalog.service';
 import { ShareDataService } from 'src/app/services/share-data.service';
 import { PopupComponent } from '../popup/popup.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-catalog',
@@ -14,7 +15,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 export class CatalogComponent {
   raspunsCatalog: any = this.shareDataService.getRaspunsCatalog();
 
-  constructor(private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog, private shareDataCatalog:ShareCatalogService) {}
+  constructor(private appComponent: AppComponent, private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog, private shareDataCatalog:ShareCatalogService) {}
 
   AccessToken: any;
   rol:string = "";
@@ -45,6 +46,7 @@ export class CatalogComponent {
 
   ngOnInit(): void {
       this.preiaDate();
+      //this.appComponent.raspuns1 = true;
       //this.iaDate();
   }
 

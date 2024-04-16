@@ -14,6 +14,7 @@ export class AppComponent {
   showModal!: boolean;
   registerForm!: FormGroup;
   submitted = false;
+  apasat = true;
 
   constructor(private formBuilder: FormBuilder, private dialog : MatDialog) { }
   show(){
@@ -23,6 +24,5 @@ export class AppComponent {
   hide(){
     this.showModal = false;
   }
-
   
 }

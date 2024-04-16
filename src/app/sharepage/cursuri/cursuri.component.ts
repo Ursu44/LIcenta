@@ -7,6 +7,9 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { coerceStringArray } from '@angular/cdk/coercion';
 import { ShareCatalogService } from 'src/app/services/share-catalog.service';
 import { SharenumeService } from 'src/app/services/sharenume.service';
+import { SendTestService } from 'src/app/services/send-test.service';
+import { ServiciuService } from 'src/app/services/serviciu.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-cursuri',
@@ -30,7 +33,7 @@ export class CursuriComponent implements OnInit {
   isCollapsed: boolean[] = [];
   nume="Fizica";
 
-  constructor(private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService) {}
+  constructor(private appComponent:AppComponent,private servicu:ServiciuService ,private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService, private sendtest:SendTestService) {}
 
   formData: any = {
     numeLectie:"",
@@ -39,8 +42,15 @@ export class CursuriComponent implements OnInit {
     mail:""
   };
 
+  dateTest: any = {
+    materie:"",
+    an:"",
+    capitole:""
+  };
+
   ngOnInit(): void {
     this.preiaDate();
+    //this.appComponent.raspuns1 = true;
   }
 
 
@@ -313,5 +323,64 @@ export class CursuriComponent implements OnInit {
 
     return JSON.parse(jsonPayload);
   }
+
+  async preiaTestul(capitole:string){
+    let accessToken = localStorage.getItem('access_token');
+    let refreshToken = localStorage.getItem('refresh_token');
+    
+    if (accessToken && refreshToken) {
+    const accessTokenPayload = this.decodeJwtPayload(accessToken);
+    const expirationTime = accessTokenPayload.exp * 1000; 
+
+
+    if (expirationTime > Date.now()) {
+      const numeMaterie = this.shareNume.getNume();
+      const nume = numeMaterie.split('_')[0];
+      const an = numeMaterie.split('_')[1];
+      console.log("Materie "+nume);
+      console.log("An "+an);
+
+      const securedEndpoint = 'http://localhost:8089/api/';
+      this.dateTest.materie = nume;
+      if(nume === "Fizică"){
+        this.dateTest.materie = "Fizica";
+      }
+      this.dateTest.an = an;
+      this.dateTest.capitole = capitole;
+      console.log("Rspusns pregatit "+this.dateTest);
+      const jsonObj = JSON.stringify(this.dateTest);
+      console.log("Rspusns pregatit "+jsonObj);
+      axios.post(securedEndpoint, jsonObj, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      .then(async response => {
+        const jsonObj1 = JSON.stringify(response.data);
+        const jsonObj2 =  JSON.parse(jsonObj1);
+        console.log(typeof(jsonObj1));
+        console.log(" "+jsonObj1);
+        console.log('JSON trimis cu succes:', jsonObj1);
+        localStorage.setItem("intrebari",jsonObj1);
+        this.sendtest.sendRaspunsTest(jsonObj1);
+        this.sendtest.getRaspunsTest();
+        window.open("/test", '_blank', "width=1648,height=960");
+        this.formData = {
+          numeLectie:"",
+          activat:false,
+          numeMaterie:"",
+          mail:""
+        };
+      })
+      .catch(error => {
+        console.error('Eroare la trimiterea JSON-ului:', error);
+      });
+
+    }else{
+      this.refresh.refresh();
+    }
+  }
+}
 
 }

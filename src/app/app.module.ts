@@ -17,6 +17,7 @@ import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.comp
 import { VerifyCodComponent } from './sharepage/verify-cod/verify-cod.component';
 import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component';
 import { CoursesComponent } from './sharepage/courses/courses.component';
+import { TestComponent } from './sharepage/test/test.component';
 
 
 
@@ -32,8 +33,8 @@ import { CoursesComponent } from './sharepage/courses/courses.component';
     ForgotPopupComponent,
     VerifyCodComponent,
     PassResetComponent,
-    CoursesComponent
-    
+    CoursesComponent ,
+    TestComponent 
   ],
   imports: [
     FormsModule,

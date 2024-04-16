@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import axios from 'axios';
+import { AppComponent } from 'src/app/app.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { ShareCatalogService } from 'src/app/services/share-catalog.service';
@@ -14,9 +15,10 @@ import { SharenumeService } from 'src/app/services/sharenume.service';
 export class CoursesComponent {
     details : any[] = [];
 
-    constructor(private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService, private shareNume:SharenumeService) {}
+    constructor(private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService, private shareNume:SharenumeService) {}
 
     ngOnInit() : void{
+      //this.appComponent.raspuns1 = true;
       this.details = this.courseDetalis.courseDetails;
     }
 

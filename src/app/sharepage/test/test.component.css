@@ -1,0 +1,35 @@
+.container{
+    margin-top: 115px;
+}
+
+.container1{
+    display: flex;
+    justify-content: space-between;
+}
+
+.form1{
+    width: 200px; 
+    height: 150px; 
+    border: 2px solid black; 
+    display: inline-block;
+    margin-left:-295px;
+}
+.form2{
+    width:1560px; 
+    height: 150px; 
+    border: 2px solid black; 
+    margin-right:-265px;
+}
+p{
+    text-align: left;
+}
+ul{
+    list-style-type: none;
+}
+
+.container1 .btn{
+    margin-top: 129px;
+    height:50px;
+    width: 20px;
+    display: block; 
+}
