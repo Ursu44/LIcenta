@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 1015px;
+    margin-left: 320px;
+    margin-right: 200px;
+    justify-content: space-between;
+  }
+  
+  .card {
+    flex: 0 1 calc(30% - 20px); 
+    margin-left: 22px;
+    margin-right:-48px; 
+    margin-top: 115px;
+  }
+
+  .card-img-top{
+    height: 190px;
+  }
+  
+ 
+  

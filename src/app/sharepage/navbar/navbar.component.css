@@ -1,0 +1,51 @@
+.navbar-light .navbar-nav .nav-link {
+    color: white;
+    font-size: 20px;
+  }
+
+.navbar-light  .navbar-nav  :hover{
+   color: aqua;
+  }
+
+nav.nav-brand {
+    color: white;
+    font-size: 20px;
+  }
+  nav {
+    background-color: transparent; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1; 
+  }
+  
+  .banner {
+    background-image: url('https://th-i.thgim.com/public/latest-news/rmxn3m/article67267713.ece/alternates/FREE_1200/IStockBook.jpg');
+    image-rendering: auto;
+    background-size: cover;
+    height: 915px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1.7; 
+  }
+  
+  
+  h1 {
+    position: absolute;
+    top: 25%;
+    left: 20%;
+    transform: translate(-60%, -40%);
+  }
+
+  .linkbutton{
+    background: none;
+    color: blue;
+    border:none;
+  }
+  
+  .linkbutton:hover{
+    text-decoration: underline;
+  }

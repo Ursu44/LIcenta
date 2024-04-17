@@ -1,0 +1,109 @@
+<div class="input-group">
+    <div *ngIf="esteProfesor()">
+    <h2>Introdu nota</h2> <br>
+    <div class="grup-materie">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Materie</span></span>
+        </div>
+        <select id="selectMaterie" class="form-select" aria-label="Default select example" style="width: 400px;">
+            <option selected>Selectează materia</option>
+            <option *ngFor="let i of materiiAfisare">{{i}}</option>
+          </select>
+    </div>
+    <br><br><br>
+    <div class="grup-ani">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Ani</span></span>
+        </div>
+        <select id="selectAn" class="form-select" aria-label="Default select example" style="width: 400px;">
+            <option selected>Selectează anul</option>
+            <option *ngFor="let an of ani">{{an}}</option>
+          </select>
+    </div>
+    <br><br><br>
+    <div class="grup-ani">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Grupe</span></span>
+        </div>
+        <select id="selectGrupa" class="form-select" aria-label="Default select example" style="width: 400px;">
+            <option selected>Selectează grupa</option>
+            <option *ngFor="let grupa of grupeSelectate">{{grupa}}</option>
+          </select>
+    </div>
+    <br><br><br>
+    <div class="grup-ani">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Nume și prenume</span></span>
+        </div>
+        <select id="selectNume" class="form-select" aria-label="Default select example" style="width: 400px;">
+            <option selected>Selectează nume</option>
+            <option *ngFor="let nume of nume">{{nume}}</option>
+          </select>
+    </div>
+    <br><br><br>
+    <div class="grup-ani">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Mail</span></span>
+        </div>
+        <select id="selectMail" class="form-select" aria-label="Default select example" style="width: 400px;">
+            <option selected>Selectează mail</option>
+            <option *ngFor="let mail of mail">{{mail}}</option>
+          </select>
+    </div>
+    <br><br><br>
+    <div class="grup-materie">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Nota de introdu</span></span>
+        </div>
+        <select id="selectNota" class="form-select" aria-label="Default select example" style="width: 200px;">
+            <option selected>Selectează tipul notei</option>
+            <option value="Nota1">Nota1</option>
+            <option value="Nota2">Nota2</option>
+            <option value="Nota3">Nota3</option>
+            <option value="Nota4">Nota4</option>
+        </select>
+        <input type="number" class="form-control" id="nota" style="width: 200px;" min="1" max="10">
+    </div>
+    <br><br><br>
+    <button type="button" class="btn btn-outline-success float-left" style="border-radius: 15px; margin-left: 460px;" (click)="adaugaNota()">Trimite</button>
+    <br><br><br><br><br><br><br><br><br>
+    </div>
+    <h2 style="margin-right: 1790px;">Catalog</h2>
+    <div class="container">
+      <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nume</th>
+                <th>Grupa</th>
+                <ng-container *ngFor="let materie of ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limbasiliteraturaromana', 'Limbaengleza']">
+                    <th *ngIf="prezentinJson(materie)">{{materie}}</th>
+                </ng-container>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let nota of vectorCatalog">
+                <td>{{nota.nume}} {{nota.prenume}}</td>
+                <td>{{nota.grupa}}</td>
+                <ng-container *ngFor="let materie of ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limbasiliteraturaromana', 'Limbaengleza']">
+                    <td style="padding: 0px;" *ngIf="prezentinJson(materie) && nota[materie]"> 
+                        <div class="table-responsive" style="overflow-x: auto;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <tbody>
+                                    <tr>
+                                        <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
+                                            <td><b>Nota{{i + 1}} </b>: <span *ngIf="nota[materie] && nota[materie][notaKey] !== 0">{{nota[materie][notaKey]}} </span></td>
+                                        </ng-container>
+                                        <td><b>Medie: </b><span *ngIf="nota[materie] && nota[materie].Medie !== 0">{{nota[materie].Medie}}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </ng-container>
+            </tr>
+        </tbody>
+    </table>
+    
+      </div>
+      <br><br><br><br><br>
+</div>

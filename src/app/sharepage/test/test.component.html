@@ -1,0 +1,38 @@
+<div class="container">
+    {{display}}
+    <ng-container *ngFor="let intrebare of intrebari; let i = index;">
+        <div class="container1">
+            <form class="form1">
+                <p>Întrebare cu răspuns: {{intrebare.tip}}</p>
+                <p>Punctaj: {{intrebare.punctaj}}</p>
+            </form>
+            <form class="form2">
+                <p>{{intrebare.intrebare}}</p>
+                <div *ngIf="intrebare.tip === 'singur'">  
+                    <ul>
+                        <li *ngFor="let varianta of intrebare.variante; let j = index;">
+                            <label>
+                                <input type="radio" name="varianta.check{{j}}" [(ngModel)]="varianta.checked" (ngModelChange)="apeleaza(intrebare, j)">{{varianta.text}}
+                            </label>
+                        </li>
+                    </ul>
+                </div>  
+                <div *ngIf="intrebare.tip === 'multiplu'" >  
+                    <ul>
+                        <li *ngFor="let varianta of intrebare.variante;">
+                            <label>
+                                <input type="checkbox" [(ngModel)]="varianta.checked" [ngModelOptions]="{ standalone: true }">{{varianta.text}}
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <br><br>
+    </ng-container>
+    <br><br>
+    <div style="text-align: center; margin-top: -90px;  margin-left: 590px;" class="btn">
+        <button type="button" class="btn btn-primary btn-lg" (click)="sendRaspunsuri()">Trimite</button>
+    </div>
+    <br><br><br>
+</div>

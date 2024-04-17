@@ -1,0 +1,14 @@
+<h1>Cele mai populare cursuri</h1>
+<div class="container-1">
+<div class="container card-container" *ngFor="let cd of courseData">
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{{cd.srcImg}}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{cd.courseName}}</h5>
+          <a href="#" class="btn btn-primary">Vezi detalii</a>
+        </div>
+    </div>
+</div>
+</div>
+
+<a href="#" class="details">Vezi toate cursurile</a>
