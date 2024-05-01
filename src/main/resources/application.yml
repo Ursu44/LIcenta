@@ -1,0 +1,27 @@
+micronaut:
+  server:
+    port: 8091
+
+---
+micronaut:
+  server:
+    cors:
+      enabled: true
+
+      configurations:
+        ui:
+          allowed-origins:
+            - http://localhost:4200
+
+
+---
+micronaut:
+  security:
+    endpoints:
+      enabled: true
+      get-allowed: true
+
+---
+mongodb:
+  uri: "mongodb+srv://cosminirimiaaursulesei:t9pam*JtJYk5M@cluster0.zfa9zls.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  database: "test"
