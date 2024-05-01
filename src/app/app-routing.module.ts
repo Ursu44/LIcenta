@@ -5,12 +5,15 @@ import { CatalogComponent } from './sharepage/catalog/catalog.component';
 import { ForgotPopupComponent } from './sharepage/forgot-popup/forgot-popup.component';
 import { CoursesComponent } from './sharepage/courses/courses.component';
 import { TestComponent } from './sharepage/test/test.component';
+import { GraficComponent } from './sharepage/grafic/grafic.component';
+
 const routes: Routes = [
   
   {path:'cursuri', component:CoursesComponent},
   {path:'catalog', component:CatalogComponent},
   {path:'curs', component:CursuriComponent},
-  {path:'test', component:TestComponent}
+  {path:'test', component:TestComponent},
+  {path:'grafic', component:GraficComponent}
 ];
 
 @NgModule({

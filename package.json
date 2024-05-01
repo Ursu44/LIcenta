@@ -24,6 +24,7 @@
     "angular-jwt": "^0.1.11",
     "axios": "^1.6.5",
     "bootstrap": "^5.2.3",
+    "chart.js": "^3.9.1",
     "crypto-browserify": "^3.12.0",
     "jsonwebtoken": "^9.0.2",
     "ngx-countdown": "^17.1.1",

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import axios from 'axios';
 import { AppComponent } from 'src/app/app.component';
 import { SendTestService } from 'src/app/services/send-test.service';
 import { ServiciuService } from 'src/app/services/serviciu.service';
@@ -16,13 +17,17 @@ export class TestComponent {
   public selectedOptions: { [key: string]: number[] } = {};
   public intrebari :any = [];
   display: any;
+  dateTrimis:any ={};
+  dateTrimis1:any ;
+  intrebariTrimis:any = {};
+  intrebariTrimis1:any ;
   
    ngOnInit() {
     //this.appComponent.raspuns1 = false;
     this.getData();
     //this.appComponent.raspuns1 = false;
     //this.preiaDate();
-    this.timer(0, 12);
+    this.timer(2, 1);
     
   }
 
@@ -37,6 +42,9 @@ export class TestComponent {
            // console.log("Raspuns " +typeof this.test);
             console.log("Raspuns din local storage "+localStorage.getItem("intrebari"));
             this.test1 =localStorage.getItem("intrebari");
+            console.log("Detalii test "+localStorage.getItem("dateElev"));
+            const raspuns = JSON.stringify(localStorage.getItem("intrebari"))+" "+ JSON.stringify(localStorage.getItem("dateElev"));
+            console.log("Raspuns de trimis"+raspuns);
             this.test = JSON.parse(this.test1) ;
             console.log("Raspuns " +typeof this.test);
             for (const cheie in this.test) {
@@ -61,14 +69,15 @@ export class TestComponent {
             //console.log("Raspuns 123" +Object.keys(this.test["Intrebare1"]));
 
               resolve(); 
-          }, 2100);
+          }, 500);
       });
   } catch (error) {
       console.error('Eroare în preluarea datelor:', error);
   }
   }
 
-  sendRaspunsuri() {
+  async sendRaspunsuri(): Promise<void> {
+    try{
     for (const intrebare of this.intrebari) {
       this.selectedOptions[intrebare.intrebare] = [];
       console.log("Intrebare 123 "+intrebare.intrebare);
@@ -88,6 +97,7 @@ export class TestComponent {
           }
 
       }
+      localStorage.setItem("raspusnuri", JSON.stringify(this.selectedOptions));
   }
   for (const intrebare of this.intrebari) {
     if (typeof this.selectedOptions !== 'undefined' && this.selectedOptions !== null) {
@@ -96,6 +106,39 @@ export class TestComponent {
       console.log("selectedOptions nu este definit sau este null.");
   }
   }
+
+      const securedEndpoint = 'http://localhost:8091/corectare/';
+      this.intrebariTrimis1 = localStorage.getItem("raspusnuri")
+      this.intrebariTrimis = JSON.parse(this.intrebariTrimis1);
+      this.dateTrimis1 = localStorage.getItem("dateElev");
+      this.dateTrimis = JSON.parse(this.dateTrimis1);
+      const raspuns = {
+        dateTrimis:  this.intrebariTrimis,
+        intrebariTrimis: this.dateTrimis 
+      };
+      await axios.post(securedEndpoint,  raspuns, {
+        headers: {
+          'Content-Type': 'application/json'        
+        }
+      })
+        .then(response => {
+          console.log('JSON trimis cu succes:', response.data);  
+          if(this.dateTrimis.capitole === "1_2"){
+          localStorage.setItem("nota1", response.data);
+          }
+          else{
+            localStorage.setItem("nota2", response.data);
+          }      
+        })
+        .catch(error => {
+          console.error('Eroare la trimiterea JSON-ului:', error);
+        });
+      } 
+      catch (error) {
+        console.error('Eroare la trimiterea JSON-ului:', error);
+      } finally {
+        window.close();
+      }
 }
 
   timer(hour:number, minute: number) {
@@ -110,7 +153,7 @@ export class TestComponent {
     let minut = "0";
     let secunde = "0";
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       seconds --;
      
       let oreRamase = Math.floor(seconds / 3600) ;
@@ -137,8 +180,9 @@ export class TestComponent {
 
       this.display = ora+":"+minut+":"+secunde;
 
+  
       if (seconds == 0) {
-        window.close();
+        this.sendRaspunsuri();
         console.log("finished");
         clearInterval(timer);
       }
@@ -154,8 +198,19 @@ export class TestComponent {
   }
 
   selectCorect(intrebare: any, selectedIndex: number) {
-
     intrebare.variante[selectedIndex].checked = true;
+  }
+
+
+  decodeJwtClaims(token: string) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+
+    return JSON.parse(jsonPayload);
   }
 
   apeleaza(intrebare: any, selectedIndex: number){

@@ -36,7 +36,10 @@
   </ng-container>
 </div>
 <div div class="btn-group" role="group" aria-label="Basic example" style="margin-top: -90px;  margin-left: 820px;">
- <button type="button"  class="btn btn-secondary" style="width: 200px;" *ngIf="!esteProfesor()" (click)="preiaTestul('1_2')">Test 1</button>
-  <button type="button" class="btn btn-secondary" style=" width: 200px;" *ngIf="!esteProfesor()"  (click)="preiaTestul('3_4')">Test 2</button>
+ <button type="button"  class="btn btn-secondary" style="width: 200px;" (click)="preiaTestul('1_2')">Test 1</button>
+  <button type="button" class="btn btn-secondary" style=" width: 200px;"  (click)="preiaTestul('3_4')">Test 2</button>
 </div>
+<br><br><br><br><br>
+<h2 class="nota11" style="margin-top: -90px;  margin-left: 820px;">Numar de incercari pentru test </h2>
+<input type="text" [disabled]="!esteProfesor()"><br><br><br><br>
 </div>

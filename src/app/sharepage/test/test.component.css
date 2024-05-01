@@ -9,14 +9,14 @@
 
 .form1{
     width: 200px; 
-    height: 150px; 
+    height: 190px; 
     border: 2px solid black; 
     display: inline-block;
     margin-left:-295px;
 }
 .form2{
     width:1560px; 
-    height: 150px; 
+    height: 190px; 
     border: 2px solid black; 
     margin-right:-265px;
 }

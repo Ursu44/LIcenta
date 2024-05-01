@@ -18,6 +18,8 @@ import { VerifyCodComponent } from './sharepage/verify-cod/verify-cod.component'
 import { PassResetComponent } from './sharepage/pass-reset/pass-reset.component';
 import { CoursesComponent } from './sharepage/courses/courses.component';
 import { TestComponent } from './sharepage/test/test.component';
+import {Chart} from 'chart.js';
+import { GraficComponent } from './sharepage/grafic/grafic.component';
 
 @NgModule({ 
   declarations: [
@@ -32,7 +34,8 @@ import { TestComponent } from './sharepage/test/test.component';
     VerifyCodComponent,
     PassResetComponent,
     CoursesComponent ,
-    TestComponent 
+    TestComponent,
+    GraficComponent 
   ],
   imports: [
     FormsModule,
@@ -42,7 +45,7 @@ import { TestComponent } from './sharepage/test/test.component';
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
-    MatDialogModule
+    MatDialogModule,
       ],
   providers: [],
   bootstrap: [AppComponent]

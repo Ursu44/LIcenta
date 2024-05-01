@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ShareDataService } from '../../services/share-data.service';
 import axios from 'axios';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -17,6 +17,8 @@ import { AppComponent } from 'src/app/app.component';
   styleUrls: ['./cursuri.component.css']
 })
 export class CursuriComponent implements OnInit {
+
+
   i = 0;
   raspunsObj:any;
   raspuns: any;
@@ -31,7 +33,13 @@ export class CursuriComponent implements OnInit {
   stare:boolean = false;
   indexDeschis: number = 0;
   isCollapsed: boolean[] = [];
+  nota1: any = "";
+  nota2: any = "";
   nume="Fizica";
+  nota1False: any= false;
+  nota2False: any= false;
+
+  
 
   constructor(private appComponent:AppComponent,private servicu:ServiciuService ,private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService, private sendtest:SendTestService) {}
 
@@ -45,15 +53,34 @@ export class CursuriComponent implements OnInit {
   dateTest: any = {
     materie:"",
     an:"",
-    capitole:""
+    capitole:"",
+    mailElev:""
   };
+
+
 
   ngOnInit(): void {
     this.preiaDate();
+  
     //this.appComponent.raspuns1 = true;
   }
 
-
+  @HostListener('window:storage', ['$event'])
+  onStorageChange(event: StorageEvent) {
+      if (event.key === 'nota1') { 
+        this.nota1False = true;
+        if(localStorage.getItem("nota1")){
+          this.nota1= localStorage.getItem("nota1");
+      }
+      }
+      if (event.key === 'nota2') { 
+        this.nota2False = true;
+        if(localStorage.getItem("nota2")){
+          this.nota2= localStorage.getItem("nota2");
+      }
+      }
+  }
+  
   async preiaDate(): Promise<void> {
     this.getData();
     const numeMaterie = this.shareNume.getNume();
@@ -331,25 +358,40 @@ export class CursuriComponent implements OnInit {
     if (accessToken && refreshToken) {
     const accessTokenPayload = this.decodeJwtPayload(accessToken);
     const expirationTime = accessTokenPayload.exp * 1000; 
-
-
+    const mail = accessTokenPayload.sub;
+   // const nume = mail.split[1];
+    console.log("Mail elev 1234 "+mail);
     if (expirationTime > Date.now()) {
       const numeMaterie = this.shareNume.getNume();
       const nume = numeMaterie.split('_')[0];
       const an = numeMaterie.split('_')[1];
       console.log("Materie "+nume);
       console.log("An "+an);
+      
+      this.dateTest.an = an;
+      this.dateTest.mailElev = mail;
+      this.dateTest.capitole = capitole;
 
-      const securedEndpoint = 'http://localhost:8089/api/';
       this.dateTest.materie = nume;
       if(nume === "Fizică"){
         this.dateTest.materie = "Fizica";
       }
-      this.dateTest.an = an;
-      this.dateTest.capitole = capitole;
+      if(nume === "Matematică"){
+        this.dateTest.materie = "Matematica";
+      }
+      if(nume === "Limba si literatura romana"){
+        this.dateTest.materie = "Limbasiliteraturaromana";
+      }
+      if(nume === "Limba engleza"){
+        this.dateTest.materie = "Limbaengleza";
+      }
+
       console.log("Rspusns pregatit "+this.dateTest);
       const jsonObj = JSON.stringify(this.dateTest);
       console.log("Rspusns pregatit "+jsonObj);
+      if(!this.esteProfesor()){
+      const securedEndpoint = 'http://localhost:8089/api/';
+    
       axios.post(securedEndpoint, jsonObj, {
         headers: {
           'Content-Type': 'application/json',
@@ -358,7 +400,8 @@ export class CursuriComponent implements OnInit {
       })
       .then(async response => {
         const jsonObj1 = JSON.stringify(response.data);
-        const jsonObj2 =  JSON.parse(jsonObj1);
+        const jsonObj2 =  JSON.stringify( this.dateTest);
+        localStorage.setItem("dateElev",jsonObj2);
         console.log(typeof(jsonObj1));
         console.log(" "+jsonObj1);
         console.log('JSON trimis cu succes:', jsonObj1);
@@ -376,7 +419,32 @@ export class CursuriComponent implements OnInit {
       .catch(error => {
         console.error('Eroare la trimiterea JSON-ului:', error);
       });
+    }
+    else{
 
+      const securedEndpoint = 'http://localhost:8091/corectare/grafic';
+    
+      axios.post(securedEndpoint, jsonObj, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      .then(async response => {
+        const jsonObj1 = JSON.stringify(response.data);
+        const jsonObj2 =  JSON.stringify( this.dateTest);
+        console.log("Raspuns primit grafic "+jsonObj1);
+        localStorage.setItem("noteGrafic",jsonObj1);
+        /*console.log(typeof(jsonObj1));
+        console.log(" "+jsonObj1);
+        console.log('JSON trimis cu succes:', jsonObj1);
+        localStorage.setItem("intrebari",jsonObj1);
+        this.sendtest.sendRaspunsTest(jsonObj1);
+        this.sendtest.getRaspunsTest();*/
+        window.open("/grafic", '_blank', "width=1648,height=960");
+      })
+
+    }
     }else{
       this.refresh.refresh();
     }
