@@ -27,7 +27,8 @@ export class TestComponent {
     this.getData();
     //this.appComponent.raspuns1 = false;
     //this.preiaDate();
-    this.timer(2, 1);
+
+    this.timer(Number(localStorage.getItem("ora")), Number(localStorage.getItem("minute")));
     
   }
 

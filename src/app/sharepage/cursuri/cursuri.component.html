@@ -40,6 +40,19 @@
   <button type="button" class="btn btn-secondary" style=" width: 200px;"  (click)="preiaTestul('3_4')">Test 2</button>
 </div>
 <br><br><br><br><br>
-<h2 class="nota11" style="margin-top: -90px;  margin-left: 820px;">Numar de incercari pentru test </h2>
-<input type="text" [disabled]="!esteProfesor()"><br><br><br><br>
+  <div class="nota11">
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Numar de incercari pentru test </p>
+    <input type="text" [value] ="incercari" class="nota" style="width: 30px"*ngIf="esteProfesor()" id="incercari1"><br><br><br><br>
+    <span *ngIf="!esteProfesor()" class="nota">{{incercari}}</span><br><br><br><br>
+  </div>
+  <div class="nota12">
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Timp pentru test</p>
+    <input type="text" [value] ="ora" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="ora1"><br>
+    <span *ngIf="!esteProfesor()" class="ora">{{ora}}</span><br>
+    <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">ore și</p>
+    <input type="text" [value] ="minute" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="minute1"><br>
+    <span *ngIf="!esteProfesor()" class="ora">{{minute}}</span><br>
+    <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">minute</p><br>
+    <button style=" margin-left: 10px; width: 140px;  margin-left: -240px;" type="button" class="btn btn-info"  (click)="trimitDateTest()" *ngIf="esteProfesor()">Trimite</button><br><br><br>
+  </div><br><br><br>
 </div>

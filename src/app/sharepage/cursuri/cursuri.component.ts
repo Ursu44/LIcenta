@@ -38,6 +38,9 @@ export class CursuriComponent implements OnInit {
   nume="Fizica";
   nota1False: any= false;
   nota2False: any= false;
+  incercari = 0;
+  ora = 0;
+  minute =0;
 
   
 
@@ -57,7 +60,11 @@ export class CursuriComponent implements OnInit {
     mailElev:""
   };
 
-
+  date: any = {
+    ora:"",
+    incercari:"",
+    materie:""
+  };
 
   ngOnInit(): void {
     this.preiaDate();
@@ -135,7 +142,13 @@ export class CursuriComponent implements OnInit {
       console.log("Uite ce am primit" + this.raspuns);
       if( this.raspuns != undefined){
       this.raspunsObj = JSON.parse(this.shareDataService.getRaspuns());
-      console.log("Answear "+this.raspunsObj["lectie2Detalii"])
+
+      this.ora = (this.raspunsObj["Detalii_test"].durataTest).split(":")[0];
+      localStorage.setItem("ora", String(this.ora));
+      this.minute = (this.raspunsObj["Detalii_test"].durataTest).split(":")[1];
+      localStorage.setItem("minute", String(this.minute));
+      this.incercari = this.raspunsObj["Detalii_test"].incercari;
+      delete this.raspunsObj["Detalii_test"];
       for(let j =0;j<= Object.keys(this.raspunsObj).length-1; j++){
         let k =j+1;
         this.lungimi[j] = Object.keys(this.raspunsObj["Capitol"+k]).length-3;
@@ -449,6 +462,48 @@ export class CursuriComponent implements OnInit {
       this.refresh.refresh();
     }
   }
+}
+
+async trimitDateTest(){
+  let accessToken = localStorage.getItem('access_token');
+  let refreshToken = localStorage.getItem('refresh_token');
+  
+  if (accessToken && refreshToken) {
+  const accessTokenPayload = this.decodeJwtPayload(accessToken);
+  const expirationTime = accessTokenPayload.exp * 1000; 
+  const mail = accessTokenPayload.sub;
+ // const nume = mail.split[1];
+  console.log("Mail elev 1234 "+mail);
+  if (expirationTime > Date.now()) {
+
+    if(this.esteProfesor()){
+    const securedEndpoint = 'http://localhost:8083/update/timp';
+    let ora1 = document.getElementById('ora1')as HTMLInputElement | null;
+    let minute = document.getElementById('minute1')as HTMLInputElement | null;
+    this.date.ora = ora1?.value+":"+minute?.value;
+    let incercari1 = document.getElementById('incercari1')as HTMLInputElement | null;
+    this.date.incercari = incercari1?.value;
+    this.date.materie = this.shareNume.getNume();
+    const jsonObj = JSON.stringify(this.date);
+    axios.put(securedEndpoint, jsonObj, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+    .then(async response => {
+      const jsonObj1 = JSON.stringify(response.data);
+      console.log(" "+jsonObj1);
+    })
+    .catch(error => {
+      console.error('Eroare la trimiterea JSON-ului:', error);
+    });
+  }
+
+  }else{
+    this.refresh.refresh();
+  }
+}
 }
 
 }
