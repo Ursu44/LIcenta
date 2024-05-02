@@ -119,7 +119,6 @@ public class VerifyAnswears  {
                                 Document intrebare = ((ArrayList<Document>) bank2.get("intrebari")).get(l);
 
                                 String intrbarePus = intrebare.getString("intrebare");
-                                String tip = intrebare.getString("tip");
                                 //System.out.println("Intrebare123: " + intrbarePus);
 
                                 double punctajIntrebare = 0 ;
@@ -131,27 +130,60 @@ public class VerifyAnswears  {
                                     //System.out.println("Raspunsuri mongo "+raspuns);
                                     //System.out.println("Intrebare123: " + fieldName);
                                     //System.out.println("Intrebare: " + intrbarePus);
+                                    double punctajProvizoriu =0.0;
+                                    double punctajProvizoriu1 =0.0;
                                     if(intrbarePus.equals(fieldName)){
                                         Object punctajValue = intrebare.get("punctaj");
-
+                                        String tip = intrebare.getString("tip");
+                                        //System.out.println("Intrebare "+intrbarePus);
+                                        //System.out.println("Tip intrebare "+tip);
+                                        ArrayList<String> raspuns1 = (ArrayList<String>) intrebare.get("raspuns", List.class);
+                                        //System.out.println("Raspunsuri mongo "+raspuns1);
                                         if (punctajValue instanceof Integer) {
                                             punctaj[0] = ((Integer) punctajValue).doubleValue();
                                         } else if (punctajValue instanceof Double) {
                                             punctaj[0] = (double) punctajValue;
                                         }
-                                        System.out.println("Am intrat in verificare");
+                                        System.out.println("Punctaj "+punctaj[0]);
+                                        //System.out.println("Am intrat in verificare");
                                         for(int k=0;k<fieldValue.size(); k++){
                                             ArrayList<String> raspuns = (ArrayList<String>) intrebare.get("raspuns", List.class);
-                                            System.out.println("Raspunsuri mongo "+raspuns);
-                                            System.out.println("Raspuns primit "+fieldValue.get(k));
+                                            //System.out.println("Raspunsuri mongo "+raspuns);
+                                            //System.out.println("Raspuns primit "+fieldValue.get(k));
                                             String varianta = fieldValue.get(k).toString();
                                             String raspsunsString = raspuns.toString();
-                                            System.out.println(raspsunsString.contains(varianta));
-                                            if(raspsunsString.contains(varianta)){
-                                                punctajFinal1[0] += punctaj[0];
-                                                System.out.println("Punctaj intrbare gasita 4 "+ punctajFinal1[0]);
+                                           // System.out.println(raspsunsString.contains(varianta));
+                                            System.out.println("Intrebare de pus "+intrbarePus);
+                                            if(tip.equals("multiplu") || punctaj[0]==0.33){
+                                                if (raspsunsString.contains(varianta) || punctaj[0]==0.33) {
+                                                    punctajProvizoriu += punctaj[0];
+                                                    System.out.println("Punctaj adaugat varaiana multipla "+intrbarePus+" "+ punctajProvizoriu);
+                                                } else{
+                                                    punctajProvizoriu1 +=  punctaj[0];
+                                                    System.out.println("Punctaj scadat varaiana multipla1 "+intrbarePus+" "+ punctajProvizoriu);
+                                                }
+
+                                                if(punctajProvizoriu < 0){
+                                                    punctajProvizoriu =0;
+                                                }
+                                            }
+                                            else {
+                                                if (raspsunsString.contains(varianta)) {
+                                                    punctajProvizoriu += punctaj[0];
+                                                    //System.out.println("Punctaj intrbare gasita 4 "+ punctajFinal1[0]);
+                                                }
                                             }
                                         }
+                                        // System.out.println("Pentru intrebarea "+intrbarePus+ " s-a pus "+punctajProvizoriu);
+                                        if(punctajProvizoriu - punctajProvizoriu1<0){
+                                            double punctaj12 =punctajProvizoriu - punctajProvizoriu1;
+                                            punctajFinal[0] += 0;
+                                            System.out.println("Pentru intrebarea1 "+intrbarePus+ " s-a pus "+punctaj12);
+                                        }else {
+                                            double punctaj12 =punctajProvizoriu - punctajProvizoriu1;
+                                            punctajFinal[0] += punctaj12;
+                                            System.out.println("Pentru intrebarea 2"+intrbarePus+ " s-a pus "+punctaj12);
+                                        };
                                     }
                                    // System.out.println("Intrebare 123: " + fieldValue);
                                 }
@@ -205,7 +237,7 @@ public class VerifyAnswears  {
 
                         //Document intrebare = ((ArrayList<Document>) bank2.get("intrebari")).get(randomPoz);
                         int lungimeIntrebari = ((ArrayList<Document>) bank2.get("intrebari")).size();
-                        System.out.println("Punctaj intrbare gasita 3 "+ punctajFinal[0]);
+                        //System.out.println("Punctaj intrbare gasita 3 "+ punctajFinal[0]);
                         for(int l = 0;l<lungimeIntrebari ;l++) {
                             Document intrebare = ((ArrayList<Document>) bank2.get("intrebari")).get(l);
 
@@ -223,29 +255,60 @@ public class VerifyAnswears  {
                                 //System.out.println("Raspunsuri mongo "+raspuns);
                                 //System.out.println("Intrebare123: " + fieldName);
                                 //System.out.println("Intrebare: " + intrbarePus);
+                                double punctajProvizoriu =0;
+                                double punctajProvizoriu1 =0;
                                 if(intrbarePus.equals(fieldName)){
                                     Object punctajValue = intrebare.get("punctaj");
-
+                                    String tip = intrebare.getString("tip");
+                                    //System.out.println("Intrebare "+intrbarePus);
+                                    //System.out.println("Tip intrebare "+tip);
+                                    ArrayList<String> raspuns1 = (ArrayList<String>) intrebare.get("raspuns", List.class);
+                                    //System.out.println("Raspunsuri mongo "+raspuns1);
                                     if (punctajValue instanceof Integer) {
                                         punctaj[0] = ((Integer) punctajValue).doubleValue();
                                     } else if (punctajValue instanceof Double) {
                                         punctaj[0] = (double) punctajValue;
                                     }
-
-                                    String tip = intrebare.getString("tip");
-                                    System.out.println("Am intrat in verificare "+tip);
-                                    double punctajProvizoriu =0;
+                                    System.out.println("Punctaj "+punctaj[0]);
+                                    //System.out.println("Am intrat in verificare "+tip);
                                     for(int k=0;k<fieldValue.size(); k++){
                                         ArrayList<String> raspuns = (ArrayList<String>) intrebare.get("raspuns", List.class);
-                                        System.out.println("Raspunsuri mongo "+raspuns);
-                                        System.out.println("Raspuns primit "+fieldValue.get(k));
+                                       // System.out.println("Raspunsuri mongo "+raspuns);
+                                        //System.out.println("Raspuns primit "+fieldValue.get(k));
                                         String varianta = fieldValue.get(k).toString();
                                         String raspsunsString = raspuns.toString();
-                                        System.out.println(raspsunsString.contains(varianta));
-                                        if(raspsunsString.contains(varianta)){
-                                            punctajFinal1[0] += punctaj[0];
-                                            System.out.println("Punctaj intrbare gasita 4 "+ punctajFinal1[0]);
+                                        //System.out.println(raspsunsString.contains(varianta));
+                                        //System.out.println("Punctaj provizoriu "+punctajProvizoriu);
+                                        System.out.println("Intrebare de pus "+intrbarePus);
+                                        if(tip.equals("multiplu") || punctaj[0]==0.33){
+                                            if (raspsunsString.contains(varianta) || punctaj[0]==0.33) {
+                                                punctajProvizoriu += punctaj[0];
+                                                System.out.println("Punctaj adaugat varaiana multipla "+intrbarePus+" "+ punctajProvizoriu);
+                                            } else{
+                                                punctajProvizoriu1 +=  punctaj[0];
+                                                System.out.println("Punctaj scadat varaiana multipla1 "+intrbarePus+" "+ punctajProvizoriu1);
+                                            }
+
+                                            if(punctajProvizoriu < 0){
+                                                punctajProvizoriu =0;
+                                            }
                                         }
+                                        else {
+                                            if (raspsunsString.contains(varianta)) {
+                                                punctajProvizoriu += punctaj[0];
+                                                //System.out.println("Punctaj intrbare gasita 4 "+ punctajFinal1[0]);
+                                            }
+                                        }
+                                    }
+                                   // System.out.println("Pentru intrebarea "+intrbarePus+ " s-a pus "+punctajProvizoriu);
+                                    if(punctajProvizoriu - punctajProvizoriu1<0){
+                                        double punctaj12 =punctajProvizoriu - punctajProvizoriu1;
+                                        System.out.println("Pentru intrebarea1 "+intrbarePus+ " s-a pus "+punctaj12+" "+punctajFinal[0]);
+                                    }else {
+                                        double punctaj12 =punctajProvizoriu - punctajProvizoriu1;
+                                        punctajFinal[0] += punctaj12;
+                                         System.out.println("Pentru intrebarea 2"+intrbarePus+ " s-a pus "+punctaj12+" "+punctajFinal[0]);
+
                                     }
                                 }
                             }
@@ -287,15 +350,10 @@ public class VerifyAnswears  {
                 e.printStackTrace();
             }
 
-            /*while(fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                String   fieldName  = field.getKey();
-                ArrayNode fieldValue = (ArrayNode) field.getValue();
-
-                System.out.println("Intrebare: " + fieldName);
-                System.out.println("Intrebare 123: " + fieldValue);
-            }*/
             double finalP =punctajFinal[0]+ punctajFinal1[0]+1;
+            if(finalP>10){
+                finalP = 10.0;
+            }
             DecimalFormat df = new DecimalFormat("0.00");
             return df.format(finalP);
         } catch (Exception e) {
