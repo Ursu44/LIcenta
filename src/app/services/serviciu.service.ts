@@ -11,6 +11,7 @@ export class ServiciuService {
 
   sendStatistici(raspuns: any){
     this.statistica = raspuns;
+    localStorage.setItem("statistica", raspuns);
   }
 
   getStatistici(){

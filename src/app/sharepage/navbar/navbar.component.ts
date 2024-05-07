@@ -359,8 +359,9 @@ export class NavbarComponent implements OnInit {
             },
           });
           let raspunsServer = response.data;
-          this.servicu.sendStatistici(raspunsServer);
-          console.log("Raspuns statistici "+raspunsServer);
+          let raspunsTRimis = JSON.stringify(raspunsServer);
+          console.log("Raspuns statistici "+raspunsTRimis);
+          this.servicu.sendStatistici(raspunsTRimis);
          
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
