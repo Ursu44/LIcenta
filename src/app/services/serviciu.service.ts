@@ -7,9 +7,14 @@ import { SendTestService } from './send-test.service';
 export class ServiciuService {
 
   constructor(private servicu:SendTestService) { }
-  private raspunsTest: any = {};
+  private statistica: any = {};
 
-  deschide(){
-    window.open("/test", '_blank', "width=1648,height=960");
+  sendStatistici(raspuns: any){
+    this.statistica = raspuns;
+  }
+
+  getStatistici(){
+    return this.statistica;
   }
 }
+

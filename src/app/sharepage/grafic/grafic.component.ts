@@ -18,7 +18,6 @@ export class GraficComponent implements OnInit{
   ngOnInit() {
     this.appComponent.apasat = false;
     this.getData();
-    this.generateChart();
   }
 
   async getData(): Promise<void>  {
@@ -29,7 +28,6 @@ export class GraficComponent implements OnInit{
             this.intrebari = localStorage.getItem("noteGrafic");
             console.log("Am intrat in initializare 123456 "+this.intrebari);
             //console.log("Raspuns 123" +Object.keys(this.test["Intrebare1"]));
-
               resolve(); 
           }, 500);
       });

@@ -20,6 +20,7 @@ import { CoursesComponent } from './sharepage/courses/courses.component';
 import { TestComponent } from './sharepage/test/test.component';
 import {Chart} from 'chart.js';
 import { GraficComponent } from './sharepage/grafic/grafic.component';
+import { StatisticiComponent } from './sharepage/statistici/statistici.component';
 
 @NgModule({ 
   declarations: [
@@ -35,7 +36,8 @@ import { GraficComponent } from './sharepage/grafic/grafic.component';
     PassResetComponent,
     CoursesComponent ,
     TestComponent,
-    GraficComponent 
+    GraficComponent,
+    StatisticiComponent 
   ],
   imports: [
     FormsModule,

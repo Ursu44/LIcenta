@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngClass]="{ 'disabled-container': !deschis  }">
 <div class="accordion" id="accordionExample" style="width:1790px; ">
   <ng-container *ngFor="let subvector of subvectori; let i = index;" style="width:1860px; margin-right: -120px;">
     <div class="accordion-item" *ngIf="(raspunsObj['Capitol'+(i+1)].activat && !esteProfesor()) || esteProfesor()">
@@ -22,7 +22,7 @@
         </div>
         <br><br>
         <div style="text-align: center;">
-          <button type="button" class="btn btn-primary btn-lg" *ngIf="!esteProfesor()">Trimite</button>
+          <button type="button" class="btn btn-primary btn-lg" *ngIf="!esteProfesor()" (click)="trimitereProgres(i)">Trimite</button>
         </div>
       </div>
       <br><br><br>
@@ -36,23 +36,39 @@
   </ng-container>
 </div>
 <div div class="btn-group" role="group" aria-label="Basic example" style="margin-top: -90px;  margin-left: 820px;">
- <button type="button"  class="btn btn-secondary" style="width: 200px;" (click)="preiaTestul('1_2')">Test 1</button>
-  <button type="button" class="btn btn-secondary" style=" width: 200px;"  (click)="preiaTestul('3_4')">Test 2</button>
+ <button type="button"  class="btn btn-secondary" style="width: 200px;" [disabled]="!esteProfesor() && raspunsObj['Capitol1'].progres != 100 && raspunsObj['Capitol2'].progres != 100 || (incercari == 0 && !esteProfesor())" (click)="preiaTestul('1_2')">Test 1</button>
+  <button type="button" class="btn btn-secondary" style=" width: 200px;"  [disabled]="!esteProfesor() && raspunsObj['Capitol4'].progres != 100 && raspunsObj['Capitol3'].progres != 100 ||  (incercari1 == 0 && !esteProfesor())" (click)="preiaTestul('3_4')">Test 2</button>
 </div>
 <br><br><br><br><br>
   <div class="nota11">
-    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Numar de incercari pentru test </p>
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Numar de incercari pentru testul 1  </p>
     <input type="text" [value] ="incercari" class="nota" style="width: 30px"*ngIf="esteProfesor()" id="incercari1"><br><br><br><br>
     <span *ngIf="!esteProfesor()" class="nota">{{incercari}}</span><br><br><br><br>
   </div>
+  <div class="nota11">
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Numar de incercari pentru testul 2  </p>
+    <input type="text" [value] ="incercari1" class="nota" style="width: 30px"*ngIf="esteProfesor()" id="incercari12"><br><br><br><br>
+    <span *ngIf="!esteProfesor()" class="nota">{{incercari1}}</span><br><br><br><br>
+  </div>
   <div class="nota12">
-    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Timp pentru test</p>
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Timp pentru testul 1  </p>
     <input type="text" [value] ="ora" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="ora1"><br>
     <span *ngIf="!esteProfesor()" class="ora">{{ora}}</span><br>
     <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">ore și</p>
     <input type="text" [value] ="minute" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="minute1"><br>
     <span *ngIf="!esteProfesor()" class="ora">{{minute}}</span><br>
     <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">minute</p><br>
+  </div>
+  <div class="nota12">
+    <p style="margin-top: -90px;  margin-left: 700px; white-space: nowrap;">Timp pentru testul 2  </p>
+    <input type="text" [value] ="ora1" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="ora12"><br>
+    <span *ngIf="!esteProfesor()" class="ora">{{ora1}}</span><br>
+    <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">ore și</p><br>
+    <input type="text" [value] ="minute1" class="ora" style="width: 40px" *ngIf="esteProfesor()" id="minute12"><br>
+    <span *ngIf="!esteProfesor()" class="ora">{{minute1}}</span><br>
+    <p style="margin-top: -90px;  margin-left: 10px; white-space: nowrap;">minute</p><br>
     <button style=" margin-left: 10px; width: 140px;  margin-left: -240px;" type="button" class="btn btn-info"  (click)="trimitDateTest()" *ngIf="esteProfesor()">Trimite</button><br><br><br>
-  </div><br><br><br>
+    <h2 *ngIf="!esteProfesor() && nota1False" class="nota1234" style="margin-left: -268px;">Nota pentru testul 1 este {{nota1}}/10</h2><br><br><br>
+    <h2 *ngIf="!esteProfesor()&& nota2False" class="nota12345" style="margin-left: -298px;">Nota pentru testul 2 este {{nota2}}/10</h2><br><br><br>
+  </div><br><br><br><br><br>
 </div>

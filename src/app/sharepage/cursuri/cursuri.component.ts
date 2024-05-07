@@ -33,15 +33,18 @@ export class CursuriComponent implements OnInit {
   stare:boolean = false;
   indexDeschis: number = 0;
   isCollapsed: boolean[] = [];
-  nota1: any = "";
-  nota2: any = "";
+  nota1: any = "0";
+  nota2: any = "0";
   nume="Fizica";
   nota1False: any= false;
   nota2False: any= false;
-  incercari = 0;
+  incercari:number = 0;
+  incercari1:number = 0;
   ora = 0;
   minute =0;
-
+  ora1 = 0;
+  minute1 =0;
+  deschis :any =true;
   
 
   constructor(private appComponent:AppComponent,private servicu:ServiciuService ,private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService, private sendtest:SendTestService) {}
@@ -62,31 +65,58 @@ export class CursuriComponent implements OnInit {
 
   date: any = {
     ora:"",
+    ora1:"",
     incercari:"",
+    incercari1:"",
     materie:""
+  };
+
+  dateProgres: any ={
+    progresAdd:0,
+    materie:"",
+    mailElev:"",
+    capitol:""
   };
 
   ngOnInit(): void {
     this.preiaDate();
-  
     //this.appComponent.raspuns1 = true;
+  }
+
+  @HostListener('click') onClick() {
+    if(!this.esteProfesor()){
+      this.deschis= (localStorage.getItem("opened") === "true");
+      this.appComponent.app = (localStorage.getItem("opened") === "true");
+    }
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll(event: Event): void {
+    if(localStorage.getItem("nota1")){
+          this.nota1False = true;
+      this.nota1= localStorage.getItem("nota1");
+  }
+ 
+  if(localStorage.getItem("nota2")){
+    this.nota2False = true;
+    this.nota2= localStorage.getItem("nota2");
+}
+
   }
 
   @HostListener('window:storage', ['$event'])
   onStorageChange(event: StorageEvent) {
-      if (event.key === 'nota1') { 
-        this.nota1False = true;
-        if(localStorage.getItem("nota1")){
-          this.nota1= localStorage.getItem("nota1");
-      }
-      }
-      if (event.key === 'nota2') { 
-        this.nota2False = true;
-        if(localStorage.getItem("nota2")){
-          this.nota2= localStorage.getItem("nota2");
-      }
-      }
+    if (event.key === 'opened') { 
+      this.nota2False = true;
+      if(localStorage.getItem("opened")){
+        this.deschis= (localStorage.getItem("opened") === "false");
+        localStorage.setItem("opened", "true");
+    }
+    }
   }
+
+  
+
   
   async preiaDate(): Promise<void> {
     this.getData();
@@ -142,12 +172,20 @@ export class CursuriComponent implements OnInit {
       console.log("Uite ce am primit" + this.raspuns);
       if( this.raspuns != undefined){
       this.raspunsObj = JSON.parse(this.shareDataService.getRaspuns());
-
+      console.log("Progres actual "+this.raspunsObj['Capitol1'].progres)
       this.ora = (this.raspunsObj["Detalii_test"].durataTest).split(":")[0];
-      localStorage.setItem("ora", String(this.ora));
+      localStorage.setItem("ora1", String(this.ora));
       this.minute = (this.raspunsObj["Detalii_test"].durataTest).split(":")[1];
-      localStorage.setItem("minute", String(this.minute));
+      localStorage.setItem("minute1", String(this.minute));
+
+      this.ora1 = (this.raspunsObj["Detalii_test"].durataTest1).split(":")[0];
+      localStorage.setItem("ora2", String(this.ora1));
+      this.minute1 = (this.raspunsObj["Detalii_test"].durataTest1).split(":")[1];
+      localStorage.setItem("minute2", String(this.minute1));
       this.incercari = this.raspunsObj["Detalii_test"].incercari;
+      console.log("Incercari 123"+this.incercari);
+
+      this.incercari1 = this.raspunsObj["Detalii_test"].incercari1;
       delete this.raspunsObj["Detalii_test"];
       for(let j =0;j<= Object.keys(this.raspunsObj).length-1; j++){
         let k =j+1;
@@ -368,6 +406,32 @@ export class CursuriComponent implements OnInit {
     let accessToken = localStorage.getItem('access_token');
     let refreshToken = localStorage.getItem('refresh_token');
     
+    if(capitole === '1_2'){
+        const ora123:string | null = localStorage.getItem("ora1");
+        if (ora123 !== null) {
+          localStorage.setItem("ora", ora123);
+      } else {
+      }
+
+      const minute123:string | null = localStorage.getItem("minute1");
+      if (minute123 !== null) {
+        localStorage.setItem("minute", minute123);
+    } else {
+    }
+    } else if(capitole === '3_4'){
+      const ora123:string | null = localStorage.getItem("ora2");
+      if (ora123 !== null) {
+        localStorage.setItem("ora", ora123);
+    } else {
+    }
+
+    const minute123:string | null = localStorage.getItem("minute2");
+    if (minute123 !== null) {
+      localStorage.setItem("minute", minute123);
+  } else {
+  }
+    }
+
     if (accessToken && refreshToken) {
     const accessTokenPayload = this.decodeJwtPayload(accessToken);
     const expirationTime = accessTokenPayload.exp * 1000; 
@@ -421,7 +485,9 @@ export class CursuriComponent implements OnInit {
         localStorage.setItem("intrebari",jsonObj1);
         this.sendtest.sendRaspunsTest(jsonObj1);
         this.sendtest.getRaspunsTest();
-        window.open("/test", '_blank', "width=1648,height=960");
+        window.open("/test", '_blank', "width=1548,height=860");
+        this.deschis = false;
+        localStorage.setItem("opened","false");
         this.formData = {
           numeLectie:"",
           activat:false,
@@ -455,6 +521,7 @@ export class CursuriComponent implements OnInit {
         this.sendtest.sendRaspunsTest(jsonObj1);
         this.sendtest.getRaspunsTest();*/
         window.open("/grafic", '_blank', "width=1648,height=960");
+        
       })
 
     }
@@ -481,10 +548,57 @@ async trimitDateTest(){
     let ora1 = document.getElementById('ora1')as HTMLInputElement | null;
     let minute = document.getElementById('minute1')as HTMLInputElement | null;
     this.date.ora = ora1?.value+":"+minute?.value;
+    let ora2 = document.getElementById('ora12')as HTMLInputElement | null;
+    let minute1 = document.getElementById('minute12')as HTMLInputElement | null;
+    this.date.ora1 = ora2?.value+":"+minute1?.value;
     let incercari1 = document.getElementById('incercari1')as HTMLInputElement | null;
     this.date.incercari = incercari1?.value;
+    let incercari12 = document.getElementById('incercari12')as HTMLInputElement | null;
+    this.date.incercari1 = incercari12?.value;
     this.date.materie = this.shareNume.getNume();
     const jsonObj = JSON.stringify(this.date);
+    axios.put(securedEndpoint, jsonObj, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+    .then(async response => {
+      const jsonObj1 = JSON.stringify(response.data);
+      console.log(" "+jsonObj1);
+    })
+    .catch(error => {
+      console.error('Eroare la trimiterea JSON-ului:', error);
+    });
+  }
+
+  }else{
+    this.refresh.refresh();
+  }
+}
+}
+
+async trimitereProgres(i:number){
+  let accessToken = localStorage.getItem('access_token');
+  let refreshToken = localStorage.getItem('refresh_token');
+  
+  if (accessToken && refreshToken) {
+  const accessTokenPayload = this.decodeJwtPayload(accessToken);
+  const expirationTime = accessTokenPayload.exp * 1000; 
+  const mail = accessTokenPayload.sub;
+ // const nume = mail.split[1];
+  //console.log("Mail elev 1234 "+mail);
+  if (expirationTime > Date.now()) {
+    //console.log("Progresul ce va fi trimis"+this.progres[i]);
+    let j = i+1;
+    //console.log("Progres ce va fi trimis Capitol"+j);
+    if(!this.esteProfesor()){
+    const securedEndpoint = 'http://localhost:8083/update/progres';
+    this.dateProgres.mailElev = mail;
+    this.dateProgres.progresAdd = this.progres[i];
+    this.dateProgres.capitol = "Capitlolul "+j;
+    this.dateProgres.materie = this.shareNume.getNume();
+    const jsonObj = JSON.stringify(this.dateProgres);
     axios.put(securedEndpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json',

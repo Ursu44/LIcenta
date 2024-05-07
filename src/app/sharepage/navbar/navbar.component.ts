@@ -9,6 +9,7 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { PopupComponent } from '../popup/popup.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
 import { AppComponent } from 'src/app/app.component';
+import { ServiciuService } from 'src/app/services/serviciu.service';
 
 declare var window: any;
 
@@ -50,7 +51,7 @@ export class NavbarComponent implements OnInit {
   raspunsServer: string = ''; 
   jwtHelper: any;
   router: any;
-  constructor(private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
+  constructor(private servicu:ServiciuService ,private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
@@ -208,27 +209,6 @@ export class NavbarComponent implements OnInit {
         localStorage.setItem('refresh_token', response.data.refresh_token);
         this.ok = true;
         this.doHiddingLogin();
-        /*const securedEndpoint = 'http://localhost:8082/';
-       
-       const securedResponse = await fetch(securedEndpoint, {
-          headers: {
-            method: 'GET',
-           'Content-Type': 'text/plain',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        });
-    
-        if (!securedResponse.ok) {
-          throw new Error(`HTTP error! Status: ${securedResponse.status}`);
-        }
-
-        const securedData = await securedResponse.text();
-        console.log('Răspuns de la endpoint-ul securizat:', securedData);
-
-        this.doHiddingRgister();*/
-
-        //window.location.reload();
-        //this.confirmModal.show();
       this.loginFormData = {
         username: '',
         password: ''
@@ -348,17 +328,53 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('refresh_token');
     //this.formLogin.show();
     this.ok = false;
-    /*const securedEndpoint = 'http://localhost:8080/logout';
+   
+  }
+
+  async accessStatistici(){
+    console.log("Am intrat la statisci")
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+
+    if (accessToken && refreshToken) {
+      const accessTokenPayload = this.decodeJwtPayload(accessToken);
+      const expirationTime = accessTokenPayload.exp * 1000; 
+      
+    if (expirationTime > Date.now()) {
+        let securedEndpoint ;
+    if(this.esteProfesor()){
+
+       securedEndpoint = 'http://localhost:8082/statistici/statisticiProfesor';
+    }
+    else{
+      securedEndpoint = 'http://localhost:8082/statistici/statisticiElev';
+    }
+ 
         try {
-          const response = await axios.post(securedEndpoint, {
+          const response = await axios.get(securedEndpoint, {
+            method: 'GET',
             headers: {
+              'Content-Type': 'text/plain',
               'Authorization': `Bearer ${accessToken}`,
             },
           });
+          let raspunsServer = response.data;
+          this.servicu.sendStatistici(raspunsServer);
+          console.log("Raspuns statistici "+raspunsServer);
+         
+        } catch (error) {
+          console.error('Eroare la cererea GET cu token valid:', error);
         }
-          catch (error) {
-            console.error('Eroare la logout:', error);
-    }*/
+      }
+        else {
+          console.log('Token-ul de acces a expirat. Solicităm o nouă autentificare.');
+          this.refresh.refresh();
+          //this.formLogin.show();
+          //await this.refreshAccessToken();
+        }
+      } else {
+        console.error('Token-uri lipsă.');
+      }
   }
   
   async accesCatalog(){

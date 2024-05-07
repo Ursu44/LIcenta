@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import axios from 'axios';
 import { AppComponent } from 'src/app/app.component';
 import { SendTestService } from 'src/app/services/send-test.service';
@@ -10,7 +10,6 @@ import { ServiciuService } from 'src/app/services/serviciu.service';
   styleUrls: ['./test.component.css']
 })
 export class TestComponent {
-[x: string]: any;
   constructor(private appComponent: AppComponent, private testComponent: SendTestService, private servicu:ServiciuService) { }
   public test: any  ;
   public test1: any  ;
@@ -21,6 +20,8 @@ export class TestComponent {
   dateTrimis1:any ;
   intrebariTrimis:any = {};
   intrebariTrimis1:any ;
+  nota1 :any;
+  nota2 :any;
   
    ngOnInit() {
     //this.appComponent.raspuns1 = false;
@@ -31,7 +32,17 @@ export class TestComponent {
     this.timer(Number(localStorage.getItem("ora")), Number(localStorage.getItem("minute")));
     
   }
-
+  @HostListener('click') onClick() {
+    localStorage.setItem("opened", "true");
+    if( localStorage.getItem("nota1")){
+      this.nota1 =  localStorage.getItem("nota1")
+    localStorage.setItem("nota11",  this.nota1);
+    }
+    if( localStorage.getItem("nota2")){
+      this.nota2 =  localStorage.getItem("nota2")
+    localStorage.setItem("nota22",  this.nota1);
+    }
+  }
 
   async getData(): Promise<void>  {
     try {
@@ -129,7 +140,8 @@ export class TestComponent {
           }
           else{
             localStorage.setItem("nota2", response.data);
-          }      
+          }
+          localStorage.setItem("opened","false");      
         })
         .catch(error => {
           console.error('Eroare la trimiterea JSON-ului:', error);
@@ -138,6 +150,7 @@ export class TestComponent {
       catch (error) {
         console.error('Eroare la trimiterea JSON-ului:', error);
       } finally {
+      
         window.close();
       }
 }

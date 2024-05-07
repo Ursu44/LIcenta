@@ -1,0 +1,7 @@
+<div class="grafice">  
+    <p>{{raspuns}}</p> 
+    <div *ngFor="let index of [0, 1, 2, 3, 4]; let i = index">
+        <p>Raspunsul pentru graficul {{i+1}}: {{raspuns}}</p> 
+        <canvas id="myChart{{i}}" width="10" height="50"></canvas>
+      </div>
+</div>

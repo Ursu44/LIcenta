@@ -15,6 +15,7 @@ export class AppComponent {
   registerForm!: FormGroup;
   submitted = false;
   apasat = true;
+  app = true;
 
   constructor(private formBuilder: FormBuilder, private dialog : MatDialog) { }
   show(){

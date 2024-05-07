@@ -28,6 +28,14 @@
     margin-left: 70px;
 }
 
+.container .nota13 {
+    display: flex;
+    align-items: center; 
+    flex-direction: row;
+    margin-top: -5px;
+    margin-left: 70px;
+}
+
 .container .nota11 .nota {
     margin-top: -100px;
     margin-left: 10px;
@@ -39,8 +47,21 @@
 }
 
 
+.container .nota12 .nota1234 {
+    margin-top: -30px;
+    margin-left: 2px;
+}
 
+.container .nota12 .nota12345 {
+    margin-top: 25px;
+    margin-left: 2px;
+}
 
 .collapsed {
     background-color: #D4E4F7; 
+  }
+
+  .disabled-container {
+    pointer-events: none;
+    opacity: 0.5; 
   }
