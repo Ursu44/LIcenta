@@ -40,6 +40,11 @@ public class TakeLectures {
                                 System.out.println("Mail " + mail);
                                 System.out.println("Materie " + numeMaterie);
                                 DataSnapshot materieSnapshot = studentSnapshot.child(numeMaterie);
+                                lectie1.put("durataTest",studentSnapshot.child(numeMaterie).child("durataTest").getValue(String.class));
+                                lectie1.put("durataTest1",studentSnapshot.child(numeMaterie).child("durataTest1").getValue(String.class));
+                                lectie1.put("incercari",studentSnapshot.child(numeMaterie).child("incercari").getValue(Integer.class));
+                                lectie1.put("incercari1",studentSnapshot.child(numeMaterie).child("incercari1").getValue(Integer.class));
+                                lectie1.put("testDat",studentSnapshot.child(numeMaterie).child("testDat").getValue(Boolean.class));
                                 if (materieSnapshot.exists()) {
                                     System.out.println("Aici 123");
                                     DataSnapshot lectieSnapshot = materieSnapshot.child("Capitlolul 1");
@@ -155,13 +160,25 @@ public class TakeLectures {
                                     }
                                     //System.out.println("Raspuns primit "+raspuns);
                                 }
+                                raspuns.put("Detalii_test", lectie1);
                             }
                         }
                         else if(tip.equals("profesor")) {
                             System.out.println("Nume pentru prof "+nume);
                             String numeMaterie = nume.split("_")[0];
+                            String mailProf = studentSnapshot.child(numeMaterie).child("mailProfesor").getValue(String.class);
+                            if (mailProf.equals(gmail)) {
                             DataSnapshot materieSnapshot = studentSnapshot.child(numeMaterie);
-                            DataSnapshot lectieSnapshot = materieSnapshot.child("Capitlolul 1");;
+                            DataSnapshot lectieSnapshot = materieSnapshot.child("Capitlolul 1");
+                            System.out.println("DEtalii test "+ studentSnapshot.child(numeMaterie).child("durataTest").getValue(String.class));
+                            System.out.println("DEtalii test 1 "+ studentSnapshot.child(numeMaterie).child("incercari").getValue(Integer.class));
+                            System.out.println("DEtalii test 2"+ studentSnapshot.child(numeMaterie).child("testDat").getValue(Boolean.class));
+                            lectie1.put("durataTest",studentSnapshot.child(numeMaterie).child("durataTest").getValue(String.class));
+                            lectie1.put("durataTest1",studentSnapshot.child(numeMaterie).child("durataTest1").getValue(String.class));
+
+                                lectie1.put("incercari",studentSnapshot.child(numeMaterie).child("incercari").getValue(Integer.class));
+                                lectie1.put("incercari1",studentSnapshot.child(numeMaterie).child("incercari1").getValue(Integer.class));
+                                lectie1.put("testDat",studentSnapshot.child(numeMaterie).child("testDat").getValue(Boolean.class));
                             if (lectieSnapshot.exists()) {
                                 JSONObject lectie = new JSONObject();
                                 lectie.put("progres", lectieSnapshot.child("progres").getValue(Integer.class));
@@ -195,8 +212,11 @@ public class TakeLectures {
                                 lectie.put("numeCapitol", lectieSnapshot3.child("Nume").getValue(String.class));
                                 raspuns.put("Capitol4", lectie);
                             }
+                            System.out.println("Json raspuns detalii test "+lectie1);
+                            raspuns.put("Detalii_test", lectie1);
                             break;
                         }
+                         }
                 }
                 latch.countDown();
             }
@@ -318,4 +338,77 @@ public class TakeLectures {
 
         return an[0];
     }
+
+    public String takeStatistic(String gmail,String tip) {
+        CountDownLatch latch = new CountDownLatch(1);
+        final int[] nr = {1};
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        ArrayList<String> materii1 = new ArrayList<String>();
+        materii1.add("Fizică");
+        materii1.add("Matematică");
+        materii1.add("Istorie");
+        materii1.add("Geografie");
+        materii1.add("Limba si literatura romana");
+        materii1.add("Limba engleza");
+        materii.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                 if (tip.equals("statisticiProfesor")) {
+                    for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                        for (int i = 0; i < materii1.size(); i++) {
+                            String mailProf = studentSnapshot.child(materii1.get(i)).child("mailProfesor").getValue(String.class);
+                            if (!mailProf.equals("") && mailProf.equals(gmail)) {
+                                HashMap<String, Object> data1 = new HashMap<String, Object>();
+                                data1.put("mail", studentSnapshot.child("mailElev").getValue(String.class));
+                                //System.out.println("dada da a 123"+ studentSnapshot.child("mailElev").getValue(String.class));
+                                //System.out.println("dada da a "+studentSnapshot.child(materii.get(i)).child("Capitlolul 1").child("progres").getValue(Integer.class));
+                                data1.put("progres1", studentSnapshot.child(materii1.get(i)).child("Capitlolul 1").child("progres").getValue(Integer.class));
+                                data1.put("progres2", studentSnapshot.child(materii1.get(i)).child("Capitlolul 2").child("progres").getValue(Integer.class));
+                                data1.put("progres3", studentSnapshot.child(materii1.get(i)).child("Capitlolul 3").child("progres").getValue(Integer.class));
+                                data1.put("progres4", studentSnapshot.child(materii1.get(i)).child("Capitlolul 4").child("progres").getValue(Integer.class));
+                                data.put("elev"+ nr[0], data1);
+                                nr[0]++;
+                                System.out.println("Da DA DA "+studentSnapshot.child("mailElev").getValue(String.class));
+                            }
+                        }
+                    }
+                }else if(tip.equals("statisticiElev")){
+                     for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                         String mailProf = studentSnapshot.child("mailElev").getValue(String.class);
+                         for (int i = 0; i < materii1.size(); i++) {
+                             if (!mailProf.equals("") && mailProf.equals(gmail)) {
+                                 HashMap<String, Object> data1 = new HashMap<String, Object>();
+                                 data1.put("mail", studentSnapshot.child("mailElev").getValue(String.class));
+                                 data1.put("progres1", studentSnapshot.child(materii1.get(i)).child("Capitlolul 1").child("progres").getValue(Integer.class));
+                                 data1.put("progres2", studentSnapshot.child(materii1.get(i)).child("Capitlolul 2").child("progres").getValue(Integer.class));
+                                 data1.put("progres3", studentSnapshot.child(materii1.get(i)).child("Capitlolul 3").child("progres").getValue(Integer.class));
+                                 data1.put("progres4", studentSnapshot.child(materii1.get(i)).child("Capitlolul 4").child("progres").getValue(Integer.class));
+
+                                 data.put(materii1.get(i), data1);
+                             }
+                         }
+                     }
+                 }
+                latch.countDown();
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Eroare la extragerea cursurilor: " + error.getMessage());
+                latch.countDown();
+            }
+        });
+
+        try {
+            latch.await(7, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        String raspuns = data.toString() ;
+        System.out.println("Raspuns 1234 "+raspuns);
+        return raspuns;
+
+    }
+
 }

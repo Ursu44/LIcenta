@@ -63,4 +63,12 @@ public class Contoller {
         return  an;
     }
 
+    @Get("/statistici/{tip}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String iauDateStatistici(Principal principal, @QueryValue String tip) {
+        String response = principal.getName();
+        String gmail = response.split("_")[1];
+        return  takeLectures.takeStatistic(gmail, tip);
+    }
+
 }
