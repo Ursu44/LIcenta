@@ -55,7 +55,7 @@ public class UpdateNote {
         if (materie.equals("Limbaengleza")) {
             materie1 =  "Limba engleza";
         }
-        String finalMaterie = materie1;
+        String finalMaterie = materie;
         System.out.println("Materie de adaugat "+finalMaterie);
         materii.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -74,16 +74,6 @@ public class UpdateNote {
                         Map<String, Object> data = new HashMap<String, Object>();
                         data.put(tip, nota);
                         studentSnapshot.child(finalMaterie).getRef().updateChildren(data, null);
-                        int nota1 = studentSnapshot.child(finalMaterie).child("Nota1").getValue(Integer.class);
-                        int nota2 = studentSnapshot.child(finalMaterie).child("Nota2").getValue(Integer.class);
-                        int nota3 = studentSnapshot.child(finalMaterie).child("Nota3").getValue(Integer.class);
-                        int nota4 = studentSnapshot.child(finalMaterie).child("Nota4").getValue(Integer.class);
-                        if(nota1!=0 && nota2!=0 && nota3!=0 && nota4!=0){
-                            Map<String, Object> data1 = new HashMap<String, Object>();
-                            int medie = (int) (0.2* nota1 + 0.2* nota2 + 0.3* nota3 +0.3* nota4);
-                            data1.put("medie", medie);
-                            studentSnapshot.child(finalMaterie).getRef().updateChildren(data1, null);
-                        }
                         break;
                     }
                 }
