@@ -390,10 +390,10 @@ export class NavbarComponent implements OnInit {
     if (expirationTime > Date.now()) {
         let securedEndpoint ;
     if(this.esteProfesor()){
-       securedEndpoint = 'http://localhost:8084/catalog/profesor';
+       securedEndpoint = 'http://localhost:8094/catalog/profesor';
     }
     else{
-      securedEndpoint = 'http://localhost:8084/catalog/elev';
+      securedEndpoint = 'http://localhost:8094/catalog/elev';
     }
  
         try {

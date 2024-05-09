@@ -1,22 +1,12 @@
 <div class="input-group">
     <div *ngIf="esteProfesor()">
     <h2>Introdu nota</h2> <br>
-    <div class="grup-materie">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Materie</span></span>
-        </div>
-        <select id="selectMaterie" class="form-select" aria-label="Default select example" style="width: 400px;">
-            <option selected>Selectează materia</option>
-            <option *ngFor="let i of materiiAfisare">{{i}}</option>
-          </select>
-    </div>
-    <br><br><br>
     <div class="grup-ani">
         <div class="input-group-prepend">
-            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Ani</span></span>
+            <span class="input-group-text" id="" style="width: 155px;"><span class="text-buton">Ani și materii</span></span>
         </div>
         <select id="selectAn" class="form-select" aria-label="Default select example" style="width: 400px;">
-            <option selected>Selectează anul</option>
+            <option selected>Selectează anul și materia</option>
             <option *ngFor="let an of ani">{{an}}</option>
           </select>
     </div>
@@ -69,9 +59,9 @@
     <br><br><br><br><br><br><br><br><br>
     </div>
     <h2 style="margin-right: 1790px;">Catalog</h2>
-    <div class="container">
+    <div class="container" *ngIf="!esteProfesor()">
       <table class="table table-bordered">
-        <thead>
+        <thead >
             <tr>
                 <th>Nume</th>
                 <th>Grupa</th>
@@ -84,7 +74,7 @@
             <tr *ngFor="let nota of vectorCatalog">
                 <td>{{nota.nume}} {{nota.prenume}}</td>
                 <td>{{nota.grupa}}</td>
-                <ng-container *ngFor="let materie of ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limbasiliteraturaromana', 'Limbaengleza']">
+                <ng-container *ngFor="let materie of ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limba si literatura romana', 'Limba engleza']">
                     <td style="padding: 0px;" *ngIf="prezentinJson(materie) && nota[materie]"> 
                         <div class="table-responsive" style="overflow-x: auto;">
                             <table class="table table-bordered" style="margin-bottom: 0;">
@@ -105,5 +95,42 @@
     </table>
     
       </div>
-      <br><br><br><br><br>
+      <br><br>
+
+      <div class="container" *ngIf="esteProfesor()">
+        <table class="table table-bordered">
+            <thead >
+                <tr>
+                    <th>Nume</th>
+                    <th>Grupa</th>
+                    <ng-container *ngFor="let materie of ['Fizică', 'Matematică', 'Istorie', 'Geografie', 'Limba si literatura romana', 'Limba engleza']">
+                        <th *ngIf="verificareMaterie(materie)">{{materie}}</th>
+                    </ng-container>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let nota of vectorCatalog">
+                    
+                    <ng-container *ngFor="let materie of ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limbasiliteraturaromana', 'Limbaengleza']">
+                        <td *ngIf="verificareMaterie(materie) && nota[materie] && nota[materie][materie] !== 0">{{nota.nume}} {{nota.prenume}}</td>
+                        <td *ngIf="verificareMaterie(materie)  && nota[materie] && nota[materie][materie] !== 0">{{nota.grupa}}</td>
+                        <td style="padding: 0px;" *ngIf="verificareMaterie(materie) && nota[materie]"> 
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table class="table table-bordered" style="margin-bottom: 0;">
+                                    <tbody *ngIf="verificareMaterie(materie)">
+                                        <tr>
+                                            <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
+                                                <td><b>Nota{{i + 1}} </b>: <span *ngIf="nota[materie] && nota[materie][notaKey] !== 0 && verificareMaterie(materie)">{{nota[materie][notaKey]}} </span></td>
+                                            </ng-container>
+                                            <td><b>Medie: </b><span *ngIf="nota[materie] && nota[materie].Medie !== 0 && verificareMaterie(materie)">{{nota[materie].Medie}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+    </div><br><br><br><br>
 </div>

@@ -8,24 +8,27 @@ import { range } from 'rxjs';
   templateUrl: './statistici.component.html',
   styleUrls: ['./statistici.component.css']
 })
-export class StatisticiComponent implements AfterViewInit {
+export class StatisticiComponent implements OnInit {
   raspuns: any;
   raspuns1: any;
   vectorElevi: any;
   myChart: any;
   raspunsJson: any;
   indici :any = [];
+  materii :any = [];
+  vectorMaterii :any = [];
   constructor(private serviciu: ServiciuService) { }
+
   chartWidth = 40; 
   chartHeight = 40;
   data1 = [25, 100, 75 ,50];
   i = 0;
   grafice: (Chart | null)[] = []; 
+  dateElevi: { [indice: number]: number [] } = {};
 
-   ngAfterViewInit() {
+  ngOnInit(): void {
     this.raspuns1 = localStorage.getItem("statistica");
     this.preiaDate();
-    
   }
 
   async preiaDate() {
@@ -36,25 +39,48 @@ export class StatisticiComponent implements AfterViewInit {
           this.raspuns1 = localStorage.getItem("statistica");
           console.log("Raspunsul din noua pagina " + this.raspuns1);
           this.raspunsJson = JSON.parse(this.raspuns1);
-          this.vectorElevi = Object.keys(this.raspunsJson );
-          console.log("Raspusnul JSON "+ this.vectorElevi);
-          let lungimeJSON = this.vectorElevi.length;
-          for(let i =0 ;i <lungimeJSON ;i++){
-            this.indici.push(i);
-          }
+          if(this.esteProfesor()){
+            this.vectorElevi = Object.keys(this.raspunsJson );
+            console.log("Raspusnul JSON "+ this.vectorElevi);
+            let lungimeJSON = this.vectorElevi.length;
+            for(let i =0 ;i <lungimeJSON ;i++){
+              this.indici.push(i);
+            }
           console.log(this.indici);
+        }
+        else if(!this.esteProfesor()){
+          this.vectorMaterii = Object.keys(this.raspunsJson );
+           console.log("Raspusnul JSON "+ this.vectorMaterii);
+           let lungimeJSON = this.vectorMaterii.length;
+          for(let i =0 ;i <lungimeJSON ;i++){
+
+            this.materii.push(this.vectorMaterii[i]);
+          }
+        }
           resolve();
-        },9500);
+        },4500);
       });
     } catch (error) {
       console.error('Eroare în preluarea datelor:', error);
     }
   }
 
-  generateChart(index: number): void {
+  generateChart(index: number, materie: string): void {
 
-    let valori = [25, 75, 80, 100, 40];
-    let etichete = ['Capitolul A', 'Capitolul B', 'Capitolul C', 'Capitolul D']; 
+    let valori:any = [];
+    if(this.esteProfesor()){
+      valori.push(this.raspunsJson["elev"+(index+1)].progres1);
+      valori.push(this.raspunsJson["elev"+(index+1)].progres2);
+      valori.push(this.raspunsJson["elev"+(index+1)].progres3);
+      valori.push(this.raspunsJson["elev"+(index+1)].progres4);
+    }
+    else if(!this.esteProfesor()){
+      valori.push(this.raspunsJson[materie].progres1);
+      valori.push(this.raspunsJson[materie].progres2);
+      valori.push(this.raspunsJson[materie].progres3);
+      valori.push(this.raspunsJson[materie].progres4);
+    }
+    let etichete = ['Capitolul 1', 'Capitolul 2', 'Capitolul 3', 'Capitolul 4']; 
 
     let eticheteMapate: { [eticheta: string]: number } = {};
     for (let i = 0; i < etichete.length; i++) {

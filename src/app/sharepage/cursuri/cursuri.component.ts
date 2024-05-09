@@ -85,8 +85,10 @@ export class CursuriComponent implements OnInit {
 
   @HostListener('click') onClick() {
     if(!this.esteProfesor()){
-      this.deschis= (localStorage.getItem("opened") === "true");
-      this.appComponent.app = (localStorage.getItem("opened") === "true");
+      if(localStorage.getItem("opened")){
+        this.deschis= (localStorage.getItem("opened") === "true");
+        this.appComponent.app = (localStorage.getItem("opened") === "true");
+      }
     }
   }
 

@@ -21,11 +21,13 @@ export class CatalogComponent {
   rol:string = "";
   raspunsCatalogJson:any;
   vectorCatalog:any;
-  materie:string[] = ['Fizica', 'Matematica', 'Istoria', 'Geografie', 'Limbaengleza', 'Limbasiliteraturaromana'] ;
+  materie:string[] = ['Fizica', 'Matematica', 'Istorie', 'Geografie', 'Limbaengleza', 'Limbasiliteraturaromana'] ;
   deataliiAn: any = {};
+  deataliiAn1: any = {};
   aniDestudiu:any = {};
   materiiAfisare :any = [];
   ani :any = [];
+  ani1 :any = [];
   grupe :any = [];
   grupeSelectate :any = [];
   anSelectat: string = "";
@@ -33,6 +35,9 @@ export class CatalogComponent {
   nume: any = [];
   prenume: any = [];
   mail: any = [];
+  materia :any;
+  an: any;
+  materieMedie: any;
 
   formData: any = {
     nume: '',
@@ -75,27 +80,34 @@ export class CatalogComponent {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 this.raspunsCatalog = this.shareDataService.getRaspunsCatalog();
-                if(this.raspunsCatalog != undefined){
-                    this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
+                if(this.raspunsCatalog!=null){
+                  this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
                     this.vectorCatalog = Object.values(this.raspunsCatalogJson);
                     for(let nota1 of this.vectorCatalog){
+                     console.log("ELEv "+nota1);
                         for(let j =0;j<this.materie.length;j++){
+                          console.log("Materie 2 "+this.materie[j]);
                             if(this.materie[j] in nota1){
+                              console.log("Materie 1 "+this.materie[j]);
                               if(!this.materiiAfisare.includes(this.materie[j])){
+                                console.log("Materie "+this.materiiAfisare);
                                 this.materiiAfisare.push(this.materie[j]);   
                               }
                                 let materiedepus;
                                 if(this.materie[j] === "Fizica"){
                                     materiedepus= "Fizică";
                                 }
-                                if(this.materie[j] === "Matematica"){
+                                else if(this.materie[j] === "Matematica"){
                                     materiedepus= "Matematică";
                                 }
-                                if(this.materie[j] === "Limbaengleza"){
+                                else if(this.materie[j] === "Limbaengleza"){
                                     materiedepus= "Limba engleză";
                                 }
-                                if(this.materie[j] === "Limbasiliteraturaromana"){
+                                else if(this.materie[j] === "Limbasiliteraturaromana"){
                                     materiedepus= "Limba și literatura română";
+                                }
+                                else{
+                                  materiedepus = this.materie[j];
                                 }
                                 let detaliiElev = {
                                   nume: nota1.nume,
@@ -118,7 +130,7 @@ export class CatalogComponent {
                             }
                             }
                         }
-                    }
+                    } 
                     for (const an in this.ani) {
                           console.log("An:", an);
                     }
@@ -127,10 +139,11 @@ export class CatalogComponent {
                 }
                 for(let i in this.materiiAfisare){
                     console.log("i= "+this.materiiAfisare[i]);
+                    this.calculeazaMedia(this.materiiAfisare[i]);
                 }
                 console.log("Uite ce am primit catalog" + this.raspunsCatalog);
                 resolve(); 
-            }, 2100);
+            }, 6200);
         });
     } catch (error) {
         console.error('Eroare în preluarea datelor:', error);
@@ -141,14 +154,62 @@ onAnSelectatChange() {
   let anLuat :any;
   let grupaLuat :any;
   anLuat = document.getElementById('selectAn')as HTMLInputElement | null;
+  console.log("Ani "+this.ani)
   var text = anLuat.options[anLuat.selectedIndex].text;
+  this.materia = text.split('_')[0];
+  this.an =  text.split('_')[1];
+  console.log("Nume:", this.materia);
+  if(this.raspunsCatalog != undefined){
+    this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
+    this.vectorCatalog = Object.values(this.raspunsCatalogJson);
+    console.log("Raspuns host listenere "+this.vectorCatalog);
+    for(let nota1 of this.vectorCatalog){
+    let materiedepus;
+    this.materieMedie = this.materia;
+    this.calculeazaMedia(this.materieMedie);
+    if(this.materia === "Fizica"){
+        materiedepus= "Fizică";
+    }
+    else if(this.materia === "Matematica"){
+        materiedepus= "Matematică";
+    }
+    else if(this.materia === "Limbaengleza"){
+        materiedepus= "Limba engleză";
+    }
+    else if(this.materia === "Limbasiliteraturaromana"){
+        materiedepus= "Limba și literatura română";
+    }
+    else{
+      materiedepus= this.materia;
+    }
+  
+    let detaliiElev = {
+      nume: nota1.nume,
+      prenume: nota1.prenume,
+      mail: nota1.mail
+  };
+  if(!this.ani1.includes(nota1.an)){
+    this.ani1.push(nota1.an);
+  }
+  if (!this.deataliiAn1.hasOwnProperty(nota1.an)) {
+
+      this.deataliiAn1[nota1.an] = {}; 
+  }
+
+  if (!this.deataliiAn1[nota1.an].hasOwnProperty(nota1.grupa)) {
+    this.deataliiAn1[nota1.an][nota1.grupa] = []; 
+}
+if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
+  this.deataliiAn1[nota1.an][nota1.grupa].push(detaliiElev);   
+}
+    }
+  }
   this.gupeAlese(text); 
   //for(let i of this.grupe){
    this.grupeSelectate = Object.keys(this.grupe);  
   //}
   grupaLuat = document.getElementById('selectGrupa')as HTMLInputElement | null;
   var text1 = grupaLuat.options[grupaLuat.selectedIndex].text;
-  console.log("An luat "+text1);
   this.detaliiAlese(text, text1);
   this.nume = [];
   this.prenume = [];
@@ -175,10 +236,10 @@ onAnSelectatChange() {
 
     let securedEndpoint ;
     if(this.esteProfesor()){
-       securedEndpoint = 'http://localhost:8084/catalog/profesor';
+       securedEndpoint = 'http://localhost:8094/catalog/profesor';
     }
     else{
-      securedEndpoint = 'http://localhost:8084/catalog/elev';
+      securedEndpoint = 'http://localhost:8094/catalog/elev';
     }
         try {
           const response1 = await axios.get(securedEndpoint, {
@@ -197,7 +258,6 @@ onAnSelectatChange() {
         //this.vectorCatalog = Object.values(this.raspunsCatalogJson);
 
         this.shareDataCatalog.sendRaspunsCatalog(raspunsJSON);
-        this.calculeazaMedia();
            console.log("Raspuns server catalog "+ raspunsJSON);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
@@ -227,9 +287,6 @@ onAnSelectatChange() {
     console.log("afagas "+this.rol);
 
     if (expirationTime > Date.now()) {
-    var materie = document.getElementById('selectMaterie')  as HTMLInputElement | null;
-    let materieValoare = materie?.value;
-    this.formData.materie = materieValoare;
 
     var grupa = document.getElementById('selectGrupa')  as HTMLInputElement | null;
     let grupaValoare = grupa?.value;
@@ -237,7 +294,9 @@ onAnSelectatChange() {
     
 
     var an = document.getElementById('selectAn')  as HTMLInputElement | null;
-    let anvaloare = an?.value;
+    let materieValoare = an?.value.split('_')[0];
+    this.formData.materie = materieValoare;
+    let anvaloare = an?.value.split('_')[1];
     this.formData.an = anvaloare;
     
     var nume = document.getElementById('selectNume')  as HTMLInputElement | null;
@@ -326,14 +385,25 @@ onAnSelectatChange() {
     this.dialog.open(PopupComponent);
   }
 
-  calculeazaMedia(){
-    for(let i=0;i<this.vectorCatalog.length;i++){
-      if(this.vectorCatalog[i].Matematica.Nota1!=0 && this.vectorCatalog[i].Matematica.Nota2!=0 && this.vectorCatalog[i].Matematica.Nota3!=0 && this.vectorCatalog[i].Matematica.Nota4!=0){
-        this.vectorCatalog[i].Matematica.Medie = 
-        Math.round(0.2 *this.vectorCatalog[i].Matematica.Nota1 
-        + 0.2*this.vectorCatalog[i].Matematica.Nota2 
-        + 0.3* this.vectorCatalog[i].Matematica.Nota3
-        + 0.3* this.vectorCatalog[i].Matematica.Nota4);
+  calculeazaMedia(materia: any) {
+    for (let nota1 of this.vectorCatalog) {
+      if (materia === "Fizică") {
+        materia = "Fizica"
+      } else if (materia === "Matematică") {
+        materia = "Matematica"
+      }
+      else if(this.materia === "Limba engleză"){
+        materia= "Limbaengleza";
+    }
+    else if(this.materia === "Limba și literatura română"){
+      materia= "Limbasiliteraturaromana";
+    }
+      if (nota1[materia] && nota1[materia].Nota1 != 0 && nota1[materia].Nota2 != 0 && nota1[materia].Nota3 != 0 && nota1[materia].Nota4 != 0) {
+        nota1[materia].Medie =
+          Math.round(0.2 * nota1[materia].Nota1
+            + 0.2 * nota1[materia].Nota2
+            + 0.3 * nota1[materia].Nota3
+            + 0.3 * nota1[materia].Nota4);
       }
     }
   }
@@ -346,5 +416,34 @@ onAnSelectatChange() {
     return ok3;
   }
 
+  verificareMaterie(materie:string):boolean{
+    let ok3 =false;
+    if(materie === "Fizica"){
+      materie= "Fizică";
+  }
+  if(materie === "Matematica"){
+    materie= "Matematică";
+  }
+  if(materie === "Limbaengleza"){
+    materie= "Limba engleza";
+  }
+  if(materie === "Limbasiliteraturaromana"){
+    materie= "Limba si literatura romana";
+  }
 
+    if(materie === this.materia){
+      ok3 = true;
+    }
+    return ok3;
+  }
+
+  contineCheia(materie:string, nota:any):boolean{
+    let ok3 =false;
+
+    if(nota.hasOwnProperty(materie)){
+      ok3 = true;
+    }
+   
+    return ok3;
+  }
 }
