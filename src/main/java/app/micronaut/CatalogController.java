@@ -38,7 +38,7 @@ public class CatalogController {
         String gmail = response.split("_")[1];
 
         JSONObject raspuns = retriveGrades.ExtractGrades(gmail, tip);
-        System.out.println("RASAPUSN "+raspuns.toString());
+       // System.out.println("RASAPUSN "+raspuns.toString());
         return raspuns.toString();
     }
 }
