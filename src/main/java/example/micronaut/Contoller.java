@@ -68,7 +68,11 @@ public class Contoller {
     public String iauDateStatistici(Principal principal, @QueryValue String tip) {
         String response = principal.getName();
         String gmail = response.split("_")[1];
-        return  takeLectures.takeStatistic(gmail, tip);
+        System.out.println("ceva "+ takeLectures.takeStatistic(gmail, tip).toString());
+        JSONObject raspuns =takeLectures.takeStatistic(gmail, tip);
+        String raspsunsString = raspuns.toString();
+        System.out.println("Raspuns 1234 "+raspsunsString);
+        return  raspsunsString;
     }
 
 }

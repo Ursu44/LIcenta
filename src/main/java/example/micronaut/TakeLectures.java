@@ -314,7 +314,15 @@ public class TakeLectures {
                                     String mailProf = profesorSnapshot.child(materiii.get(i)).child("mailProfesor").getValue(String.class);
                                     if(mailProf.equals(gmail)){
                                         System.out.println(" "+profesorSnapshot.child("an").getValue(String.class));
-                                        an[0]+=materiii.get(i)+"_"+ profesorSnapshot.child("an").getValue(String.class)+" ";
+                                        String materia;
+                                        if(materiii.get(i).equals("Limba si literatura romana")){
+                                            materia = "Limbasiliteraturaromana";
+                                        } else if(materiii.get(i).equals("Limba engleza")){
+                                            materia ="Limbaengleza";
+                                        } else {
+                                            materia = materiii.get(i);
+                                        }
+                                        an[0]+=materia+"_"+ profesorSnapshot.child("an").getValue(String.class)+" ";
                                 }
                             }
                         }
@@ -339,10 +347,10 @@ public class TakeLectures {
         return an[0];
     }
 
-    public String takeStatistic(String gmail,String tip) {
+    public JSONObject takeStatistic(String gmail,String tip) {
         CountDownLatch latch = new CountDownLatch(1);
         final int[] nr = {1};
-        HashMap<String, Object> data = new HashMap<String, Object>();
+        JSONObject data = new JSONObject();
         ArrayList<String> materii1 = new ArrayList<String>();
         materii1.add("Fizică");
         materii1.add("Matematică");
@@ -360,8 +368,6 @@ public class TakeLectures {
                             if (!mailProf.equals("") && mailProf.equals(gmail)) {
                                 HashMap<String, Object> data1 = new HashMap<String, Object>();
                                 data1.put("mail", studentSnapshot.child("mailElev").getValue(String.class));
-                                //System.out.println("dada da a 123"+ studentSnapshot.child("mailElev").getValue(String.class));
-                                //System.out.println("dada da a "+studentSnapshot.child(materii.get(i)).child("Capitlolul 1").child("progres").getValue(Integer.class));
                                 data1.put("progres1", studentSnapshot.child(materii1.get(i)).child("Capitlolul 1").child("progres").getValue(Integer.class));
                                 data1.put("progres2", studentSnapshot.child(materii1.get(i)).child("Capitlolul 2").child("progres").getValue(Integer.class));
                                 data1.put("progres3", studentSnapshot.child(materii1.get(i)).child("Capitlolul 3").child("progres").getValue(Integer.class));
@@ -401,13 +407,13 @@ public class TakeLectures {
         });
 
         try {
-            latch.await(7, TimeUnit.SECONDS);
+            latch.await(9, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         String raspuns = data.toString() ;
-        System.out.println("Raspuns 1234 "+raspuns);
-        return raspuns;
+        //System.out.println("Raspuns 1234 "+raspuns);
+        return data;
 
     }
 
