@@ -49,6 +49,7 @@ export class CoursesComponent {
               },
             });
             let raspunsServer = response.data;
+            console.log("Raspuns ani "+raspunsServer);
             let raspunsServerModficat = raspunsServer.slice(0, -1);
             const raspunsJSON = JSON.stringify(raspunsServerModficat);
             this.shareDataService.sendRaspuns(raspunsServerModficat);

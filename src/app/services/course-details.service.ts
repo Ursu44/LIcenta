@@ -77,15 +77,29 @@ export class CourseDetailsService {
     for(let curs of this.courseDetails){
       let gasit:boolean=false;
         for(let i = 0; i < materii.length; i++){
-          if(materii[i].includes(curs.courseName)){
+          let materia;
+          if(curs.courseName === "Limba si literatura romana"){
+            materia = "Limbasiliteraturaromana";
+          } else if(curs.courseName === "Limba engleza"){
+            materia = "Limbaengleza";
+          } else{
+            materia = curs.courseName;
+          }
+          if(materii[i].includes(materia)){
             curs.courseName = materii[i];
             gasit= true;
+            
             break;
           }
         }
         if(!gasit){
           curs.deAfisat = false;
-        }
+        } 
+    }
+    for(let curs of this.courseDetails){
+      if(curs.deAfisat){
+        console.log(curs.courseName);
+      }
     }
   }
 

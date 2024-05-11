@@ -10,6 +10,7 @@ import { PopupComponent } from '../popup/popup.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
 import { AppComponent } from 'src/app/app.component';
 import { ServiciuService } from 'src/app/services/serviciu.service';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 declare var window: any;
 
@@ -29,13 +30,14 @@ export class NavbarComponent implements OnInit {
   confirmModal: any;
   formSuccesLogin: any;
   isProfesorSelected: boolean = false;
-
+  
   formData: any = {
     nume: '',
     prenume: '',
     mail: '',
     parola: '',
-    materie: ''
+    materie: '',
+    grupe:'1301,1302'
   };
 
   loginFormData:any = {
@@ -86,7 +88,9 @@ export class NavbarComponent implements OnInit {
       prenume: '',
       mail: '',
       parola: '',
-      materie: ''
+      materie: '',
+      grupe:'1301,1302',
+      materii:{"materia1":"Istorie - AnIII"}
     };
 
     this.loginFormData = {
@@ -98,7 +102,7 @@ export class NavbarComponent implements OnInit {
       username: '',
       password: ''
     }
-  
+    
   }
 
 
@@ -142,6 +146,7 @@ export class NavbarComponent implements OnInit {
       console.log("Rol selectat 1 "+radioButton.value)
       this.formData.rol = "student";
       delete this.formData.materie;
+      delete this.formData.grupe;
     }
     else{
       console.log("Rol selectat 2 "+radioButton.value)
@@ -177,7 +182,9 @@ export class NavbarComponent implements OnInit {
           mail: '',
           parola: '',
           materie: '',
-          rol:''
+          rol:'',
+          grupe:'1301,1302',
+           materii:{"materia1":"Istorie - AnIII"}
         };
         
       })
@@ -257,6 +264,7 @@ export class NavbarComponent implements OnInit {
            this.courseDetalis.modifica(response.data);
            }
            else {
+            console.log("AN primit "+response.data);
             this.courseDetalis.curataVectorProf();
             this.courseDetalis.modificaProf(response.data);
            }
