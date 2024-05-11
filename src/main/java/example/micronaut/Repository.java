@@ -3,6 +3,7 @@ package example.micronaut;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -19,13 +20,16 @@ public class Repository {
     private DatabaseReference emailIndex = null;
     private DatabaseReference catalog = null;
 
+    private DatabaseReference materii = null;
+
 
     public Repository() {
         dataReference = FirebaseDatabase.getInstance().getReference("Profesori");
         emailIndex = FirebaseDatabase.getInstance().getReference().child("UniqueMail");
         catalog = FirebaseDatabase.getInstance().getReference().child("Catalog");
+        materii = FirebaseDatabase.getInstance().getReference().child("Materii");
 
-        emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
+       emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
@@ -82,6 +86,15 @@ public class Repository {
         String encodeEmail = email.replace(".",",");
         DatabaseReference entityNew = dataReference.push();
         String id = entityNew.getKey();
+        CountDownLatch latch = new CountDownLatch(3);
+
+        ArrayList<String> materii1 = new ArrayList<String>();
+        materii1.add("Fizică");
+        materii1.add("Geografie");
+        materii1.add("Istorie");
+        materii1.add("Limba engleza");
+        materii1.add("Limba si literatura romana");
+        materii1.add("Matematică");
         emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -138,34 +151,71 @@ public class Repository {
 
                 } else {System.out.println("Email already exists in the database");
                 }
+                latch.countDown();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 System.out.println("Citire esuata");
+                latch.countDown();
             }
         });
+
 
         System.out.println("Aici ati ajus prof");
         String materie = profesor.getMaterie();
         System.out.println("Materia cu care cautam "+materie);
         System.out.println("Aici ati ajus prof 1");
-        CountDownLatch latch = new CountDownLatch(1);
         catalog.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    DatabaseReference elevRef = snapshot.getRef();
-                    DatabaseReference fizicaRef1 = elevRef.child("Fizica");
-                    System.out.println("Fizicca ref "+fizicaRef1);
-                    String fizicaRef = elevRef.child("Fizica").toString();
+                    String grupa = snapshot.child("grupa").getValue(String.class);
+                    String an = snapshot.child("an").getValue(String.class);
+                    String grupe = profesor.getGrupe();
+                    HashMap<String, Object> materii2 = profesor.getMaterii();
+                    for (String i : materii1) {
+                        String materie;
+                        materie = i + " - " + an;
+                        if (grupe.contains(grupa) && materii2.containsValue(materie)) {
+                            DatabaseReference elevRef = snapshot.getRef();
+                            DatabaseReference materieRef = elevRef.child(i);
+                            Map<String, Object> data = new HashMap<>();
+                            String mail = profesor.getMail();
+                            data.put("mailProfesor", mail);
+                            materieRef.updateChildren(data, null);
+                        }
+                    }
+                }
+                latch.countDown();
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Citire esuata");
+                latch.countDown();
 
-                    System.out.println("Adevart "+"Fizica".equals(materie));
-                    if("Fizica".equals(materie)){
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("profesor", profesor.getMail());
-                        fizicaRef1.updateChildren(data ,null);
-                        System.out.println("Ce se gaseste aici "+ snapshot.child("Fizica").getValue(String.class));
+            }
+        });
+
+        materii.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String grupa = snapshot.child("grupa").getValue(String.class);
+                    String an = snapshot.child("an").getValue(String.class);
+                    String grupe = profesor.getGrupe();
+                    HashMap<String, Object> materii2 = profesor.getMaterii();
+                    for (String i : materii1) {
+                        String materie;
+                        materie = i + " - " + an;
+                        if (grupe.contains(grupa) && materii2.containsValue(materie)) {
+                            DatabaseReference elevRef = snapshot.getRef();
+                            DatabaseReference materieRef = elevRef.child(i);
+                            Map<String, Object> data = new HashMap<>();
+                            String mail = profesor.getMail();
+                            data.put("mailProfesor", mail);
+                            materieRef.updateChildren(data, null);
+                        }
                     }
                 }
                 latch.countDown();
@@ -178,10 +228,33 @@ public class Repository {
 
             }
         });
+
         try {
             latch.await(2, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public void updateConfirmation(String token) {
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String tokenValue = snapshot.child("token").getValue(String.class);
+                    if(tokenValue != null && tokenValue.equals(token)){
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("verificat", "da");
+                        System.out.println("Verificat cu succes");
+                        snapshot.getRef().updateChildren(data, null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
     }
 }

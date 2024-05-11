@@ -11,6 +11,7 @@ import io.micronaut.serde.annotation.Serdeable;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 @Introspected
@@ -30,9 +31,13 @@ public class Profesor {
     private String parola;
     @JsonProperty("materie")
     private String materie;
-
     @JsonProperty("rol")
     private String rol;
+    @JsonProperty("grupe")
+    private String grupe;
+
+    @JsonProperty("materii")
+    private HashMap<String, Object> materii;
 
     @JsonCreator
     public Profesor(
@@ -41,7 +46,9 @@ public class Profesor {
             @JsonProperty("mail") String mail,
             @JsonProperty("parola") String parola,
             @JsonProperty("materie") String materie,
-            @JsonProperty("rol")  String rol
+            @JsonProperty("rol")  String rol,
+            @JsonProperty("grupe") String grupe,
+            @JsonProperty("materii") HashMap<String, Object> materii
     ) throws NoSuchAlgorithmException {
         this.nume = nume;
         this.prenume = prenume;
@@ -49,6 +56,8 @@ public class Profesor {
         this.parola = hasher.toHexString(hasher.getSHA(parola));
         this.materie = materie;
         this.rol =rol;
+        this.grupe = grupe;
+        this.materii = materii;
     }
 
     public void setNume(String nume){
@@ -95,6 +104,22 @@ public class Profesor {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public void setGrupe(String grupe) {
+        this.grupe = grupe;
+    }
+
+    public String getGrupe(){
+        return grupe;
+    }
+
+    public void setMaterii(HashMap<String, Object> materii) {
+        this.materii = materii;
+    }
+
+    public HashMap<String, Object>  getMaterii(){
+        return materii;
     }
 
     public static Profesor fromJson(String json) {

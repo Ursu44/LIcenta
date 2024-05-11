@@ -85,7 +85,7 @@ public class SendMail {
         }
 
         confirmatonToken = confirmatonTokenBuilder.toString();
-        String url = "http://localhost:8080/firebase/activationLink/activate/"+confirmatonToken;
+        String url = "http://localhost:8086/add/activationLink/activate/"+confirmatonToken;
         String content = "<a href='"+url+"'>"+url+"</a>";
 
         String messageSubject = "Confirmare identitate";
