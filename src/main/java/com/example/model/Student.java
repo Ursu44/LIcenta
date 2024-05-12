@@ -31,22 +31,30 @@ public class Student {
 
     @JsonProperty("parola")
     private String parola;
-
     @JsonProperty("rol")
     private String rol;
+
+    @JsonProperty("an")
+    private String an;
+
+    @JsonProperty("grupa")
+    private String grupa;
 
     @JsonCreator
     public Student(
             @JsonProperty("nume") String nume,
             @JsonProperty("prenume") String prenume,
             @JsonProperty("mail") String mail,
-            @JsonProperty("parola") String parola
+            @JsonProperty("parola") String parola,
+            @JsonProperty("an") String an,
+            @JsonProperty("grupa") String grupa
     ) throws NoSuchAlgorithmException {
-
         this.nume = nume;
         this.prenume = prenume;
         this.mail = mail;
         this.parola = encryptor.toHexString(encryptor.getSHA(parola));
+        this.an =an;
+        this.grupa =grupa;
     }
 
     public void setNume(String nume){
@@ -80,6 +88,21 @@ public class Student {
     public String getMail(){
         return mail;
     }
+
+    public void setGrupa(String grupa){
+        this.grupa = grupa;
+    }
+    public String getGrupa() {
+        return grupa;
+    }
+
+    public void setAn(String an){
+        this.an = an;
+    }
+    public String getAn() {
+        return an;
+    }
+
 
     public void setParola(String parola) throws NoSuchAlgorithmException {
         this.parola = this.parola = encryptor.toHexString(encryptor.getSHA(parola));

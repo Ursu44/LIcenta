@@ -3,35 +3,40 @@ package com.example.repository;
 import com.example.SendMail;
 import com.example.TeacherSearch;
 import com.example.firebase.FirebaseInitializer;
+import com.example.model.Student;
 import com.google.firebase.database.*;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractFirebasRepository<T> implements FireBaseRepository<T> {
+public class AbstractFirebasRepository{
 
     @Inject
     private FirebaseInitializer firebaseInitializer;
     @Inject
     private SendMail sendMail;
-    private DatabaseReference dataReference = null;
     private DatabaseReference emailIndex = null;
+    private DatabaseReference profesori = null;
     private DatabaseReference lectures = null;
     private DatabaseReference catalog = null;
-
-    private DatabaseReference profesori = null;
+    private DatabaseReference studenti = null;
+    private DatabaseReference cursuri = null;
+    private DatabaseReference grupe = null;
 
     private TeacherSearch searching = new TeacherSearch();
 
-    public AbstractFirebasRepository(String dataCollectionName) {
-        dataReference = FirebaseDatabase.getInstance().getReference(dataCollectionName);
+    public AbstractFirebasRepository() {
         emailIndex = FirebaseDatabase.getInstance().getReference().child("UniqueMail");
+        grupe = FirebaseDatabase.getInstance().getReference().child("Grupe");
         lectures = FirebaseDatabase.getInstance().getReference().child("Materii");
         catalog = FirebaseDatabase.getInstance().getReference().child("Catalog");
+        studenti = FirebaseDatabase.getInstance().getReference().child("Studenti");
         profesori = FirebaseDatabase.getInstance().getReference().child("Profesori");
+        cursuri = FirebaseDatabase.getInstance().getReference("CursuriAni");
         emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -111,14 +116,26 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
 
     }
 
-    public void create(T entity,String role) {
-        String email = getEmailFromEntity(entity);
+    public void create(Student student) {
+        String email = student.getMail();
         String encodeEmail = email.replace(".",",");
-        DatabaseReference entityNew = dataReference.push();
+        String nume = student.getNume();
+        String prenume = student.getPrenume();
+        CountDownLatch latch = new CountDownLatch(2);
+        DatabaseReference entityNew = studenti.push();
+        DatabaseReference catalogReference = catalog.push();
+        DatabaseReference materiiReference = lectures.push();
         String id = entityNew.getKey();
-
+         String[] an = {""};
+         String[] grupa = {""};
+        ArrayList<String> materii1 = new ArrayList<String>();
+        materii1.add("Fizică");
+        materii1.add("Geografie");
+        materii1.add("Istorie");
+        materii1.add("Limba engleza");
+        materii1.add("Limba si literatura romana");
+        materii1.add("Matematică");
         emailIndex.addListenerForSingleValueEvent(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -130,17 +147,142 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                         break;
                     }
                 }
-                if (!emailExistence) {
+                 boolean[] gasit = {false};
+                 String[] an_grupa = {""};
+                boolean finalEmailExistence = emailExistence;
+                cautStudent(nume, prenume, email)
+                        .thenAccept(result -> {
+                            if (!result.isEmpty()) {
+                                System.out.println("Studentul a fost găsit în grupa: " + result);
+                                gasit[0] = true;
+                                an_grupa[0] = result;
+                                an[0] =an_grupa[0].split("_")[0];
+                                grupa[0] = an_grupa[0].split("_")[1];
+                                student.setAn(an_grupa[0].split("_")[0]);
+                                student.setGrupa(an_grupa[0].split("_")[1]);
+                                if (!finalEmailExistence && gasit[0]) {
+                                    cautMail(an[0], grupa[0])
+                                            .thenAccept(result1 -> {
+                                                if (!result1.isEmpty()) {
+                                                    System.out.println("Mail ul a fost găsit : " + result1);
+                                                    Map<String, Object> data3 = new HashMap<>();
+                                                    data3.put("an", an[0]);
+                                                    data3.put("grupa", grupa[0]);
+                                                    data3.put("mailElev", student.getMail());
+                                                    data3.put("nume", student.getNume());
+                                                    data3.put("prenume", student.getPrenume());
+                                                    for (String i : materii1) {
+                                                        Map<String, Object> data4 = new HashMap<>();
+                                                        data4.put("Nota1", 0);
+                                                        data4.put("Nota2", 0);
+                                                        data4.put("Nota3", 0);
+                                                        data4.put("Nota4", 0);
+                                                        data4.put("medie", 0);
+                                                        if(result1.containsKey(i)){
+                                                            data4.put("mailProfesor", result1.get(i));
+                                                        } else{
+                                                            data4.put("mailProfesor", "");
+                                                        }
+                                                        data3.put(i, data4);
+                                                    }
+                                                    catalogReference.setValue(data3, (entityDatabaseError, entityDatabaseReference) -> {
+                                                        if (entityDatabaseError == null) {
+                                                            System.out.println("S-a adaugat ");
+
+                                                        } else {
+                                                            System.out.println("Error creating entity: " + entityDatabaseError.getMessage());
+                                                        }
+                                                    });
+                                                    DatabaseReference cursuriReference = cursuri.child("-NuTFYX9gGrHFrMmtVlE").child(an[0]);
+                                                    cursuriReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            System.out.println("ADAUG LA MATERII " + result1);
+                                                            Map<String, Object> data7 = new HashMap<>();
+
+                                                            data7.put("an", an[0]);
+                                                            data7.put("grupa", grupa[0]);
+                                                            data7.put("mailElev", student.getMail());
+                                                            for (DataSnapshot materieSnapshot : dataSnapshot.getChildren()) {
+                                                                Map<String, Object> data6 = new HashMap<>();
+                                                                String materia1 = materieSnapshot.getKey() ;
+                                                                    if(materia1.equals("Fizica")){
+                                                                        materia1 = "Fizică";
+                                                                    } else if(materia1.equals("Matematica")){
+                                                                        materia1 = "Matematică";
+                                                                    } else{
+                                                                        materia1 = materia1;
+                                                                    }
+                                                                Map<String, Object> data5 = new HashMap<>();
+
+                                                                for (DataSnapshot capitolSnapshot : materieSnapshot.getChildren()) {
+                                                                    String capitolKey = capitolSnapshot.getKey();
+                                                                    Map<String, Object> capitolData = new HashMap<>();
+                                                                    for (DataSnapshot lectieSnapshot : capitolSnapshot.getChildren()) {
+                                                                        String lectieKey = lectieSnapshot.getKey();
+                                                                        Object lectieValue = lectieSnapshot.getValue();
+                                                                        data6.put(lectieKey, lectieValue);
+                                                                        data6.put("progres", 0);
+                                                                        data6.put("activat", true);
+                                                                    }
+                                                                    data5.put(capitolKey, data6);
+                                                                }
+                                                                data5.put("durataTest", "0:30");
+                                                                data5.put("durataTest1", "0:45");
+                                                                data5.put("incercari", 3);
+                                                                data5.put("incercari1", 3);
+                                                                data5.put("testDat", false);
+                                                                System.out.println("Materie "+materia1);
+                                                                System.out.println("ADAUG LA MATERII 1" + result1);
+                                                                if(result1.containsKey(materia1)) {
+                                                                    System.out.println("Ce mail s-a pus "+result1.get(materia1)+" pentru "+materia1);
+                                                                    data5.put("mailProfesor", result1.get(materia1));
+                                                                    System.out.println(data5);
+                                                                    data7.put(materia1, data5);
+                                                                }
+                                                                else{
+                                                                    data5.put("mailProfesor", "");
+                                                                    data7.put(materia1, data5);
+                                                                }
+
+
+                                                            }
+                                                            materiiReference.setValue(data7, (entityDatabaseError, entityDatabaseReference) -> {
+                                                                if (entityDatabaseError == null) {
+                                                                    System.out.println("S-a adaugat ");
+
+                                                                } else {
+                                                                    System.out.println("Error creating entity: " + entityDatabaseError.getMessage());
+                                                                        }
+                                                                    });
+
+                                                                }
+                                                                @Override
+                                                                public void onCancelled(DatabaseError error) {
+                                                                    System.out.println("Citire esuata");
+                                                                }
+                                                            });
+                                                            latch.countDown();
+
+                                                } else {
+                                                    System.out.println("Mail ul nu a fost găsit.");
+                                                }
+                                            })
+                                            .exceptionally(ex -> {
+                                                System.out.println("A apărut o excepție: " + ex.getMessage());
+                                                return null;
+                                            });
+                                    System.out.println("Gasit "+ an_grupa[0]);
                     Map<String, Object> data= new HashMap<>();
-                    data.put("id", id);
                     data.put("email", encodeEmail);
+                    data.put("id", id);
                     DatabaseReference emailIndexNou = emailIndex.push();
                     emailIndexNou.setValue(data, (databaseError, databaseReference) -> {
                         if (databaseError == null) {
                             System.out.println("Email saved successfully");
                             Map<String, Object> verificare = new HashMap<>();
                             verificare.put("verificat","nu");
-                            entityNew.setValue(entity, (entityDatabaseError, entityDatabaseReference) -> {
+                            entityNew.setValue(student, (entityDatabaseError, entityDatabaseReference) -> {
                                 if (entityDatabaseError == null) {
                                     System.out.println("Entity saved successfully");
                                     sendMail.setMailTo(email);
@@ -170,17 +312,29 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                             System.out.println("Email could not be saved");
                         }
                     });
+                                } else {System.out.println("Email already exists in the database");
+                                }
+                            } else {
+                                System.out.println("Studentul nu a fost găsit.");
+                            }
+                        })
+                        .exceptionally(ex -> {
+                            System.out.println("A apărut o excepție: " + ex.getMessage());
+                            return null;
+                        });
 
-                } else {System.out.println("Email already exists in the database");
-                }
+                latch.countDown();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 System.out.println("Citire esuata");
+                latch.countDown();
             }
         });
-        if(role.equals("student")) {
+
+
+        /*if(role.equals("student")) {
             Map<String, Object> note = new HashMap<>();
             Map<String, Object> detaliiLectie = new HashMap<>();
             System.out.println("Pun lectii");
@@ -215,51 +369,6 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
             lectures.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Map<String, Object> data = new HashMap<>();
-                    Map<String, Object> informatiiLectie1 = new HashMap<>();
-                    Map<String, Object> informatiiLectie2 = new HashMap<>();
-                    Map<String, Object> informatiiLectie3 = new HashMap<>();
-                    detaliiLectie.put("mailProfesor", mailPorf[0]);
-                    System.out.println("Mail prof "+  mailPorf[0]);
-                    informatiiLectie1.put("Inforamtie1", "bla bla");
-                    informatiiLectie1.put("Inforamtie2", "bla bla bla");
-                    informatiiLectie1.put("Inforamtie3", "bla bla bla bla bla");
-                    informatiiLectie1.put("Inforamtie4", "bla bla bla bla bla bla");
-                    informatiiLectie1.put("activat", false);
-                    informatiiLectie1.put("progres", 0);
-
-                    informatiiLectie2.put("Inforamtie1", "Legea lui Ohm");
-                    informatiiLectie2.put("Inforamtie2", "Formula puterii");
-                    informatiiLectie2.put("Inforamtie3", "Intensitatea curentului");
-                    informatiiLectie2.put("Inforamtie4", "Baterii ");
-                    informatiiLectie2.put("Inforamtie5", "Blaaaa");
-                    informatiiLectie2.put("activat", false);
-                    informatiiLectie2.put("progres", 0);
-
-                    informatiiLectie3.put("Inforamtie1", "Principiul 1 al termodinamicii");
-                    informatiiLectie3.put("Inforamtie2", "Transformare izocora");
-                    informatiiLectie3.put("Inforamtie3", "Transformare izobara");
-                    informatiiLectie3.put("Inforamtie4", "Transformarea izoterma ");
-                    informatiiLectie3.put("Inforamtie5", "Blaaaa Blaaaa");
-                    informatiiLectie3.put("activat", false);
-                    informatiiLectie3.put("progres", 0);
-
-                    detaliiLectie.put("Lectia1", informatiiLectie1);
-                    detaliiLectie.put("Lectia2", informatiiLectie2);
-                    detaliiLectie.put("Lectia3", informatiiLectie3);
-
-                    data.put("Fizica", detaliiLectie);
-                    data.put("mailElev", encodeEmail);
-                    System.out.println("SALVEZ DATELE IN CATALOG 2");
-
-                    DatabaseReference newLectureReference = lectures.push();
-                    newLectureReference.setValue(data, (databaseError, databaseReference) -> {
-                        if (databaseError == null) {
-                            System.out.println("Datele lectiei au fost salvate bine");
-                        } else {
-                            System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
-                        }
-                    });
 
                 }
 
@@ -272,37 +381,10 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
             catalog.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    System.out.println("SALVEZ DATELE IN CATALOG");
-                    note.put("Nota1", 0);
-                    note.put("Nota2", 0);
-                    note.put("Nota3", 0);
-                    note.put("Nota4", 0);
-                    note.put("medie", 0);
                     lectures.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            System.out.println("SALVEZ DATELE IN CATALOG");
-                            note.put("Nota1", 0);
-                            note.put("Nota2", 0);
-                            note.put("Nota3", 0);
-                            note.put("Nota4", 0);
-                            note.put("medie", 0);
-                            note.put("profesor", mailPorf[0]);
 
-                            Map<String, Object> materie = new HashMap<>();
-                            materie.put("Fizica", note);
-                            Map<String, Object> elev = new HashMap<>();
-                            materie.put("mailElev", getEmailFromEntity(entity));
-                            materie.put("numeElev", getLastNameFromEntity(entity));
-                            materie.put("prenumenumeElev", getFirstNameFromEntity(entity));
-                            DatabaseReference catalogReference = catalog.push();
-                            catalogReference.setValue(materie, (databaseError, databaseReference) -> {
-                                if (databaseError == null) {
-                                    System.out.println("Datele lectiei au fost salvate bine");
-                                } else {
-                                    System.err.println("Datele lectiei nu au fost salvate bine : " + databaseError.getMessage());
-                                }
-                            });
                         }
 
                         @Override
@@ -316,58 +398,96 @@ public abstract class AbstractFirebasRepository<T> implements FireBaseRepository
                 public void onCancelled(DatabaseError error) {
                     System.out.println("Citire esuata");
                 }
-            });
-
-        } else if(role.equals("profesor")){
-            System.out.println("Aici ati ajus prof");
-            String materie = getMaterie(entity);
-            System.out.println("Materia cu care cautam "+materie);
-            System.out.println("Aici ati ajus prof 1");
-            CountDownLatch latch = new CountDownLatch(1);
-            catalog.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        DatabaseReference elevRef = snapshot.getRef();
-                        DatabaseReference fizicaRef1 = elevRef.child("Fizica");
-                        System.out.println("Fizicca ref "+fizicaRef1);
-                        String fizicaRef = elevRef.child("Fizica").toString();
-
-                        System.out.println("Adevart "+"Fizica".equals(materie));
-                        if("Fizica".equals(materie)){
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("profesor", getEmailFromEntity(entity));
-                            fizicaRef1.updateChildren(data ,null);
-                            System.out.println("Ce se gaseste aici "+ snapshot.child("Fizica").getValue(String.class));
-                        }
-                    }
-                    latch.countDown();
-
-                }
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    System.out.println("Citire esuata");
-                    latch.countDown();
-
-                }
-            });
-            try {
-                latch.await(2, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            });*/
         }
 
 
+    CompletableFuture<String> cautStudent(String numeStudent, String prenumeStudent, String mail) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        grupe.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot an : dataSnapshot.getChildren()) {
+                    for (DataSnapshot grupa : an.getChildren()) {
+                        for (DataSnapshot student : grupa.getChildren()) {
+                            String nume = student.child("nume").getValue(String.class);
+                            String prenume = student.child("prenume").getValue(String.class);
+                            String email = student.child("mail").getValue(String.class);
+                            if(numeStudent.equals(nume) && prenumeStudent.equals(prenume) && mail.equals(email)){
+                                System.out.println("L-am gasit pe studentul "+nume+" "+prenume);
+                                future.complete(an.getKey()+"_"+grupa.getKey());
+                                break;
+                            }
+                        }
+                    }
+                }
+                future.complete("");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Citire esuata: " + error.getMessage());
+            }
+        });
+        return future;
     }
 
-    public abstract void read();
-    public abstract void update(T entity,String identifier);
-    protected abstract String getEmailFromEntity(T entity);
-    protected abstract  String getFirstNameFromEntity(T entity);
-    protected abstract  String getLastNameFromEntity(T entity);
-    protected abstract  String getMaterie(T entity);
-    public abstract void updateConfirmation(String token);
+    CompletableFuture<HashMap<String, Object>> cautMail(String an, String grupa) {
+        CompletableFuture<HashMap<String, Object>> future = new CompletableFuture<>();
+        HashMap<String, Object> profesori1 = new HashMap<String, Object>();
+        profesori.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot profesorSnapshot : dataSnapshot.getChildren()) {
+                    System.out.println("Am intrat 1");
+                    String grupe = profesorSnapshot.child("grupe").getValue(String.class);
+                   HashMap<String, Object> ani = (HashMap<String, Object>) profesorSnapshot.child("materii").getValue();
+                    System.out.println("Hash ul "+ani);
+                    ArrayList<String> materii1 = new ArrayList<String>();
+                    materii1.add("Fizică");
+                    materii1.add("Geografie");
+                    materii1.add("Istorie");
+                    materii1.add("Limba engleza");
+                    materii1.add("Limba si literatura romana");
+                    materii1.add("Matematică");
+                    for (String i : materii1) {
+                        System.out.println("Am intrat 2");
+                        String materia = i +" - "+an;
+                        if (grupe.contains(grupa) && ani.containsValue(materia)) {
+                            profesori1.put(i, profesorSnapshot.child("mail").getValue(String.class));
+                        }
+                    }
+                }
+                future.complete(profesori1);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Citire esuata: " + error.getMessage());
+            }
+        });
+        return future;
+    }
 
+    public void updateConfirmation(String token) {
+        studenti.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String tokenValue = snapshot.child("token").getValue(String.class);
+                    if (tokenValue != null && tokenValue.equals(token)) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("verificat", "da");
+                        System.out.println("Verificat cu succes");
+                        snapshot.getRef().updateChildren(data, null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
+    }
 }
