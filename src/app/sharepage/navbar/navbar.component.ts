@@ -10,7 +10,9 @@ import { PopupComponent } from '../popup/popup.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
 import { AppComponent } from 'src/app/app.component';
 import { ServiciuService } from 'src/app/services/serviciu.service';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import { FormGroup } from '@angular/forms';
 
 declare var window: any;
 
@@ -51,12 +53,16 @@ export class NavbarComponent implements OnInit {
   }
 
   raspunsServer: string = ''; 
-  jwtHelper: any;
   router: any;
+  categories:any;
+  selected:any;
+
   constructor(private servicu:ServiciuService ,private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
+  selectedItems: string[] = [];
+  dropdownItems: string[] = ['Option 1', 'Option 2', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3'];
 
   ngOnInit(): void {
     //localStorage.clear();
@@ -102,9 +108,11 @@ export class NavbarComponent implements OnInit {
       username: '',
       password: ''
     }
-    
-  }
 
+  }
+  onSelectChange() {
+    console.log('Selected item:', this.selectedItems);
+  }
 
   openLogin() {
     this.formLogin.show();
@@ -147,6 +155,7 @@ export class NavbarComponent implements OnInit {
       this.formData.rol = "student";
       delete this.formData.materie;
       delete this.formData.grupe;
+      delete this.formData.materii;
     }
     else{
       console.log("Rol selectat 2 "+radioButton.value)

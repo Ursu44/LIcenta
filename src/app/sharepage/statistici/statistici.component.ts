@@ -68,6 +68,7 @@ export class StatisticiComponent implements OnInit {
   generateChart(index: number, materie: string): void {
 
     let valori:any = [];
+    let eticheta :string = "Progres capitole";
     if(this.esteProfesor()){
       valori.push(this.raspunsJson["elev"+(index+1)].progres1);
       valori.push(this.raspunsJson["elev"+(index+1)].progres2);
@@ -79,6 +80,7 @@ export class StatisticiComponent implements OnInit {
       valori.push(this.raspunsJson[materie].progres2);
       valori.push(this.raspunsJson[materie].progres3);
       valori.push(this.raspunsJson[materie].progres4);
+
     }
     let etichete = ['Capitolul 1', 'Capitolul 2', 'Capitolul 3', 'Capitolul 4']; 
 

@@ -72,6 +72,7 @@
             <label for="message-text" class="col-form-label">Parola:</label>
             <input type="password" class="form-control" id="recipient-parola" name="password" [(ngModel)]="loginFormData.password">
           </div>
+          
         </form>
       </div>
       <div class="mb-3">
@@ -126,9 +127,17 @@
     Profesor
   </label>
 </div>
-            <div class="mb-3">
-    <label for="message-text" class="col-form-label">Materie:</label>
-    <input type="text" class="form-control" id="recipient-materie" [disabled]="!isProfesorSelected" name="materie" [(ngModel)]="formData.materie">
+  <div class="mb-3">
+    <label for="message-text" class="col-form-label">Materie si an:</label>
+    <select class="form-select" style="width:460px; height: 80px;" [(ngModel)]="selectedItems" multiple (change)="onSelectChange()">
+      <option *ngFor="let item of dropdownItems" [value]="item">{{ item }}</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="message-text" class="col-form-label">Grupe:</label><br>
+    <select class="form-select" style="width:460px; height: 80px;" [(ngModel)]="selectedItems" multiple (change)="onSelectChange()">
+      <option *ngFor="let item of dropdownItems" [value]="item">{{ item }}</option>
+    </select>
   </div>
         </form>
       </div>
@@ -164,6 +173,8 @@
               <label for="message-text" class="col-form-label">Parola:</label>
               <input type="password" class="form-control" id="recipient-parola" name="parola" [(ngModel)]="formData.parola">
             </div>
+            
+            
           
   <div class="form-check">
     <input class="form-check-input" type="radio" name="flexRadioDefault" id="student" value="student" (change)="handleRadioButtonSelection($event)">
@@ -178,10 +189,10 @@
       Profesor
     </label>
   </div>
-              <div class="mb-3">
-      <label for="message-text" class="col-form-label">Materie:</label>
+    <div class="mb-3">
+      <label for="message-text" class="col-form-label">Materie1:</label>
       <input type="text" class="form-control" id="recipient-materie" [disabled]="!isProfesorSelected" name="materie" [(ngModel)]="formData.materie">
-    </div>
+    </div>      
           </form>
         </div>
         <div class="modal-footer">
@@ -189,7 +200,6 @@
           <button type="button" class="btn btn-primary" (click)="sendFormData()">Trimite</button>
         </div>
       </div>
-      
     </div>
 
 </div>

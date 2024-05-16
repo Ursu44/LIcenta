@@ -1,17 +1,18 @@
 <div class="grafice" *ngIf="esteProfesor()">
-  <div *ngFor="let index of indici; let i = index">
-    <h2>{{raspunsJson["elev"+(i+1)].mail}}</h2> 
+  <div *ngFor="let index of indici; let i = index"><br><br>
+    <h2>{{raspunsJson["elev"+(i+1)].nume}} {{raspunsJson["elev"+(i+1)].prenume}}</h2>
+    <h2>Progres {{raspunsJson["elev"+(i+1)].materie}}</h2>
     <button class="btn btn-success" (click)="generateChart(i, 'elev')">Generare Grafic</button>
-    <button class="btn btn-danger" (click)="ascundeGrafic(i)">Ascunde Grafic</button>
+    <button class="btn btn-danger" (click)="ascundeGrafic(i)">Ascunde Grafic</button><br><br>
     <canvas id="Chart{{i}}" height="10" width="50"></canvas>
   </div><br><br><br>
 </div><br><br><br>
 
 <div class="grafice1" *ngIf="!esteProfesor()">
   <div *ngFor="let index of materii; let i = index">
-    <h2>{{vectorMaterii[i]}}</h2> 
+    <h2>{{vectorMaterii[i]}}</h2> <br><br>
     <button class="btn btn-success" (click)="generateChart(i, vectorMaterii[i])">Generare Grafic</button>
-    <button class="btn btn-danger" (click)="ascundeGrafic(i)">Ascunde Grafic</button>
+    <button class="btn btn-danger" (click)="ascundeGrafic(i)">Ascunde Grafic</button><br><br>
     <canvas id="Chart{{i}}" height="10" width="50"></canvas><br><br>
   </div><br><br><br><br><br><br>
 </div><br><br><br>
