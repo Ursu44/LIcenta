@@ -454,7 +454,7 @@ public class TakeLectures {
         });
 
         try {
-            latch.await(6, TimeUnit.SECONDS);
+            latch.await(11, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
