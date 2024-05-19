@@ -52,9 +52,14 @@ export class CourseDetailsService {
   ];
 
   modifica(an:String){
+    let an1= localStorage.getItem("ani");
+    console.log("aici 1 "+an1);
+    let materii:string[];
+    if(an1){
     for(let curs of this.courseDetails){
-        curs.courseName = curs.courseName+"_"+an;
+        curs.courseName = curs.courseName+"_"+an1;
     }
+  }
   }
 
   curataVector(){
@@ -72,7 +77,13 @@ export class CourseDetailsService {
   }
 
   modificaProf(an:String){
-    const materii:string[] = an.split(" ");
+    let an1 ;
+    an1= localStorage.getItem("ani");
+    console.log("aici 2"+an1);
+    let materii:string[];
+    if(an1){
+     materii = an1.split(" ");
+    
     let gasit:boolean=false;
     for(let curs of this.courseDetails){
       let gasit:boolean=false;
@@ -100,6 +111,7 @@ export class CourseDetailsService {
       if(curs.deAfisat){
         console.log(curs.courseName);
       }
+    }
     }
   }
 

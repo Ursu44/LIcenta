@@ -80,6 +80,7 @@ export class CatalogComponent {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 this.raspunsCatalog = this.shareDataService.getRaspunsCatalog();
+                this.raspunsCatalog = localStorage.getItem("catalog");
                 if(this.raspunsCatalog!=null){
                   this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
                     this.vectorCatalog = Object.values(this.raspunsCatalogJson);

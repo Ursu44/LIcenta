@@ -171,9 +171,10 @@ export class CursuriComponent implements OnInit {
   getData() {
     setTimeout(() => {
       this.raspuns = this.shareDataService.getRaspuns();
+      this.raspuns = localStorage.getItem("cursuri");
       console.log("Uite ce am primit" + this.raspuns);
       if( this.raspuns != undefined){
-      this.raspunsObj = JSON.parse(this.shareDataService.getRaspuns());
+      this.raspunsObj = JSON.parse(this.raspuns);
       console.log("Progres actual "+this.raspunsObj['Capitol1'].progres)
       this.ora = (this.raspunsObj["Detalii_test"].durataTest).split(":")[0];
       localStorage.setItem("ora1", String(this.ora));

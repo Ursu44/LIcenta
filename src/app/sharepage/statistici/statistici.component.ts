@@ -58,7 +58,7 @@ export class StatisticiComponent implements OnInit {
           }
         }
           resolve();
-        },4500);
+        },7500);
       });
     } catch (error) {
       console.error('Eroare în preluarea datelor:', error);

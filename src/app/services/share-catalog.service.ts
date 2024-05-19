@@ -10,6 +10,7 @@ export class ShareCatalogService {
 
   sendRaspunsCatalog(raspuns: any){
     this.raspunsCatalog = raspuns;
+    localStorage.setItem("catalog", raspuns);
   }
 
   getRaspunsCatalog(){

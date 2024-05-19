@@ -20,6 +20,13 @@ export class CoursesComponent {
     ngOnInit() : void{
       //this.appComponent.raspuns1 = true;
       this.details = this.courseDetalis.courseDetails;
+      if(!this.esteProfesor()){
+        this.courseDetalis.curataVector();
+        this.courseDetalis.modifica("");
+      } else{
+        this.courseDetalis.curataVectorProf();
+        this.courseDetalis.modificaProf("");
+      }
     }
 
     async afisezMateria(nume: string):Promise<void>{
@@ -52,7 +59,9 @@ export class CoursesComponent {
             console.log("Raspuns ani "+raspunsServer);
             let raspunsServerModficat = raspunsServer.slice(0, -1);
             const raspunsJSON = JSON.stringify(raspunsServerModficat);
+            localStorage.setItem("cursuri", raspunsServerModficat);
             this.shareDataService.sendRaspuns(raspunsServerModficat);
+
              console.log("Raspuns server "+ raspunsServerModficat);
              console.log("Raspuns server json"+ raspunsJSON);
           } catch (error) {

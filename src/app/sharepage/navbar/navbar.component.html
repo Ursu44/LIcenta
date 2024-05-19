@@ -80,7 +80,7 @@
       </div>
       <p *ngIf="ok2" style="color:red;">Mail sau parolă incorecte</p>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="refreshAccessToken()">Inchide</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Inchide</button>
         <button type="button" class="btn btn-primary" (click)="sendFormDataLogin()">Trimite</button>
       </div>
     </div>
@@ -129,14 +129,14 @@
 </div>
   <div class="mb-3">
     <label for="message-text" class="col-form-label">Materie si an:</label>
-    <select class="form-select" style="width:460px; height: 80px;" [(ngModel)]="selectedItems" multiple (change)="onSelectChange()">
-      <option *ngFor="let item of dropdownItems" [value]="item">{{ item }}</option>
+    <select class="form-select" style="width:460px; height: 80px;" multiple (change)="preiaAni($event)">
+      <option *ngFor="let item of dropdownItems" [disabled]="!isProfesorSelected" [value]="item">{{ item }}</option>
     </select>
   </div>
   <div class="mb-3">
     <label for="message-text" class="col-form-label">Grupe:</label><br>
-    <select class="form-select" style="width:460px; height: 80px;" [(ngModel)]="selectedItems" multiple (change)="onSelectChange()">
-      <option *ngFor="let item of dropdownItems" [value]="item">{{ item }}</option>
+    <select class="form-select" style="width:460px; height: 80px;"  multiple (change)="preiaGrupe($event)">
+      <option *ngFor="let item of dropdownItems1" [disabled]="!isProfesorSelected"  [value]="item">{{ item }}</option>
     </select>
   </div>
         </form>

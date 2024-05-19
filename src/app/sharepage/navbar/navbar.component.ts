@@ -32,7 +32,10 @@ export class NavbarComponent implements OnInit {
   confirmModal: any;
   formSuccesLogin: any;
   isProfesorSelected: boolean = false;
-  
+  animaterii:any = new Map<string, object>(); 
+  grupe: string = "";
+  grupeAici: string[] = [];
+  materiisiani:any;
   formData: any = {
     nume: '',
     prenume: '',
@@ -51,7 +54,7 @@ export class NavbarComponent implements OnInit {
     username: '',
     password: ''
   }
-
+  ani : any = localStorage.getItem("an");
   raspunsServer: string = ''; 
   router: any;
   categories:any;
@@ -62,7 +65,9 @@ export class NavbarComponent implements OnInit {
   }
 
   selectedItems: string[] = [];
-  dropdownItems: string[] = ['Option 1', 'Option 2', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3'];
+  selectedItems1: string[] = [];
+  dropdownItems: string[] = ['Fizică - AnI', 'Matematică - AnI', 'Istorie - AnI', 'Geografie - AnI', 'Limba engleza - AnI', 'Limba si literatura romana - AnI', 'Fizică - AnII', 'Matematică - AnII', 'Istorie - AnII', 'Geografie - AnII', 'Limba engleza - AnII', 'Limba si literatura romana - AnII', 'Fizică - AnIII', 'Matematică - AnIII', 'Istorie - AnIII', 'Geografie - AnIII', 'Limba engleza - AnIII', 'Limba si literatura romana - AnIII'];
+  dropdownItems1: string[] = ['1101', '1102', '1103', '1104', '1105', '1201', '1202', '1203', '1204', '1301', '1302', '1303', '1304'];
 
   ngOnInit(): void {
     //localStorage.clear();
@@ -95,8 +100,8 @@ export class NavbarComponent implements OnInit {
       mail: '',
       parola: '',
       materie: '',
-      grupe:'1301,1302',
-      materii:{"materia1":"Istorie - AnIII"}
+      grupe:'',
+      materii:new Map<string, object>()
     };
 
     this.loginFormData = {
@@ -110,8 +115,14 @@ export class NavbarComponent implements OnInit {
     }
 
   }
-  onSelectChange() {
-    console.log('Selected item:', this.selectedItems);
+  preiaAni(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+   this.materiisiani =Array.from(selectElement.selectedOptions).map(option => option.value);
+  }
+
+  preiaGrupe(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    this.grupeAici =Array.from(selectElement.selectedOptions).map(option => option.value);
   }
 
   openLogin() {
@@ -149,6 +160,7 @@ export class NavbarComponent implements OnInit {
   handleRadioButtonSelection(event: Event) {
     const radioButton = event.target as HTMLInputElement;
     this.isProfesorSelected = radioButton.value === 'profesor';
+    console.log("Valoarea adaugata adevar "+this.isProfesorSelected);
     console.log("Rol selectat "+radioButton.value);
     if(radioButton.value !== 'profesor'){
       console.log("Rol selectat 1 "+radioButton.value)
@@ -160,21 +172,35 @@ export class NavbarComponent implements OnInit {
     else{
       console.log("Rol selectat 2 "+radioButton.value)
       this.formData.rol = "profesor";
+      this.formData.materie='';
+      this.formData.grupe='';
+     this.formData.materii=new Map<string, object>();
     }
   }
 
   async sendFormData() {
     console.log("role"+this.formData.rol);
-    const jsonObj = JSON.stringify(this.formData);
-    console.log('Form Data:', jsonObj);
     let backendEndpoint 
     if(this.formData.rol === 'profesor'){
         backendEndpoint = 'http://localhost:8086/add/profesor';
+        for(let i = 0;i<this.grupeAici.length; i++){
+          this.grupe += this.grupeAici[i]+",";
+        }
+        this.grupe = this.grupe.substring(0, this.grupe.length - 1);
+        this.formData.grupe = this.grupe;
+        for(let i=0 ;i<this.materiisiani.length; i++){
+          let j = i+1;
+          this.formData.materii["materii"+j] = this.materiisiani[i];
+        }
+        console.log('Selected item123:', this.formData.materii);
+        //console.log("daaaaaaaaaaaaaaaaaaaa "+this.animaterii);
+        //this.formData.materii = this.animaterii;
     }
     else{
       backendEndpoint = 'http://localhost:8080/firebase/add/student';
     }    
-    console.log(backendEndpoint);
+    const jsonObj = JSON.stringify(this.formData);
+    console.log('Selected item: ', jsonObj);
     axios.post(backendEndpoint, jsonObj, {
       headers: {
         'Content-Type': 'application/json'
@@ -192,8 +218,8 @@ export class NavbarComponent implements OnInit {
           parola: '',
           materie: '',
           rol:'',
-          grupe:'1301,1302',
-           materii:{"materia1":"Istorie - AnIII"}
+          grupe:'',
+           materii:new Map<string, object>()
         };
         
       })
@@ -201,6 +227,7 @@ export class NavbarComponent implements OnInit {
         console.log("Aicisa");
         console.error('Eroare la trimiterea JSON-ului:', error);
       });
+
   }
 
   async sendFormDataLogin() {
@@ -267,13 +294,20 @@ export class NavbarComponent implements OnInit {
           this.shareDataService.sendRaspuns(raspunsServerModficat);
            console.log("Raspuns server "+ raspunsServerModficat);
            console.log("Raspuns server json"+ raspunsJSON);*/
+
+          localStorage.setItem("an" , response.data);
+           
+
+         
            if(!this.esteProfesor()){
            console.log("AN primit "+response.data);
+           localStorage.setItem("ani", response.data);
            this.courseDetalis.curataVector();
            this.courseDetalis.modifica(response.data);
            }
            else {
             console.log("AN primit "+response.data);
+            localStorage.setItem("ani", response.data);
             this.courseDetalis.curataVectorProf();
             this.courseDetalis.modificaProf(response.data);
            }
@@ -361,10 +395,10 @@ export class NavbarComponent implements OnInit {
         let securedEndpoint ;
     if(this.esteProfesor()){
 
-       securedEndpoint = 'http://localhost:8082/statistici/statisticiProfesor';
+       securedEndpoint = 'http://localhost:8096/statistici/statisticiProfesor';
     }
     else{
-      securedEndpoint = 'http://localhost:8082/statistici/statisticiElev';
+      securedEndpoint = 'http://localhost:8096/statistici/statisticiElev';
     }
  
         try {
