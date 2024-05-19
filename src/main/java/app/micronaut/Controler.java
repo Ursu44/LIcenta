@@ -34,10 +34,17 @@ public class Controler {
 
     @Produces(MediaType.TEXT_PLAIN)
     @Put("/progres")
-    public void index(Principal principal) {
+    public void index(Principal principal,  @Body String json) throws JsonProcessingException {
         String response = principal.getName();
         String gmail = response.split("_")[1];
-        updateCurs.update(gmail);
+        //System.out.println("Mail "+gmail+" "+json);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode raspunsJson = objectMapper.readTree(json);
+        String an = raspunsJson.get("materie").asText().split("_")[1];
+        String materie = raspunsJson.get("materie").asText().split("_")[0];
+        String capitol = raspunsJson.get("capitol").asText();
+        String progres =  raspunsJson.get("progresAdd").asText();
+        updateCurs.update(gmail, an, materie, capitol, progres);
     }
 
     @Produces(MediaType.TEXT_PLAIN)
@@ -51,13 +58,14 @@ public class Controler {
         String an = raspunsJson.get("materie").asText().split("_")[1];
         String materie = raspunsJson.get("materie").asText().split("_")[0];
         String ora =  raspunsJson.get("ora").asText();
+        String ora1 =  raspunsJson.get("ora1").asText();
         int incercari =  raspunsJson.get("incercari").asInt();
-
+        int incercari1 =  raspunsJson.get("incercari1").asInt();
         /*System.out.println("An "+an);
         System.out.println("Materie "+materie);
         System.out.println("Ora "+ora);
         System.out.println("Incercari "+incercari);*/
 
-        updateCurs.updateTest(gmail, an, materie, ora, incercari);
+        updateCurs.updateTest(gmail, an, materie, ora, ora1, incercari, incercari1);
     }
 }
