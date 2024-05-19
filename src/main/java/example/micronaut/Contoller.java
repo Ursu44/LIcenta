@@ -63,26 +63,4 @@ public class Contoller {
         return  an;
     }
 
-    @Get("/statistici/{tip}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String iauDateStatistici(Principal principal, @QueryValue String tip) {
-        String response = principal.getName();
-        String gmail = response.split("_")[1];
-        System.out.println("ceva "+ takeLectures.takeStatistic(gmail, tip).toString());
-        JSONObject raspuns =takeLectures.takeStatistic(gmail, tip);
-        if(tip.equals("statisticiProfesor")) {
-            for (int i = 0; i < raspuns.length(); i++) {
-                JSONObject elev = raspuns.getJSONObject("elev" + (i + 1));
-                String mail = elev.getString("mail");
-                System.out.println("NUme " + takeLectures.cautStudent(mail, raspuns, (i + 1)));
-                String rez = takeLectures.cautStudent(mail, raspuns, (i + 1));
-                elev.put("nume", rez.split("_")[0]);
-                elev.put("prenume", rez.split("_")[1]);
-            }
-        }
-        String raspsunsString = raspuns.toString();
-        System.out.println("Raspuns 1234 "+raspsunsString);
-        return  raspsunsString;
-    }
-
 }

@@ -425,39 +425,4 @@ public class TakeLectures {
         return data;
 
     }
-
-    String cautStudent(String mail, JSONObject raspuns, int index) {
-        CompletableFuture<String> future = new CompletableFuture<>();
-        CountDownLatch latch = new CountDownLatch(1);
-        final String[] rezultat = {""};
-        studenti.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot student : dataSnapshot.getChildren()) {
-                    String email = student.child("mail").getValue(String.class);
-                    if (mail.equals(email)) {
-                        String nume = student.child("nume").getValue(String.class);
-                        String prenume = student.child("prenume").getValue(String.class);
-                        System.out.println("L-am gasit pe studentul " + nume + " " + prenume);
-                        rezultat[0] = nume + "_" + prenume;
-                        JSONObject elev = raspuns.getJSONObject("elev" + index);
-                    }
-                }
-                latch.countDown();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("Citire esuata: " + error.getMessage());
-                latch.countDown();
-            }
-        });
-
-        try {
-            latch.await(11, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return rezultat[0];
-    }
 }
