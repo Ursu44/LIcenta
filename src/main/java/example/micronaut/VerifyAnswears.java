@@ -26,13 +26,14 @@ public class VerifyAnswears  {
     private CorectareFirebase dbInitializer;
 
     private DatabaseReference materii = null;
-
+    private DatabaseReference note = null;
     @Inject
     Conectare conectare;
 
     @Inject
     public VerifyAnswears() {
         materii = FirebaseDatabase.getInstance().getReference("Catalog");
+        note =  FirebaseDatabase.getInstance().getReference("Materii");
     }
 
     public String corecteaza(JsonNode date,JsonNode intrebari){
@@ -49,18 +50,7 @@ public class VerifyAnswears  {
         System.out.println("Captol 1 "+capitol1);
         System.out.println("Captol 2 "+capitol2);
 
-        //Iterator<Map.Entry<String, JsonNode>> fields = intrebari.fields();
-
         int index = 0;
-
-        /*while(fields.hasNext()) {
-            Map.Entry<String, JsonNode> field = fields.next();
-            String   fieldName  = field.getKey();
-            ArrayNode fieldValue = (ArrayNode) field.getValue();
-
-            System.out.println("Intrebare: " + fieldName);
-            System.out.println("Intrebare 123: " + fieldValue);
-        }*/
 
         if(materie.equals("Matematică")){
             materie = "Matematica";
@@ -190,18 +180,8 @@ public class VerifyAnswears  {
 
                                 //punctajFinal[0] += punctajIntrebare;
                             }
-                            //System.out.println("Intrebare "+intrebare);
-
-                            //String variante = intrebare.getString("variante");
-                            // System.out.println("Index 1" +j);
-                            //jsonObject.put("intrebare", intrbarePus);
-                            // jsonObject.put("tip", tip);
-                            // jsonObject.put("punctaj", punctaj);
-                            //jsonObject.put("variante", intrebare.get("variante", List.class));
-                            // jsonObject1.put(intrebareIndex, jsonObject);
 
                         }
-                        //System.out.println("Rezultat final " + jsonObject1);
                     }
                     try {
                         Thread.sleep(1000);
@@ -283,10 +263,8 @@ public class VerifyAnswears  {
                                         if(tip.equals("multiplu") || punctaj[0]==0.33){
                                             if (raspsunsString.contains(varianta) || punctaj[0]==0.33) {
                                                 punctajProvizoriu += punctaj[0];
-                                                System.out.println("Punctaj adaugat varaiana multipla "+intrbarePus+" "+ punctajProvizoriu);
                                             } else{
                                                 punctajProvizoriu1 +=  punctaj[0];
-                                                System.out.println("Punctaj scadat varaiana multipla1 "+intrbarePus+" "+ punctajProvizoriu1);
                                             }
 
                                             if(punctajProvizoriu < 0){
@@ -296,11 +274,9 @@ public class VerifyAnswears  {
                                         else {
                                             if (raspsunsString.contains(varianta)) {
                                                 punctajProvizoriu += punctaj[0];
-                                                //System.out.println("Punctaj intrbare gasita 4 "+ punctajFinal1[0]);
                                             }
                                         }
                                     }
-                                   // System.out.println("Pentru intrebarea "+intrbarePus+ " s-a pus "+punctajProvizoriu);
                                     if(punctajProvizoriu - punctajProvizoriu1<0){
                                         double punctaj12 =punctajProvizoriu - punctajProvizoriu1;
                                         System.out.println("Pentru intrebarea1 "+intrbarePus+ " s-a pus "+punctaj12+" "+punctajFinal[0]);
@@ -363,7 +339,7 @@ public class VerifyAnswears  {
     }
 
     public void salvezNota(JsonNode date,String nota){
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(2);
         System.out.println("Nota "+nota);
         System.out.println("An "+date.get("an").asText());
         String an1 = date.get("an").asText();
@@ -373,13 +349,15 @@ public class VerifyAnswears  {
         String capitole = date.get("capitole").asText();
         System.out.println("Mail "+(date.get("mailElev").asText()).split("_")[1]);
         String mail = (date.get("mailElev").asText()).split("_")[1];
-        String materie1 = "", tip="";
+        String materie1 = "", tip="", incercari="";
 
         if(capitole.equals("1_2")){
             tip ="Nota1";
+            incercari = "incercari";
         }
         else if(capitole.equals("3_4")) {
             tip = "Nota2";
+            incercari = "incercari1";
         }
 
 
@@ -416,6 +394,33 @@ public class VerifyAnswears  {
                         double notaDouble = Double.parseDouble(nota);
                         long notaRotunjita = Math.round(notaDouble);
                         data.put(finalTip, notaRotunjita);
+                        studentSnapshot.child(finalMaterie).getRef().updateChildren(data, null);
+                        break;
+                    }
+                }
+                latch.countDown();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("Eroare la extragerea cursurilor: " + error.getMessage());
+                latch.countDown();
+            }
+        });
+
+        String finalIncercari = incercari;
+        note.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                    DataSnapshot dataSnapshot1 = studentSnapshot;
+                    String elevEmail = dataSnapshot1.child("mailElev").getValue(String.class);
+                    if (elevEmail.equals(mail))   {
+                        System.out.println("Pe aici nu se trece 12");
+                        Map<String, Object> data = new HashMap<String, Object>();
+                        int incercariInt = dataSnapshot1.child(finalMaterie).child(finalIncercari).getValue(Integer.class);
+                        incercariInt--;
+                        data.put(finalIncercari, incercariInt);
                         studentSnapshot.child(finalMaterie).getRef().updateChildren(data, null);
                         break;
                     }
@@ -471,26 +476,14 @@ public class VerifyAnswears  {
         String finalTip = tip;
 
         CountDownLatch latch = new CountDownLatch(1);
-        CountDownLatch latch1 = new CountDownLatch(1);
         final int[] nr = {1};
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        Map<String, Object> data1 = new HashMap<>();
+        JSONObject data1 = new JSONObject();
             materii.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
                         String mailProfesor = studentSnapshot.child(finalMaterie).child("mailProfesor").getValue(String.class);
                         System.out.println("Mai " + mailProfesor);
-                        //int nota = dataSnapshot.child(finalMaterie).child("Nota1").getValue(Integer.class);
-                        //System.out.println("Nota " + nota);
-                       // String mailElev = studentSnapshot.child("mailElev").getValue(String.class);
-                        //System.out.println("Mail elev " + mailElev);
-                        /*String nume = studentSnapshot.child("nume").getValue(String.class);
-                        System.out.println("Nume " + nume);
-                        String prenume = studentSnapshot.child("prenume").getValue(String.class);
-                        System.out.println("Prenume " + prenume);
-                        String grupa = studentSnapshot.child("grupa").getValue(String.class);
-                        System.out.println("Grupa " + grupa);*/
 
                                 if (mailProfesor.equals(mail)) {
                                     System.out.println("Pe aici nu se trece " + finalTip+ " "+finalMaterie);
@@ -523,7 +516,7 @@ public class VerifyAnswears  {
                                 }
                             }
                     latch.countDown();
-                 }
+                }
 
                 @Override
                 public void onCancelled(DatabaseError error) {
