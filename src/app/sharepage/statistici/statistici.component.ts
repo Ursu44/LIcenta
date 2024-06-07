@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 import { ServiciuService } from 'src/app/services/serviciu.service';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { range } from 'rxjs';
@@ -163,6 +163,12 @@ esteProfesor() :boolean{
 }
   return ok;
 }
-
+  @HostListener('change', ['$event.target.value'])
+  onAnSelectatChange() {
+    if(this.esteProfesor()){
+      
+    }
+  }
+  
 
 }

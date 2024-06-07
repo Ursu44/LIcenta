@@ -6,6 +6,7 @@ import { ShareDataService } from 'src/app/services/share-data.service';
 import { PopupComponent } from '../popup/popup.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { AppComponent } from 'src/app/app.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-catalog',
@@ -15,7 +16,7 @@ import { AppComponent } from 'src/app/app.component';
 export class CatalogComponent {
   raspunsCatalog: any = this.shareDataService.getRaspunsCatalog();
 
-  constructor(private appComponent: AppComponent, private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog, private shareDataCatalog:ShareCatalogService) {}
+  constructor(private snackBar: MatSnackBar, private appComponent: AppComponent, private shareDataService:ShareCatalogService, private refresh:RefreshService, private dialog: MatDialog, private shareDataCatalog:ShareCatalogService) {}
 
   AccessToken: any;
   rol:string = "";
@@ -342,7 +343,12 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
           tipNota: '',
           nota:0
         };
-        
+        this.snackBar.open('Notă inrodusă cu succes', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       })
       .catch(error => {
         console.error('Eroare la trimiterea JSON-ului:', error);
@@ -447,4 +453,43 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
    
     return ok3;
   }
+
+  updateNota(nota: any, materie: string, notaKey: string, event: any) {
+    const value = (event.target as HTMLElement)?.textContent || ''; 
+    const intValue = value === '' ? 0 : parseInt(value);
+    
+    if (!nota[materie]) {
+      nota[materie] = {};
+    }
+    
+    nota[materie][notaKey] = intValue;
+    
+    this.calculeazaMediaMaterie(nota, materie);
+    console.log("Recalculare 12"+notaKey+" "+materie);
+    console.log("Recalculare "+value);
+    
+}
+
+updateMedie(nota: any, materie: string, event: any) {
+    const value = event?.target?.value || ''; 
+    const floatValue = value === '' ? 0 : parseFloat(value);
+    
+    if (!nota[materie]) {
+      nota[materie] = {};
+    }
+    console.log("Recalculare 1");
+
+    nota[materie].Medie = this.calculeazaMediaMaterie(materie, nota);
+    
+}
+
+calculeazaMediaMaterie(nota: any, materie: string) {
+    const note = ['Nota1', 'Nota2', 'Nota3', 'Nota4'].map(key => nota[materie][key] || 0);
+    const total = note.reduce((sum, value) => sum + value, 0);
+    const media = total / note.length;
+    nota[materie].Medie = media;
+    console.log("Recalculare 2"+media);
+}
+
+
 }

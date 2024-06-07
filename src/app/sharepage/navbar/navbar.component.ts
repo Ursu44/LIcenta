@@ -13,6 +13,8 @@ import { ServiciuService } from 'src/app/services/serviciu.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { FormGroup } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 
 declare var window: any;
 
@@ -28,7 +30,6 @@ export class NavbarComponent implements OnInit {
   isScrolled = false;
   formRegister: any;
   formLogin: any;
-  snackBar: any;
   confirmModal: any;
   formSuccesLogin: any;
   isProfesorSelected: boolean = false;
@@ -60,7 +61,7 @@ export class NavbarComponent implements OnInit {
   categories:any;
   selected:any;
 
-  constructor(private servicu:ServiciuService ,private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
+  constructor(private snackBar: MatSnackBar,private servicu:ServiciuService ,private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private httpClient: HttpClient, private shareDataService:ShareDataService, private shareDataCatalog:ShareCatalogService, private dialog:MatDialog,  private refresh:RefreshService) { 
     this.isProfesorSelected = false;
   }
 
@@ -252,6 +253,12 @@ export class NavbarComponent implements OnInit {
         localStorage.setItem('refresh_token', response.data.refresh_token);
         this.ok = true;
         this.doHiddingLogin();
+        this.snackBar.open('Logare reușită', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       this.loginFormData = {
         username: '',
         password: ''
@@ -322,6 +329,12 @@ export class NavbarComponent implements OnInit {
       }
     } else {
       console.error('Token-uri lipsă.');
+      this.snackBar.open('Este nevoie de autentificare sau înregistrare', 'Închide', {
+        duration: 2500,
+        panelClass: 'custom-snackbar',
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
@@ -425,6 +438,12 @@ export class NavbarComponent implements OnInit {
           //await this.refreshAccessToken();
         }
       } else {
+        this.snackBar.open('Este nevoie de autentificare sau înregistrare', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
         console.error('Token-uri lipsă.');
       }
   }
@@ -472,6 +491,12 @@ export class NavbarComponent implements OnInit {
         }
       } else {
         console.error('Token-uri lipsă.');
+        this.snackBar.open('Este nevoie de autentificare sau înregistrare', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       }
   }
 

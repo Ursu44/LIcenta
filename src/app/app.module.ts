@@ -21,6 +21,8 @@ import { TestComponent } from './sharepage/test/test.component';
 import {Chart} from 'chart.js';
 import { GraficComponent } from './sharepage/grafic/grafic.component';
 import { StatisticiComponent } from './sharepage/statistici/statistici.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 
 @NgModule({ 
   declarations: [
@@ -48,6 +50,7 @@ import { StatisticiComponent } from './sharepage/statistici/statistici.component
     BrowserModule,
     BrowserAnimationsModule,
     MatDialogModule,
+    MatSnackBarModule
       ],
   providers: [],
   bootstrap: [AppComponent]

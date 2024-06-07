@@ -39,16 +39,15 @@ export class GraficComponent implements OnInit{
 
         const media = this.calculezaMedia(this.note);
         const deviatiaStandard = this.calculareDeviatieStandard(this.note, media);
+        console.log("Media "+media);
+        const dateGrafic = this.generareDateDistributie(media, deviatiaStandard, this.note.length);
+       this.numarNote(this.note);
 
-        const dateGrafic = this.generareDateDistributie(media, deviatiaStandard, 10);
-        const idealGaussianData = this.genereazaGraficIdeal(10, 0.9, media, deviatiaStandard);
-        this.numarNote(this.note);
-        console.log("Numarate "+this.numarat);
-        
-        this.generateChart(dateGrafic, idealGaussianData);
+        const data = this.generateGaussianData(media, deviatiaStandard, this.note.length+2);
+        this.generateChart(dateGrafic, data);
         this.generateBarChart(this.numarat);
               resolve(); 
-          }, 500);
+          }, 800);
       });
   } catch (error) {
       console.error('Eroare în preluarea datelor:', error);
@@ -56,7 +55,7 @@ export class GraficComponent implements OnInit{
 }
   
 
-generateChart(gaussianData: number[], idealData: number[]): void {
+generateChart(gaussianData:  Array<{x: number, y: number}>, idealData:  Array<{x: number, y: number}>): void {
   const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
   const ctx = document.getElementById('myChart') as HTMLCanvasElement;
@@ -66,18 +65,19 @@ generateChart(gaussianData: number[], idealData: number[]): void {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Distribuția normală a notelor',
-        data: gaussianData,
+        label: 'Distribuția normală a notelor ideala',
+        data: idealData,
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
       },{
-        label: 'Distributia normală a notelor ideală',
-        data: idealData,
+        label: 'Distribuția normală a notelor reala',
+        data: gaussianData,
         fill: false,
         borderColor: 'rgb(255, 99, 132)',
         tension: 0.1
-      }]
+      }
+    ]
     },
     options: {
       scales: {
@@ -153,30 +153,62 @@ calculareDeviatieStandard(note: number[], medie: number): number {
   return Math.sqrt(deviatieStd);
 }
 
-generareDateDistributie(medie: number, deviatieStandard: number, lungime: number): number[] {
-  const dateGrafic = [];
+generareDateDistributie(medie: number, deviatieStandard: number, lungime: number): { x: number, y: number }[] {
+  const dateGrafic: { x: number, y: number }[] = [];
   for (let i = 0; i <= lungime; i++) {
     const valoare = (1 / (deviatieStandard * Math.sqrt(2 * Math.PI))) * Math.exp(-Math.pow(i - medie, 2) / (2 * Math.pow(deviatieStandard, 2)));
-    dateGrafic.push(valoare);
+    dateGrafic.push({ x: i, y: valoare });
   }
-  return dateGrafic;
+  const sum = dateGrafic.reduce((acc, val) => acc + val.y, 0);
+  return dateGrafic.map(val => ({ x: val.x, y: val.y / sum }));
 }
 
-genereazaGraficIdeal(lungime: number, valoareReferinta: number, medie: number, deviatie: number): number[] {
+
+gaussian(x: number, medie: number, sigma: number) {
+  var constantaGaussian = 1 / (sigma * Math.sqrt(2 * Math.PI));
+  x = (x - medie) / sigma;
+  return constantaGaussian * Math.exp(-.5 * x * x);
+}
+
+genereazaGraficIdeal(lungime: number, valoareReferinta: number, medie: number, deviatie: number): Array<{x: number, y: number}> {
   const dateIdeale = [];
-  for (let x = 1; x <= lungime; x++) {
-    const exponent = -0.5 * Math.pow((x - medie) / deviatie, 2);
-    const value = valoareReferinta * Math.exp(exponent);
-    dateIdeale.push(value);
+  const constantaGaussian = 1 / (deviatie * Math.sqrt(2 * Math.PI));
+
+  for (let i = 0; i <= lungime; i++) {
+    const x = i;
+    const scaledX = (x - medie) / deviatie;
+    const valoareGaussian = constantaGaussian * Math.exp(-0.5 * scaledX * scaledX);
+    dateIdeale.push({x: x, y: valoareGaussian});
   }
   return dateIdeale;
 }
+
 
 
 numarNote(note: number[]) {
   for(let i=0;i< note.length; i++){
     this.numarat[note[i]]++;
   }
+}
+
+ gaussianPDF(x: number, mean: number, stdDev: number): number {
+  return (1 / (stdDev * Math.sqrt(2 * Math.PI))) * Math.exp(-Math.pow(x - mean, 2) / (2 * Math.pow(stdDev, 2)));
+}
+
+ generateGaussianData(mean: number, stdDev: number, numPoints: number): { x: number, y: number }[] {
+  console.log("Media grafic "+mean+" deviatia "+stdDev)
+  const data = [];
+  const minX = mean - 2.5 * stdDev;
+    const maxX = mean + 2.5 * stdDev;
+    const step = (maxX - minX) / (numPoints - 1);
+
+    for (let x = minX; x <= maxX; x += step) {
+        const y = this.gaussianPDF(x, mean, stdDev);
+        data.push({ x, y });
+        console.log("x:", x, "y:", y);
+    }
+
+  return data;
 }
 
 }
