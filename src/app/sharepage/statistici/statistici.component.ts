@@ -12,19 +12,22 @@ export class StatisticiComponent implements OnInit {
   raspuns: any;
   raspuns1: any;
   vectorElevi: any;
+  materia: string = "";
   myChart: any;
   raspunsJson: any;
-  indici :any = [];
-  materii :any = [];
-  vectorMaterii :any = [];
+  indici: any = [];
+  materii: any = [];
+  vectorMaterii: any = [];
+  selectedIndex: number | null = null;
+  selectedIndex1: number | null = null;
   constructor(private serviciu: ServiciuService) { }
 
   chartWidth = 40; 
   chartHeight = 40;
-  data1 = [25, 100, 75 ,50];
+  data1 = [25, 100, 75, 50];
   i = 0;
   grafice: (Chart | null)[] = []; 
-  dateElevi: { [indice: number]: number [] } = {};
+  dateElevi: { [indice: number]: number[] } = {};
 
   ngOnInit(): void {
     this.raspuns1 = localStorage.getItem("statistica");
@@ -39,48 +42,60 @@ export class StatisticiComponent implements OnInit {
           this.raspuns1 = localStorage.getItem("statistica");
           console.log("Raspunsul din noua pagina " + this.raspuns1);
           this.raspunsJson = JSON.parse(this.raspuns1);
-          if(this.esteProfesor()){
-            this.vectorElevi = Object.keys(this.raspunsJson );
-            console.log("Raspusnul JSON "+ this.vectorElevi);
+          if (this.esteProfesor()) {
+            this.vectorElevi = Object.keys(this.raspunsJson);
+            console.log("Raspunsul JSON " + this.vectorElevi);
             let lungimeJSON = this.vectorElevi.length;
-            for(let i =0 ;i <lungimeJSON ;i++){
+            for (let i = 0; i < lungimeJSON; i++) {
               this.indici.push(i);
             }
-          console.log(this.indici);
-        }
-        else if(!this.esteProfesor()){
-          this.vectorMaterii = Object.keys(this.raspunsJson );
-           console.log("Raspusnul JSON "+ this.vectorMaterii);
-           let lungimeJSON = this.vectorMaterii.length;
-          for(let i =0 ;i <lungimeJSON ;i++){
-
-            this.materii.push(this.vectorMaterii[i]);
+            console.log(this.indici);
+          } else {
+            this.vectorMaterii = Object.keys(this.raspunsJson);
+            console.log("Raspunsul JSON " + this.vectorMaterii);
+            let lungimeJSON = this.vectorMaterii.length;
+            for (let i = 0; i < lungimeJSON; i++) {
+              this.materii.push(this.vectorMaterii[i]);
+            }
           }
-        }
           resolve();
-        },7500);
+        }, 7500);
       });
     } catch (error) {
       console.error('Eroare în preluarea datelor:', error);
     }
   }
 
-  generateChart(index: number, materie: string): void {
-
-    let valori:any = [];
-    let eticheta :string = "Progres capitole";
-    if(this.esteProfesor()){
-      valori.push(this.raspunsJson["elev"+(index+1)].progres1);
-      valori.push(this.raspunsJson["elev"+(index+1)].progres2);
-      valori.push(this.raspunsJson["elev"+(index+1)].progres3);
-      valori.push(this.raspunsJson["elev"+(index+1)].progres4);
+  generateChart(index: number | null, materie: string): void {
+    if (index === null) {
+      console.error('Indexul selectat este null');
+      return;
     }
-    else if(!this.esteProfesor()){
-      valori.push(this.raspunsJson[materie].progres1);
-      valori.push(this.raspunsJson[materie].progres2);
-      valori.push(this.raspunsJson[materie].progres3);
-      valori.push(this.raspunsJson[materie].progres4);
-
+    let valori: any = [];
+    let eticheta: string = "Progres capitole";
+    let index3:number;
+    if (this.selectedIndex === null) {
+      return;
+    }
+    else{
+      index3 = this.selectedIndex;
+      index3++;
+      console.log(index3);
+    }
+  
+    if (this.esteProfesor()) {
+      console.log("elev" + index3);
+      valori.push(this.raspunsJson["elev" + index3].progres1);
+      valori.push(this.raspunsJson["elev" + index3].progres2);
+      valori.push(this.raspunsJson["elev" + index3].progres3);
+      valori.push(this.raspunsJson["elev" + index3].progres4);
+    } else {
+      let materiaIndex = this.vectorMaterii[this.selectedIndex];
+      console.log("Materi1313 "+this.selectedIndex);
+      valori.push(this.raspunsJson[this.selectedIndex].progres1);
+      valori.push(this.raspunsJson[this.selectedIndex].progres2);
+      valori.push(this.raspunsJson[this.selectedIndex].progres3);
+      valori.push(this.raspunsJson[this.selectedIndex].progres4);
     }
     let etichete = ['Capitolul 1', 'Capitolul 2', 'Capitolul 3', 'Capitolul 4']; 
 
@@ -116,59 +131,70 @@ export class StatisticiComponent implements OnInit {
       options: {
         scales: {
           y: {
-            min:0,
-            max:100,
+            min: 0,
+            max: 100,
           }
         }
       }
     };
     console.log(index);
-    let index1 = index+1;
-    const canvasId = 'Chart'+index;
+    let index1 = index + 1;
+    const canvasId = 'Chart' + this.selectedIndex;
     const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
-    console.log("Id "+ctx);
+    console.log("Id " + ctx);
     this.myChart = new Chart(ctx, config);
     this.grafice[index] = this.myChart;
-
-}
-
-ascundeGrafic(index: number) {
-  const chart = this.grafice[index];
-  if (chart) {
-    chart.destroy();
-    this.grafice[index] = null;
   }
-}
 
-decodeJwtClaims(token: string) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-
-  return JSON.parse(jsonPayload);
-}
-
-esteProfesor() :boolean{
-  var notaNoua = document.getElementById('element') as HTMLInputElement | null;
-  const accessToken = localStorage.getItem('access_token');
-  let ok =false;
-  if(accessToken){
-    const claimsDecodat = this.decodeJwtClaims(accessToken)
-    let rol = claimsDecodat.roles;
-    let rol1 = JSON.stringify(rol);
-      const numeRol = rol1.trim();
-      ok = (numeRol === '["ROLE_PROFESOR"]');
-}
-  return ok;
-}
-  @HostListener('change', ['$event.target.value'])
-  onAnSelectatChange() {
-    if(this.esteProfesor()){
-      
+  ascundeGrafic(index: number | null) {
+    if (index === null) {
+      console.error('Indexul selectat este null');
+      return;
+    }
+    const chart = this.grafice[index];
+    if (chart) {
+      chart.destroy();
+      this.grafice[index] = null;
     }
   }
-  
 
+  decodeJwtClaims(token: string) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  }
+
+  esteProfesor(): boolean {
+    var notaNoua = document.getElementById('element') as HTMLInputElement | null;
+    const accessToken = localStorage.getItem('access_token');
+    let ok = false;
+    if (accessToken) {
+      const claimsDecodat = this.decodeJwtClaims(accessToken);
+      let rol = claimsDecodat.roles;
+      let rol1 = JSON.stringify(rol);
+      const numeRol = rol1.trim();
+      ok = (numeRol === '["ROLE_PROFESOR"]');
+    }
+    return ok;
+  }
+
+  @HostListener('change', ['$event.target.value'])
+  onAnSelectatChange() {
+    if (this.esteProfesor()) {
+      let index3:number;
+      if (this.selectedIndex === null) {
+        return;
+      }
+      else{
+        index3 = this.selectedIndex;
+        index3++;
+        console.log(index3);
+      }
+      this.materia = this.raspunsJson["elev" + index3].materie;      
+    }
+  }
 }

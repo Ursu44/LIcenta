@@ -8,12 +8,34 @@
   </div><br><br><br>
 </div><br><br><br> -->
 
+<div class="grafice" *ngIf="esteProfesor()">
+  <h2>Seelctează numele</h2> <br>
+  <h2>Progres {{materia}}</h2> <br><br><br>
+  <select id="selectAn" class="form-select" [(ngModel)]="selectedIndex" aria-label="Default select example" style="width: 400px;">
+    <option selected  *ngFor="let index of indici; let i = index" [value]="i">{{raspunsJson["elev"+(i+1)].nume}} {{raspunsJson["elev"+(i+1)].prenume}}</option>
+  </select><br><br> 
+  <button class="btn btn-success" (click)="generateChart(selectedIndex, 'elev')">Generare Grafic</button>
+  <button class="btn btn-danger" (click)="ascundeGrafic(selectedIndex)">Ascunde Grafic</button><br><br>
+  <canvas id="Chart{{selectedIndex}}" height="10" width="50"></canvas>
+</div><br><br><br> 
 
-<div class="grafice1" *ngIf="!esteProfesor()">
+<!--<div class="grafice1" *ngIf="!esteProfesor()">
   <div *ngFor="let index of materii; let i = index">
     <h2>{{vectorMaterii[i]}}</h2> <br><br>
     <button class="btn btn-success" (click)="generateChart(i, vectorMaterii[i])">Generare Grafic</button>
     <button class="btn btn-danger" (click)="ascundeGrafic(i)">Ascunde Grafic</button><br><br>
     <canvas id="Chart{{i}}" height="10" width="50"></canvas><br><br>
   </div><br><br><br><br><br><br>
+</div><br><br><br>-->
+
+<div class="grafice1" *ngIf="!esteProfesor()">
+  <h2>Seelctează materia</h2> <br>
+  <h2>{{materia}}</h2> <br><br>
+  <select id="selectAn" class="form-select" [(ngModel)]="selectedIndex" aria-label="Default select example" style="width: 400px;">
+    <option selected>Selectează</option>
+    <option selected  *ngFor="let index of materii; let i = index">{{vectorMaterii[i]}}</option>
+  </select><br><br> 
+  <button class="btn btn-success"  (click)="generateChart(selectedIndex, vectorMaterii[i])">Generare Grafic</button>
+  <button class="btn btn-danger"  (click)="ascundeGrafic(selectedIndex)">Ascunde Grafic</button><br><br>
+  <canvas id="Chart{{selectedIndex}}" height="10" width="50"></canvas><br><br><br>
 </div><br><br><br>

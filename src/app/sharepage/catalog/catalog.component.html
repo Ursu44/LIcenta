@@ -81,9 +81,16 @@
                                 <tbody>
                                     <tr>
                                         <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
-                                            <td><b>Nota{{i + 1}} </b>: <span *ngIf="nota[materie] && nota[materie][notaKey] !== 0">{{nota[materie][notaKey]}} </span></td>
+                                            <td><b>Nota{{i + 1}} </b></td>
                                         </ng-container>
-                                        <td><b>Medie: </b><span *ngIf="nota[materie] && nota[materie].Medie !== 0">{{nota[materie].Medie}}</span></td>
+                                        <td><b>Medie </b></td>
+                                    </tr>
+                                    <tr>
+                                        <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
+                                            <td [innerText]="nota[materie] && nota[materie][notaKey] !== 0 ? nota[materie][notaKey] : ''"><div *ngIf="nota[materie] && nota[materie][notaKey] !== 0 && verificareMaterie(materie)">{{nota[materie][notaKey]}} </div></td>
+                                        </ng-container>
+                                        <td ><span *ngIf="nota[materie] && nota[materie].Medie !== 0 && verificareMaterie(materie)">{{nota[materie].Medie}}</span></td>
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -126,7 +133,7 @@
                                         </tr>
                                         <tr>
                                             <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
-                                                <td  contenteditable="true" (input)="updateNota(nota, materie, notaKey, $event)" [innerText]="nota[materie] && nota[materie][notaKey] !== 0 ? nota[materie][notaKey] : ''"><div *ngIf="nota[materie] && nota[materie][notaKey] !== 0 && verificareMaterie(materie)">{{nota[materie][notaKey]}} </div></td>
+                                                <td  contenteditable="true" (input)="updateazaNota(nota, materie, notaKey, $event)" [innerText]="nota[materie] && nota[materie][notaKey] !== 0 ? nota[materie][notaKey] : ''"><div *ngIf="nota[materie] && nota[materie][notaKey] !== 0 && verificareMaterie(materie)">{{nota[materie][notaKey]}} </div></td>
                                             </ng-container>
                                             <td ><span *ngIf="nota[materie] && nota[materie].Medie !== 0 && verificareMaterie(materie)">{{nota[materie].Medie}}</span></td>
 

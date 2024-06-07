@@ -454,7 +454,7 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
     return ok3;
   }
 
-  updateNota(nota: any, materie: string, notaKey: string, event: any) {
+  updateazaNota(nota: any, materie: string, notaKey: string, event: any) {
     const value = (event.target as HTMLElement)?.textContent || ''; 
     const intValue = value === '' ? 0 : parseInt(value);
     
@@ -464,30 +464,29 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
     
     nota[materie][notaKey] = intValue;
     
-    this.calculeazaMediaMaterie(nota, materie);
+    this.calculeazaMediaLive(nota, materie);
     console.log("Recalculare 12"+notaKey+" "+materie);
     console.log("Recalculare "+value);
     
 }
 
-updateMedie(nota: any, materie: string, event: any) {
-    const value = event?.target?.value || ''; 
-    const floatValue = value === '' ? 0 : parseFloat(value);
-    
-    if (!nota[materie]) {
-      nota[materie] = {};
-    }
-    console.log("Recalculare 1");
-
-    nota[materie].Medie = this.calculeazaMediaMaterie(materie, nota);
-    
-}
-
-calculeazaMediaMaterie(nota: any, materie: string) {
+calculeazaMediaLive(nota: any, materie: string) {
     const note = ['Nota1', 'Nota2', 'Nota3', 'Nota4'].map(key => nota[materie][key] || 0);
     const total = note.reduce((sum, value) => sum + value, 0);
     const media = total / note.length;
-    nota[materie].Medie = media;
+
+    if (nota[materie] && nota[materie].Nota1 != 0 && nota[materie].Nota2 != 0 && nota[materie].Nota3 != 0 && nota[materie].Nota4 != 0) {
+      nota[materie].Medie =
+        Math.round(0.2 * nota[materie].Nota1
+          + 0.2 * nota[materie].Nota2
+          + 0.3 * nota[materie].Nota3
+          + 0.3 * nota[materie].Nota4);
+    }
+
+    //nota[materie].Medie = media;
+
+    
+
     console.log("Recalculare 2"+media);
 }
 
