@@ -2,6 +2,9 @@ import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 import { ServiciuService } from 'src/app/services/serviciu.service';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { range } from 'rxjs';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-statistici',
@@ -20,7 +23,8 @@ export class StatisticiComponent implements OnInit {
   vectorMaterii: any = [];
   selectedIndex: number | null = null;
   selectedIndex1: number | null = null;
-  constructor(private serviciu: ServiciuService) { }
+  incarcat:boolean = false;
+  constructor(private snackBar: MatSnackBar,private serviciu: ServiciuService) { }
 
   chartWidth = 40; 
   chartHeight = 40;
@@ -58,7 +62,14 @@ export class StatisticiComponent implements OnInit {
               this.materii.push(this.vectorMaterii[i]);
             }
           }
+          this.incarcat = true;
           resolve();
+          this.snackBar.open('Date încărcate cu succes', 'Închide', {
+            duration: 2500,
+            panelClass: 'custom-snackbar',
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }, 7500);
       });
     } catch (error) {

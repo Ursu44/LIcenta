@@ -1,4 +1,8 @@
-<div class="container">
+<div class="loading" *ngIf="!incarcat">
+  <div class="spinner"></div>
+  <h2>Loading...</h2>
+</div>
+<div class="container" *ngIf="incarcat">
   <ng-container *ngFor="let detail of details">
     <div class="card" id="cardPosition" style="width: 18rem;" *ngIf="detail.deAfisat">
       <img class="card-img-top" [src]="detail.srcImg" alt="Card image cap">

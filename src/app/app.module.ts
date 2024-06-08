@@ -22,6 +22,7 @@ import {Chart} from 'chart.js';
 import { GraficComponent } from './sharepage/grafic/grafic.component';
 import { StatisticiComponent } from './sharepage/statistici/statistici.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({ 
@@ -39,7 +40,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     CoursesComponent ,
     TestComponent,
     GraficComponent,
-    StatisticiComponent 
+    StatisticiComponent
   ],
   imports: [
     FormsModule,

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import axios from 'axios';
 import { AppComponent } from 'src/app/app.component';
 import { CourseDetailsService } from 'src/app/services/course-details.service';
@@ -14,8 +15,9 @@ import { SharenumeService } from 'src/app/services/sharenume.service';
 })
 export class CoursesComponent {
     details : any[] = [];
+    incarcat:boolean = false;
 
-    constructor(private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService, private shareNume:SharenumeService) {}
+    constructor(private snackBar: MatSnackBar,private appComponent:AppComponent,private courseDetalis:CourseDetailsService, private shareDataService:ShareDataService, private refresh:RefreshService, private shareNume:SharenumeService) {}
 
     ngOnInit() : void{
       //this.appComponent.raspuns1 = true;
@@ -27,6 +29,7 @@ export class CoursesComponent {
         this.courseDetalis.curataVectorProf();
         this.courseDetalis.modificaProf("");
       }
+      this.incarcat = true;
     }
 
     async afisezMateria(nume: string):Promise<void>{

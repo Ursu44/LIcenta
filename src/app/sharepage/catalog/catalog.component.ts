@@ -39,6 +39,7 @@ export class CatalogComponent {
   materia :any;
   an: any;
   materieMedie: any;
+  incarcat:boolean = false;
 
   formData: any = {
     nume: '',
@@ -145,6 +146,13 @@ export class CatalogComponent {
                 }
                 console.log("Uite ce am primit catalog" + this.raspunsCatalog);
                 resolve(); 
+                this.incarcat = true;
+                this.snackBar.open('Date încărcate cu succes', 'Închide', {
+                  duration: 2500,
+                  panelClass: 'custom-snackbar',
+                  horizontalPosition: 'center',
+                  verticalPosition: 'top',
+                });
             }, 6200);
         });
     } catch (error) {

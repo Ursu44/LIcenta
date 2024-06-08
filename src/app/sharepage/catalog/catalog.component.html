@@ -1,5 +1,9 @@
+<div class="loading" *ngIf="!incarcat">
+    <div class="spinner"></div>
+    <h2 class="textIncarcare">Loading...</h2>
+  </div>
 <div class="input-group">
-    <div *ngIf="esteProfesor()">
+    <div *ngIf="esteProfesor() && incarcat">
     <h2>Introdu nota</h2> <br>
     <div class="grup-ani">
         <div class="input-group-prepend">
@@ -58,8 +62,8 @@
     <button type="button" class="btn btn-outline-success float-left" style="border-radius: 15px; margin-left: 460px;" (click)="adaugaNota()">Trimite</button>
     <br><br><br><br><br><br><br><br><br>
     </div>
-    <h2 style="margin-right: 1790px;">Catalog</h2>
-    <div class="container" *ngIf="!esteProfesor()">
+    <h2 style="margin-right: 1790px;" *ngIf="incarcat">Catalog</h2>
+    <div class="container" *ngIf="!esteProfesor() && incarcat">
       <table class="table table-bordered">
         <thead >
             <tr>
@@ -104,7 +108,7 @@
       </div>
       <br><br>
 
-      <div class="container" *ngIf="esteProfesor()">
+      <div class="container" *ngIf="esteProfesor() && incarcat">
         <table class="table table-bordered">
             <thead >
                 <tr>

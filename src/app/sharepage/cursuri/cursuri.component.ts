@@ -10,6 +10,7 @@ import { SharenumeService } from 'src/app/services/sharenume.service';
 import { SendTestService } from 'src/app/services/send-test.service';
 import { ServiciuService } from 'src/app/services/serviciu.service';
 import { AppComponent } from 'src/app/app.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-cursuri',
@@ -45,9 +46,10 @@ export class CursuriComponent implements OnInit {
   ora1 = 0;
   minute1 =0;
   deschis :any =true;
-  
+  incarcat:boolean = false;
 
-  constructor(private appComponent:AppComponent,private servicu:ServiciuService ,private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService, private sendtest:SendTestService) {}
+
+  constructor(private snackBar: MatSnackBar,private appComponent:AppComponent,private servicu:ServiciuService ,private shareDataService: ShareDataService, private dialog: MatDialog, private refresh: RefreshService, private shareNume:SharenumeService, private sendtest:SendTestService) {}
 
   formData: any = {
     numeLectie:"",
@@ -153,6 +155,13 @@ export class CursuriComponent implements OnInit {
           this.shareDataService.sendRaspuns(raspunsServerModficat);
            console.log("Raspuns server "+ raspunsServerModficat);
            console.log("Raspuns server json"+ raspunsJSON);
+          this.incarcat =true;
+           this.snackBar.open('Cursuri încărcate cu succes', 'Închide', {
+            duration: 2500,
+            panelClass: 'custom-snackbar',
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
         }
