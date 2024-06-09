@@ -44,6 +44,7 @@ export class VerifyCodComponent {
   open(){
     const dialogRefresh = new MatDialogConfig();
     dialogRefresh.width = "60%";
+    dialogRefresh.width = "60%";
     
     this.dialog.open(PassResetComponent);
   }

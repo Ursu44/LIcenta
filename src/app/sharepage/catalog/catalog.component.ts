@@ -137,8 +137,7 @@ export class CatalogComponent {
                     for (const an in this.ani) {
                           console.log("An:", an);
                     }
-                  
-                    // this.calculeazaMedia();
+
                 }
                 for(let i in this.materiiAfisare){
                     console.log("i= "+this.materiiAfisare[i]);
@@ -231,6 +230,14 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
       console.log("Mail:", detaliiElev.mail);  
       this.adaugNUmPrenumeMail(detaliiElev.nume, detaliiElev.prenume, detaliiElev.mail);
 }
+}
+
+@HostListener('window:scroll', ['$event'])
+onScroll(event: Event): void {
+  for(let i in this.materiiAfisare){
+    console.log("i= "+this.materiiAfisare[i]);
+    this.calculeazaMediaElev(this.materiiAfisare[i]);
+  }
 }
 
   async iaDate(){
@@ -401,6 +408,7 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
   }
 
   calculeazaMedia(materia: any) {
+   
     for (let nota1 of this.vectorCatalog) {
       if (materia === "Fizică") {
         materia = "Fizica"
@@ -419,6 +427,34 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
             + 0.2 * nota1[materia].Nota2
             + 0.3 * nota1[materia].Nota3
             + 0.3 * nota1[materia].Nota4);
+      }
+    }
+  }
+
+
+
+  calculeazaMediaElev(materia: any) {
+   
+    for (let nota1 of this.vectorCatalog) {
+      if (materia === "Fizică") {
+        materia = "Fizica"
+      } else if (materia === "Matematică") {
+        materia = "Matematica"
+      }
+      else if(this.materia === "Limba engleză"){
+        materia= "Limbaengleza";
+    }
+    else if(this.materia === "Limba și literatura română"){
+      materia= "Limbasiliteraturaromana";
+    }
+    console.log(nota1[materia]['Nota1']+" "+nota1[materia]['Nota2']+" "+nota1[materia]['Nota3']+" "+nota1[materia]['Nota4']);
+      if (nota1[materia]['Nota1'] != 0 && nota1[materia]['Nota2'] != 0 && nota1[materia]['Nota3']!= 0 && nota1[materia]['Nota4'] != 0) {
+        nota1[materia].Medie =
+          Math.round(0.2 * nota1[materia]['Nota1']
+            + 0.2 * nota1[materia]['Nota2']
+            + 0.3 * nota1[materia]['Nota4']
+            + 0.3 * nota1[materia]['Nota4']);
+            console.log("Claculat "+nota1[materia].Medie);
       }
     }
   }
@@ -482,7 +518,6 @@ calculeazaMediaLive(nota: any, materie: string) {
     const note = ['Nota1', 'Nota2', 'Nota3', 'Nota4'].map(key => nota[materie][key] || 0);
     const total = note.reduce((sum, value) => sum + value, 0);
     const media = total / note.length;
-
     if (nota[materie] && nota[materie].Nota1 != 0 && nota[materie].Nota2 != 0 && nota[materie].Nota3 != 0 && nota[materie].Nota4 != 0) {
       nota[materie].Medie =
         Math.round(0.2 * nota[materie].Nota1

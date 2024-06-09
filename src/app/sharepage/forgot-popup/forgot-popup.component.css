@@ -1,0 +1,11 @@
+.maiText{
+    align-items: center;
+}
+
+.popupparola{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+}

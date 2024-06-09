@@ -37,6 +37,7 @@ export class NavbarComponent implements OnInit {
   grupe: string = "";
   grupeAici: string[] = [];
   materiisiani:any;
+  incarcat:boolean = false;
   formData: any = {
     nume: '',
     prenume: '',
@@ -232,6 +233,7 @@ export class NavbarComponent implements OnInit {
   }
 
   async sendFormDataLogin() {
+    this.incarcat = true;
     const jsonObj = JSON.stringify(this.loginFormData);
     console.log('Form Data:', jsonObj);
     const backendEndpoint = 'http://localhost:8081/login';

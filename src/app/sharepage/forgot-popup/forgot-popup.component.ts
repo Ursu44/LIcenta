@@ -43,7 +43,8 @@ export class ForgotPopupComponent {
 
   open(){
     const dialogRefresh = new MatDialogConfig();
-    dialogRefresh.width = "60%";
+    dialogRefresh.width = "50%";
+    dialogRefresh.width = "50%";
     
     this.dialog.open(VerifyCodComponent);
   }

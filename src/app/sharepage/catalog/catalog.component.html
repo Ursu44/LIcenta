@@ -93,7 +93,7 @@
                                         <ng-container *ngFor="let notaKey of ['Nota1', 'Nota2', 'Nota3', 'Nota4']; let i = index">
                                             <td [innerText]="nota[materie] && nota[materie][notaKey] !== 0 ? nota[materie][notaKey] : ''"><div *ngIf="nota[materie] && nota[materie][notaKey] !== 0 && verificareMaterie(materie)">{{nota[materie][notaKey]}} </div></td>
                                         </ng-container>
-                                        <td ><span *ngIf="nota[materie] && nota[materie].Medie !== 0 && verificareMaterie(materie)">{{nota[materie].Medie}}</span></td>
+                                        <td ><span *ngIf="nota[materie].Medie !== 0">{{nota[materie]["Medie"]}}</span></td>
 
                                     </tr>
                                 </tbody>
