@@ -37,6 +37,7 @@ export class CatalogComponent {
   prenume: any = [];
   mail: any = [];
   materia :any;
+  materia1 :any;
   an: any;
   materieMedie: any;
   incarcat:boolean = false;
@@ -146,7 +147,7 @@ export class CatalogComponent {
                 console.log("Uite ce am primit catalog" + this.raspunsCatalog);
                 resolve(); 
                 this.incarcat = true;
-                this.snackBar.open('Date încărcate cu succes', 'Închide', {
+                this.snackBar.open('Note încărcate cu succes', 'Închide', {
                   duration: 2500,
                   panelClass: 'custom-snackbar',
                   horizontalPosition: 'center',
@@ -163,15 +164,12 @@ onAnSelectatChange() {
   let anLuat :any;
   let grupaLuat :any;
   anLuat = document.getElementById('selectAn')as HTMLInputElement | null;
-  console.log("Ani "+this.ani)
   var text = anLuat.options[anLuat.selectedIndex].text;
   this.materia = text.split('_')[0];
   this.an =  text.split('_')[1];
-  console.log("Nume:", this.materia);
   if(this.raspunsCatalog != undefined){
     this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
     this.vectorCatalog = Object.values(this.raspunsCatalogJson);
-    console.log("Raspuns host listenere "+this.vectorCatalog);
     for(let nota1 of this.vectorCatalog){
     let materiedepus;
     this.materieMedie = this.materia;
@@ -225,9 +223,6 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
   this.mail = [];
   for (const detaliu in this.detalii) {
       const detaliiElev = this.detalii[detaliu];
-      console.log("Nume:", detaliiElev.nume);
-      console.log("Prenume:", detaliiElev.prenume);
-      console.log("Mail:", detaliiElev.mail);  
       this.adaugNUmPrenumeMail(detaliiElev.nume, detaliiElev.prenume, detaliiElev.mail);
 }
 }
@@ -235,7 +230,6 @@ if(!this.deataliiAn1[nota1.an][nota1.grupa].includes(detaliiElev)){
 @HostListener('window:scroll', ['$event'])
 onScroll(event: Event): void {
   for(let i in this.materiiAfisare){
-    console.log("i= "+this.materiiAfisare[i]);
     this.calculeazaMediaElev(this.materiiAfisare[i]);
   }
 }
@@ -267,15 +261,11 @@ onScroll(event: Event): void {
             },
           });
           let raspunsServer = response1.data;
-          console.log("afafga "+raspunsServer);
           const raspunsJSON = JSON.stringify(raspunsServer);
-          console.log("afafga "+raspunsJSON);
           this.raspunsCatalogJson = JSON.parse(this.raspunsCatalog );
-          console.log("afafgaafafa fafag "+this.raspunsCatalogJson);
         //this.vectorCatalog = Object.values(this.raspunsCatalogJson);
 
         this.shareDataCatalog.sendRaspunsCatalog(raspunsJSON);
-           console.log("Raspuns server catalog "+ raspunsJSON);
         } catch (error) {
           console.error('Eroare la cererea GET cu token valid:', error);
         }
@@ -301,7 +291,6 @@ onScroll(event: Event): void {
     const accessTokenPayload = this.decodeJwtClaims(accessToken);
     const expirationTime = accessTokenPayload.exp * 1000; 
     this.rol = accessTokenPayload.roles;
-    console.log("afagas "+this.rol);
 
     if (expirationTime > Date.now()) {
 
@@ -319,26 +308,21 @@ onScroll(event: Event): void {
     var nume = document.getElementById('selectNume')  as HTMLInputElement | null;
     let numeValoare = nume?.value;
     this.formData.nume = numeValoare;
-    console.log('Opțiunea selectată:', numeValoare);
 
     var mail = document.getElementById('selectMail')  as HTMLInputElement | null;
     let mailValoare = mail?.value;
-    console.log('Opțiunea selectată:', mailValoare);
     this.formData.mail = mailValoare;
     
     var nota = document.getElementById('selectNota')  as HTMLInputElement | null;
     let notaValoare = nota?.value;
-    console.log('Opțiunea selectată select 2:', notaValoare);
     this.formData.tipNota = notaValoare;
 
 
     var nota1 = document.getElementById('nota')  as HTMLInputElement | null;
     let notaVal = nota1?.value;
-    console.log('Opțiunea selectată select 2:', notaVal);
     this.formData.nota = notaVal;
 
     const jsonObj = JSON.stringify(this.formData);
-    console.log("JSON: ", jsonObj);
 
 
      await axios.put(endpoint, jsonObj, {
@@ -447,14 +431,12 @@ onScroll(event: Event): void {
     else if(this.materia === "Limba și literatura română"){
       materia= "Limbasiliteraturaromana";
     }
-    console.log(nota1[materia]['Nota1']+" "+nota1[materia]['Nota2']+" "+nota1[materia]['Nota3']+" "+nota1[materia]['Nota4']);
       if (nota1[materia]['Nota1'] != 0 && nota1[materia]['Nota2'] != 0 && nota1[materia]['Nota3']!= 0 && nota1[materia]['Nota4'] != 0) {
         nota1[materia].Medie =
           Math.round(0.2 * nota1[materia]['Nota1']
             + 0.2 * nota1[materia]['Nota2']
             + 0.3 * nota1[materia]['Nota4']
             + 0.3 * nota1[materia]['Nota4']);
-            console.log("Claculat "+nota1[materia].Medie);
       }
     }
   }
@@ -509,8 +491,6 @@ onScroll(event: Event): void {
     nota[materie][notaKey] = intValue;
     
     this.calculeazaMediaLive(nota, materie);
-    console.log("Recalculare 12"+notaKey+" "+materie);
-    console.log("Recalculare "+value);
     
 }
 
@@ -528,10 +508,60 @@ calculeazaMediaLive(nota: any, materie: string) {
 
     //nota[materie].Medie = media;
 
-    
 
-    console.log("Recalculare 2"+media);
 }
+
+  async preiaNote(){
+    //let catalogNou = JSON.parse(this.vectorCatalog);
+    let accessToken = localStorage.getItem('access_token');
+    let refreshToken = localStorage.getItem('refresh_token');
+
+    if(accessToken && refreshToken){
+    const endpoint = 'http://localhost:8085/updateNote';
+    const accessTokenPayload = this.decodeJwtClaims(accessToken);
+    const expirationTime = accessTokenPayload.exp * 1000; 
+
+
+
+    if (expirationTime > Date.now()) {
+
+    const jsonObj = JSON.stringify(this.vectorCatalog);
+      console.log("Noul catalog" + jsonObj);
+     await axios.put(endpoint, jsonObj, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+      .then(response => {
+        console.log('JSON trimis cu succes:', response.data);
+        this.shareDataService.sendRaspunsCatalog(jsonObj);
+        this.formData = {
+          nume: '',
+          prenume: '',
+          mail: '',
+          materie: '',
+          tipNota: '',
+          nota:0
+        };
+        this.snackBar.open('Note trimise  cu succes', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      })
+      .catch(error => {
+        console.error('Eroare la trimiterea JSON-ului:', error);
+      });
+    }
+    else{
+      this.refresh.refresh();
+    }
+  }
+  
+  
+  }
 
 
 }
