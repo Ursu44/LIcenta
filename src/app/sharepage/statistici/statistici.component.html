@@ -1,7 +1,10 @@
-<div class="loading" *ngIf="!incarcat">
-  <div class="spinner"></div>
-  <h2>Loading...</h2>
+<div class="overlay" *ngIf="!incarcat">
+  <div class="popup">
+      <div class="spinner"></div>
+      <h2 class="scris">Se încarcă datele... </h2>
+  </div>
 </div>
+
 <div class="grafice" *ngIf="esteProfesor() && incarcat">
   <h2>Seelctează numele</h2> <br>
   <h2>Progres {{materia}}</h2> <br><br><br>

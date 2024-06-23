@@ -584,6 +584,12 @@ async trimitDateTest(){
     .then(async response => {
       const jsonObj1 = JSON.stringify(response.data);
       console.log(" "+jsonObj1);
+      this.snackBar.open('Date modificate cu succes', 'Închide', {
+        duration: 2500,
+        panelClass: 'custom-snackbar',
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     })
     .catch(error => {
       console.error('Eroare la trimiterea JSON-ului:', error);

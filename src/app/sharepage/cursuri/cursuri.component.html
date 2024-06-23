@@ -1,6 +1,8 @@
-<div class="loading" *ngIf="!incarcat">
-  <div class="spinner"></div>
-  <h2>Loading...</h2>
+<div class="overlay" *ngIf="!incarcat">
+  <div class="popup">
+      <div class="spinner"></div>
+      <h2 class="scris">Se încarcă cursurile... </h2>
+  </div>
 </div>
 <div class="container" *ngIf="incarcat" [ngClass]="{ 'disabled-container': !deschis  }">
 <div class="accordion" id="accordionExample" style="width:1790px; ">

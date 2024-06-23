@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import axios from 'axios';
 
 @Component({
@@ -8,7 +9,7 @@ import axios from 'axios';
   styleUrls: ['./pass-reset.component.css']
 })
 export class PassResetComponent {
-  constructor(private dialog:MatDialog) {}
+  constructor(private snackBar: MatSnackBar,private dialog:MatDialog) {}
 
   formData: any = {
     parola: 'ceva'  
@@ -31,6 +32,12 @@ export class PassResetComponent {
       parola: ''
     }
     this.dialog.closeAll();
+    this.snackBar.open('Parolă schimbată', 'Închide', {
+      duration: 2500,
+      panelClass: 'custom-snackbar',
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
     })
     .catch(error => {
       console.error('Eroare la trimiterea JSON-ului:', error);

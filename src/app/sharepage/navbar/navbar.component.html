@@ -145,6 +145,11 @@
   </div>
         </form>
       </div>
+      <div *ngIf="incarcat1" class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>
         <button type="button" class="btn btn-primary" (click)="sendFormData()">Trimite</button>
@@ -153,7 +158,7 @@
   </div>
 
   <div class="modal fade" id="SuccesLogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" *ngIf="!incarcat">
+    <div class="modal-dialog" *ngIf="!incarcat1">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Inregistrare</h5>
@@ -198,6 +203,11 @@
       <input type="text" class="form-control" id="recipient-materie" [disabled]="!isProfesorSelected" name="materie" [(ngModel)]="formData.materie">
     </div>      
           </form>
+          <div *ngIf="incarcat1" class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Inchide</button>

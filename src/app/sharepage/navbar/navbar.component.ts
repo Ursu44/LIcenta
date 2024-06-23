@@ -38,6 +38,7 @@ export class NavbarComponent implements OnInit {
   grupeAici: string[] = [];
   materiisiani:any;
   incarcat:boolean = false;
+  incarcat1:boolean = false;
   formData: any = {
     nume: '',
     prenume: '',
@@ -183,6 +184,7 @@ export class NavbarComponent implements OnInit {
   async sendFormData() {
     console.log("role"+this.formData.rol);
     let backendEndpoint 
+    this.incarcat1 = true;
     if(this.formData.rol === 'profesor'){
         backendEndpoint = 'http://localhost:8086/add/profesor';
         for(let i = 0;i<this.grupeAici.length; i++){
@@ -223,7 +225,12 @@ export class NavbarComponent implements OnInit {
           grupe:'',
            materii:new Map<string, object>()
         };
-        
+        this.snackBar.open('Înregistrare reușită', 'Închide', {
+          duration: 2500,
+          panelClass: 'custom-snackbar',
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       })
       .catch(error => {
         console.log("Aicisa");
